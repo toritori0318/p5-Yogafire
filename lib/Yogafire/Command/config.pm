@@ -29,7 +29,7 @@ has edit => (
 );
 no Mouse;
 
-sub abstract {'AWSKinfe Config Manager'}
+sub abstract {'Yogafire Config Manager'}
 
 sub validate_args {
     my ( $self, $opt, $args ) = @_;
