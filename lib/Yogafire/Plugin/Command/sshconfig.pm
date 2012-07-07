@@ -19,7 +19,7 @@ has 'sshconfig-file' => (
     traits        => [qw(Getopt)],
     isa           => "Str",
     is            => "rw",
-    cmd_aliases   => "b",
+    cmd_aliases   => "f",
     documentation => 'specify sshconfig file path. (default: {$HOME}/.ssh/config )',
 );
 no Mouse;
@@ -70,8 +70,11 @@ sub execute {
     close $rfh;
 
     if($opt->{replace}) {
-        my $diff = diff(\$new_data, $org_data);
-        return unless $diff;
+        my $diff = diff(\$new_data, \$org_data);
+        unless($diff) {
+            print "sshconfig is no different.\n";
+            return;
+        }
 
         # backup
         if($opt->{backup}) {
