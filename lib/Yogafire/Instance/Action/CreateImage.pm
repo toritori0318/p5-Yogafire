@@ -67,6 +67,7 @@ sub confirm_create_image {
             default  => 'n',
         );
     }
+    my $display_noreboot = ($noreboot) ? 'yes' : 'no';
 
     my $confirm_str =<<"EOF";
 ================================================================
@@ -74,7 +75,7 @@ Create Image Info
 
          Image Name : $name
   Image Description : $description
- Instance No Reboot : $noreboot
+ Instance No Reboot : $display_noreboot
 ================================================================
 EOF
     unless($force) {
