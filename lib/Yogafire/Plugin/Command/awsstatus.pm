@@ -1,22 +1,17 @@
 package Yogafire::Plugin::Command::awsstatus;
 use Mouse;
 extends qw(Yogafire::Command Yogafire::CommandAttribute);
-has all => (
-    traits        => [qw(Getopt)],
-    isa           => "Bool",
-    is            => "rw",
-    documentation => "Show all",
-);
-
 no Mouse;
 
 use Yogafire::Regions qw/list display_table/;
 use LWP::UserAgent qw/get/;
 use XML::RSS;
-use AWSKnife::Regions qw/list/;
+use Yogafire::Regions qw/list/;
+use Term::ANSIColor qw/colored/;
 my $feed = 'http://status.aws.amazon.com/rss/all.rss';
 
 sub abstract {'Show AWS Status'}
+sub command_names {'aws-status'}
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
@@ -32,51 +27,57 @@ sub execute {
         die $response->status_line;
     }
 
+    my $regions = list();
     my $rss = XML::RSS->new;
     $rss->parse($response->content);
     for (@{$rss->{items}}) {
-#   warn Dumper $_;
-        warn '-'x32;
-        warn $_->{title};
-        warn $_->{description};
-        warn $_->{guid};
-        warn $_->{pubDate};
-        warn service_status($_->{title});
+        my $service_status = $self->service_status($_->{title});
+        my $service_name   = $self->service_name($_->{guid});
+        my $region = $self->region($regions, $_->{guid});
+        my $print_str =<<"EOF";
+============================== $_->{pubDate} ==================================
+     service : $service_name
+       level : $service_status
+      region : $region
+       title : $_->{title}
+         url : $_->{guid}
+
+EOF
+        print $print_str;
     }
 
 }
 
 sub service_status {
-    my ($text) = @_;
+    my ($self, $text) = @_;
     if($text =~ /Service is operating normally/) {
-        return 'normal';
+        return colored('Normal', 'green');
     } elsif($text =~ /Informational message/) {
-        return 'info';
+        return colored('Info', 'green');
     } elsif($text =~ /Performance issues/) {
-        return 'warn';
+        return colored('Warning', 'yellow');
     } elsif($text =~ /Service disruption/) {
-        return 'error';
+        return colored('Error', 'red');
     }
+    return 'Unknown';
+}
+
+sub region {
+    my ($self, $regions, $text) = @_;
+    for (@$regions) {
+        if($text =~ /$_->{id}/) {
+            return $_->{name};
+        }
+    }
+    return 'ALL';
 }
 
 sub service_name {
-    my ($text) = @_;
-    if($text =~ /Service is operating normally/) {
-        return 'normal';
-    } elsif($text =~ /Informational message/) {
-        return 'info';
-    } elsif($text =~ /Performance issues/) {
-        return 'warn';
-    } elsif($text =~ /Service disruption/) {
-        return 'error';
+    my ($self,$text) = @_;
+    if($text =~ m|/#(\w+)-|) {
+        return uc($1);
     }
-}
-
-#http://status.aws.amazon.com/#elasticache-sa-east-1_1335850302
-sub parse_url {
-    my ($url) = @_;
-    if($url =~ /#(.*)-(\w+)$/) {
-    }
+    return 'Unknown';
 }
 
 1;
