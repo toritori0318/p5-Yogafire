@@ -1,0 +1,51 @@
+use strict;
+use warnings;
+use Test::More;
+
+BEGIN {
+use_ok ("Yogafire::ActionBase");
+use_ok ("Yogafire::Command::cmd");
+use_ok ("Yogafire::Command::config");
+use_ok ("Yogafire::Command::createimage");
+use_ok ("Yogafire::Command::get");
+use_ok ("Yogafire::Command::info");
+use_ok ("Yogafire::Command::ls");
+use_ok ("Yogafire::Command::lsami");
+use_ok ("Yogafire::Command::put");
+use_ok ("Yogafire::Command::reboot");
+use_ok ("Yogafire::Command::ssh");
+use_ok ("Yogafire::Command::start");
+use_ok ("Yogafire::Command::stop");
+use_ok ("Yogafire::Command::terminate");
+use_ok ("Yogafire::Command::use");
+use_ok ("Yogafire::CommandAttribute");
+use_ok ("Yogafire::Command");
+use_ok ("Yogafire::CommandClass::Sync");
+use_ok ("Yogafire::Config");
+use_ok ("Yogafire::Image::Action::Deregister");
+use_ok ("Yogafire::Image::Action::Info");
+use_ok ("Yogafire::Image::Action::RunInstance");
+use_ok ("Yogafire::Image::Action");
+use_ok ("Yogafire::Image");
+use_ok ("Yogafire::Instance::Action::CopyAndLaunch");
+use_ok ("Yogafire::Instance::Action::CreateImage");
+use_ok ("Yogafire::Instance::Action::Info");
+use_ok ("Yogafire::Instance::Action::Quit");
+use_ok ("Yogafire::Instance::Action::Reboot");
+use_ok ("Yogafire::Instance::Action::SSH");
+use_ok ("Yogafire::Instance::Action::Start");
+use_ok ("Yogafire::Instance::Action::Stop");
+use_ok ("Yogafire::Instance::Action::Terminate");
+use_ok ("Yogafire::Instance::Action::UpdateTags");
+use_ok ("Yogafire::Instance::Action");
+use_ok ("Yogafire::Instance");
+use_ok ("Yogafire::Plugin::Command::allregion");
+use_ok ("Yogafire::Plugin::Command::hosts");
+use_ok ("Yogafire::Plugin::Command::region");
+use_ok ("Yogafire::Plugin::Command::sshconfig");
+use_ok ("Yogafire::Regions");
+use_ok ("Yogafire");
+};
+
+done_testing;
+

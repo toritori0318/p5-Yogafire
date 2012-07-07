@@ -1,0 +1,57 @@
+# yoga
+compdef _yoga yoga
+
+function _yoga {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        ':command:->command' \
+        '*::options:->options'
+
+    case $state in
+        (command)
+            local -a subcommands
+            IFS=$'\n';
+            subcommands=(`yoga --help | sed 's/^ *//g' |awk 'NR>4 && NR<30 && NF>0 {q="\047";print $0}'`)
+            _describe -t commands "yoga" subcommands
+            ;;
+
+        (options)
+            case $line[1] in
+                (ssh | put | get | ls | start | stop | reboot | terminate)
+                    __yoga-instance-list
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+__yoga-instance-list ()
+{
+    local cache_policy
+    zstyle -s ":completion:${curcontext}:" cache-policy cache_policy
+    if [[ -z "$cache_policy" ]]; then
+        zstyle ":completion:${curcontext}:" cache-policy _yoga-instance-list-caching-policy
+    fi
+
+    local -a lists
+
+    if (( CURRENT == 2 ));then
+        if ( [[ ${+_yoga_cache} -eq 0 ]] || _cache_invalid yoga_cache ) \
+            && ! _retrieve_cache yoga_cache; then
+
+            lists=(`yoga ls --notable --filter='instance-state-name=running' | awk '{print $1}'`)
+            # store cache
+            _store_cache yoga_cache lists
+        fi
+
+        _describe -t commands 'yoga instance list' lists
+    fi
+}
+
+_yoga-instance-list-caching-policy() {
+    local -a oldp
+    oldp=( "$1"(Nms+15) )
+    (( $#oldp ))
+}

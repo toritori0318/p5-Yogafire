@@ -1,0 +1,6 @@
+Revision history for Perl extension Yogafire.
+
+0.01 2012/06/23
+    - original version; created by h2xs 1.23 with options
+        -AX -n Yogafire
+
