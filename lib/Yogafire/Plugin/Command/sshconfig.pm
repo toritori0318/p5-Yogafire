@@ -1,6 +1,13 @@
 package Yogafire::Plugin::Command::sshconfig;
 use Mouse;
 extends qw(Yogafire::Command Yogafire::CommandAttribute);
+has 'preview' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    cmd_aliases   => "p",
+    documentation => "Show preview hosts file.",
+);
 has replace => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
@@ -34,6 +41,14 @@ sub abstract {'Operation for sshconfig'}
 sub begin {qq{#======== Yogafire Begen ========#\n}}
 sub end   {qq{#======== Yogafire End   ========#\n}}
 
+sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    $self->validate_args_common($opt, $args );
+
+    die "Please specify any option. <preview / replace>\n\n" . $self->usage
+        unless $opt->{preview} || $opt->{replace};
+}
+
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
@@ -51,12 +66,14 @@ sub execute {
     my $begin = $self->begin;
     my $end   = $self->end;
 
+    # filepath
     my $home_dir = $ENV{"HOME"};
     my $sshconfig_file = $home_dir."/.ssh/config";
     if($opt->{'sshconfig-file'}) {
         $sshconfig_file = $opt->{'sshconfig-file'};
     }
 
+    # slurp file
     open my $rfh, '<', $sshconfig_file;
     my $org_data = do{ local $/; <$rfh>};
     my $new_data = $org_data;
@@ -69,7 +86,10 @@ sub execute {
     #print $new_data;
     close $rfh;
 
-    if($opt->{replace}) {
+    if($opt->{preview}) {
+        print $new_data;
+    } elsif($opt->{replace}) {
+        # check diff
         my $diff = diff(\$new_data, \$org_data);
         unless($diff) {
             print "sshconfig is no different.\n";
@@ -89,8 +109,6 @@ sub execute {
         close $wfh;
 
         print "Complete replacement sshconfig file.\n";
-    } else {
-        print $new_data;
     }
 }
 

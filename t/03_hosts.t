@@ -54,7 +54,7 @@ my $hosts_file = create_hosts_file();
 #======== Yogafire End   ========#
 EOF
 
-    my $result = test_app(Yogafire => [ 'hosts', "--hosts-file=$hosts_file" ]);
+    my $result = test_app(Yogafire => [ 'hosts', "--preview", "--hosts-file=$hosts_file" ]);
     is($result->stdout, $str,   'printed hosts file is success');
     is($result->stderr, '', '');
     is($result->error, undef, '');
@@ -69,7 +69,7 @@ EOF
 #======== Yogafire End   ========#
 EOF
 
-    my $result = test_app(Yogafire => [ 'hosts', "--hosts-file=$hosts_file", "--private-ip" ]);
+    my $result = test_app(Yogafire => [ 'hosts', "--preview", "--hosts-file=$hosts_file", "--private-ip" ]);
     is($result->stdout, $str,   'private ip printed hosts file is success');
     is($result->stderr, '', '');
     is($result->error, undef, '');

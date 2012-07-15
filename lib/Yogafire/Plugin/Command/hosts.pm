@@ -1,6 +1,13 @@
 package Yogafire::Plugin::Command::hosts;
 use Mouse;
 extends qw(Yogafire::Command Yogafire::CommandAttribute);
+has 'preview' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    cmd_aliases   => "p",
+    documentation => "Show preview hosts file.",
+);
 has replace => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
@@ -19,7 +26,6 @@ has 'private-ip' => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
-    cmd_aliases   => "p",
     documentation => "private IP address to the ip address of the hosts file.",
 );
 has 'hosts-file' => (
@@ -41,6 +47,14 @@ sub abstract {'Operation for hosts file'}
 sub begin {qq{#======== Yogafire Begen ========#\n}}
 sub end   {qq{#======== Yogafire End   ========#\n}}
 
+sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    $self->validate_args_common($opt, $args );
+
+    die "Please specify any option. <preview / replace>\n\n" . $self->usage
+        unless $opt->{preview} || $opt->{replace};
+}
+
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
@@ -58,11 +72,13 @@ sub execute {
     my $begin = $self->begin;
     my $end   = $self->end;
 
+    # filepath
     my $hosts_file = '/etc/hosts';
     if($opt->{'hosts-file'}) {
         $hosts_file = $opt->{'hosts-file'};
     }
 
+    # slurp file
     open my $rfh, '<', $hosts_file;
     my $org_data = do{ local $/; <$rfh>};
     my $new_data = $org_data;
@@ -72,10 +88,12 @@ sub execute {
 
     my $hosts = $self->_hosts(\@instances, $ip_key);
     $new_data =~ s/${begin}(.*)${end}/${begin}${hosts}${end}/sg;
-    #print $new_data;
     close $rfh;
 
-    if($opt->{replace}) {
+    if($opt->{preview}) {
+        print $new_data;
+    } elsif($opt->{replace}) {
+        # check diff
         my $diff = diff(\$new_data, \$org_data);
         unless($diff) {
             print "hosts file is no different.\n";
@@ -95,8 +113,6 @@ sub execute {
         close $wfh;
 
         print "Complete replacement hosts file.\n";
-    } else {
-        print $new_data;
     }
 }
 

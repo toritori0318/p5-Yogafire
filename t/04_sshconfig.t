@@ -69,7 +69,7 @@ Host fuga
 #======== Yogafire End   ========#
 EOF
 
-    my $result = test_app(Yogafire => [ 'sshconfig', "--sshconfig-file=$sshconfig_file" ]);
+    my $result = test_app(Yogafire => [ 'sshconfig', "--preview", "--sshconfig-file=$sshconfig_file" ]);
     is($result->stdout, $str,   'printed sshconfig file is success');
     is($result->stderr, '', '');
     is($result->error, undef, '');
