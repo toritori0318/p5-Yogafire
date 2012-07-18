@@ -84,30 +84,30 @@ sub init {
         $access_key_id = $term->get_reply(
             prompt   => 'AWS Access Key Id? > ',
             default  => $access_key_id,
-        );
+        ) || '';
         $secret_access_key = $term->get_reply(
             prompt   => 'AWS Secret Access Key? > ',
             default  => $secret_access_key,
-        );
+        ) || '';
         $region = $term->get_reply(
             prompt   => 'Region? > ',
             default  => $region,
-        );
+        ) || '';
         $owner_id = $term->get_reply(
             prompt   => 'Owner Id? > ',
             default  => $owner_id,
-        );
+        ) || '';
         $user = $term->get_reply(
             prompt   => 'SSH User? > ',
             default  => $user,
-        );
+        ) || '';
         $port = $term->get_reply(
             prompt   => 'SSH Port? > ',
             default  => $port,
-        );
+        ) || '';
         $identity_file = $term->get_reply(
             prompt   => 'SSH Identity File? > ',
-        );
+        ) || '';
 
         my $confirm_str =<<"EOF";
 ================================================================
