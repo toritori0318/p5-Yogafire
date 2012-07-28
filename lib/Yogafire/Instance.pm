@@ -78,6 +78,7 @@ sub convert_row {
     }
     return \@results;
 }
+
 sub attribute_mapping {
     my ($instance, $key) = @_;
 

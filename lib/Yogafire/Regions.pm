@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use base 'Exporter';
-our @EXPORT = qw/list display_table find/;
+our @EXPORT_OK = qw/list display_table find/;
 
 my @regions = (
     { id => 'us-east-1',      name => 'US East (Northern Virginia)' },

@@ -6,7 +6,6 @@ extends qw(Yogafire::Command Yogafire::CommandAttribute);
 no Mouse;
 
 use Yogafire::Regions qw/list display_table/;
-use Yogafire::Instance::Action;
 
 sub abstract {'Show AWS Regions'}
 
