@@ -15,10 +15,23 @@ has to => (
     cmd_aliases   => "t",
     documentation => "specify the to-ymd of feed (format: yyyymmdd )",
 );
+has region => (
+    traits        => [qw(Getopt)],
+    isa           => "Str",
+    is            => "rw",
+    cmd_aliases   => "r",
+    documentation => "specify the region name.",
+);
+has service => (
+    traits        => [qw(Getopt)],
+    isa           => "Str",
+    is            => "rw",
+    cmd_aliases   => "s",
+    documentation => "specify the service name.",
+);
 no Mouse;
 
-use Yogafire::Regions qw/list display_table/;
-use Yogafire::Regions qw/list/;
+use Yogafire::Regions qw/list display_table find/;
 
 use LWP::UserAgent qw/get/;
 use XML::RSS;
@@ -62,20 +75,34 @@ sub execute {
     for (@{$rss->{items}}) {
         my $rss_dt  = $rss_parser->parse_datetime($_->{pubDate});
         my $from_dt = ($opt->{from}) ? $args_parser->parse_datetime($opt->{from}) : undef;
-        my $to_dt   = ($opt->{to})   ? $args_parser->parse_datetime($opt->{to}) : undef;
-        $to_dt->add(seconds => (60*60*24)-1);
-
-        next if $from_dt && $rss_dt < $from_dt;
-        next if $to_dt   && $rss_dt > $to_dt;
+        my $to_dt   = do {
+            my $dt;
+            if($opt->{to}) {
+                $dt = $args_parser->parse_datetime($opt->{to});
+                $dt->add(seconds => (60*60*24)-1);
+            }
+            $dt;
+        };
 
         my $service_status = $self->service_status($_->{title});
         my $service_name   = $self->service_name($_->{guid});
-        my $region = $self->region($regions, $_->{guid});
+        my $find_region = $self->find_region($regions, $_->{guid});
+
+        # filter
+        next if $from_dt && $rss_dt < $from_dt;
+        next if $to_dt   && $rss_dt > $to_dt;
+        # region
+        next if $opt->{region}  && ( ($opt->{region} ne $find_region->{id}) || (!$find_region->{name}) );
+        # service
+        next if $opt->{service} && lc($opt->{service}) ne lc($service_name);
+
+        my $region_name = $find_region->{name} || 'ALL';
+
         my $print_str =<<"EOF";
 ============================== $rss_dt ==================================
      service : $service_name
        level : $service_status
-      region : $region
+      region : $region_name
        title : $_->{title}
          url : $_->{guid}
 
@@ -99,14 +126,17 @@ sub service_status {
     return 'Unknown';
 }
 
-sub region {
+sub find_region {
     my ($self, $regions, $text) = @_;
     for (@$regions) {
         if($text =~ /$_->{id}/) {
-            return $_->{name};
+            return {
+                id => $_->{id},
+                name => $_->{name},
+            };
         }
     }
-    return 'ALL';
+    return {};
 }
 
 sub service_name {
