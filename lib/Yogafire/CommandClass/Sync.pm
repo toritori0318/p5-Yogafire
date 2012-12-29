@@ -30,15 +30,18 @@ sub execute {
         die "Not Found Instance. \n";
     }
 
-    my $results = $self->exec_ssh(
-        $config->get('identity_file'),
-        $config->get('ssh_user'),
-        $host,
-        $src,
-        $dest,
-        $sync_option,
-    );
-    print "sync complete!\n";
+    for (@instances) {
+        my $name = $_->tags->{Name} || '';
+        printf "# Sync %s@%s(%s)\n", $self->config->get('ssh_user'), $_->ip_address, $name;
+        my $results = $self->exec_ssh(
+            $config->get('identity_file'),
+            $config->get('ssh_user'),
+            $_->dns_name,
+            $src,
+            $dest,
+            $sync_option,
+        );
+    }
 }
 
 sub parse_option {
