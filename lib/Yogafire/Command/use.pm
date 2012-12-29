@@ -30,8 +30,12 @@ sub execute {
         }
 
     } else {
+        my @profiles = map { $_ } keys %{$config->list_profile};
         my $current_profile = $config->current_profile();
-        print " current profile is [$current_profile]\n";
+        print "--------- profiles ---------\n";
+        for my $profile (@profiles) {
+           printf " %s %s\n", ($current_profile eq $profile) ? '*' : ' ', $profile;
+        }
     }
 
 }

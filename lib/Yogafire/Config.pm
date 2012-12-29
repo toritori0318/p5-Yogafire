@@ -200,4 +200,9 @@ sub get {
     return $self->config->[0]->{$profile}->{$key};
 }
 
+sub list_profile {
+    my ($self) = @_;
+    return { map { $_ => $self->config->[0]->{$_} } grep { $_ ne 'use_profile' } keys %{$self->config->[0]} };
+}
+
 1;
