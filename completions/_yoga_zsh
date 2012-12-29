@@ -19,8 +19,6 @@ function _yoga {
 
         (options)
             case $line[1] in
-                (ssh | put | get | ls | start | stop | reboot | terminate)
-                    __yoga-instance-list
                     ;;
             esac
             ;;

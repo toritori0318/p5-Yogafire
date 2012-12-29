@@ -73,10 +73,10 @@ sub init {
         $access_key_id     = $ENV{AWS_ACCESS_KEY_ID};
         $secret_access_key = $ENV{AWS_SECRET_ACCESS_KEY};
     }
-    my $region = $ENV{EC2_REGION};
-    my $owner_id = $ENV{EC2_OWNER_ID};
-    my $user = 'ec2-user';
-    my $port = '22';
+    my $region        = $ENV{EC2_REGION};
+    my $owner_id      = $ENV{EC2_OWNER_ID};
+    my $user          = 'ec2-user';
+    my $port          = '22';
     my $identity_file = '';
 
     unless($opt->{noconfirm}) {

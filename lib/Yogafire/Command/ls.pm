@@ -60,8 +60,7 @@ sub execute {
 
     my @instances = list($self->ec2, $opt);
     if(scalar @instances == 0) {
-        print "Not Found Instance. \n";
-        return;
+        die "Not Found Instance. \n";
     }
 
     my $column_list = $self->config->get('instance_column');

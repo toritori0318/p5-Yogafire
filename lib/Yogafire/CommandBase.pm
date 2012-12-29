@@ -99,7 +99,7 @@ sub action_process {
     $term->set_completion_word([map {$_->tags->{Name}} @instances]);
 
     while (1) {
-        my $input = $term->readline('no. or tags_Name. > ');
+        my $input = $term->readline('no / tags_Name / instance_id > ');
         $input =~ s/^ //g;
         $input =~ s/ $//g;
         last if $input =~ /^(q|quit|exit)$/;

@@ -21,5 +21,5 @@
 \.sw[po]$
 ^Todo
 ^tmp/
-^*\.save
-
+^*\save
+^*\sv
