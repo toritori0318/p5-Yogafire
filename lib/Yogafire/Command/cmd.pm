@@ -22,6 +22,13 @@ has sudo => (
     cmd_aliases   => "s",
     documentation => "sudo command.",
 );
+has password => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    cmd_aliases   => "p",
+    documentation => "send sudo password.",
+);
 has 'dry-run'=> (
     traits        => [qw(Getopt)],
     isa           => "Bool",
@@ -34,6 +41,7 @@ no Mouse;
 
 use Net::OpenSSH;
 use Yogafire::Instance qw/list/;
+use Yogafire::Term;
 
 sub abstract {'Execute remote command'}
 
@@ -76,18 +84,20 @@ sub execute {
         unless ($opt->{'dry-run'}) {
             $results = $self->exec_ssh(
                 {
-                    identity_file => $self->config->get('identity_file'),
-                    user          => $self->config->get('ssh_user'),
-                    host          => $_->dns_name,
-                    cmd           => $cmd,
-                    sudo          => $opt->{sudo},
+                    identity_file   => $self->config->get('identity_file'),
+                    user            => $self->config->get('ssh_user'),
+                    host            => $_->dns_name,
+                    cmd             => $cmd,
+                    sudo            => $opt->{sudo},
+                    f_passwaord     => $opt->{password},
                 }
             );
         }
-        printf "# Connected to %s@%s(%s)\n%s", $self->config->get('ssh_user'), $_->ip_address, $name, join('', @$results) || '';
+        printf "# Connected to %s@%s(%s)\n%s", $self->config->get('ssh_user'), $_->ip_address, $name, $results || '';
     }
 }
 
+my $g_password = '';
 sub exec_ssh {
     my ($self, $args) = @_;
 
@@ -96,32 +106,48 @@ sub exec_ssh {
     my $host          = $args->{host} ||'';
     my $cmd           = $args->{cmd} ||'';
     my $sudo          = $args->{sudo} ||'';
+    my $f_passwaord   = $args->{f_passwaord};
+
     my $ssh = Net::OpenSSH->new(
         $host,
         (
-            user     => $user,
-            key_path => $identity_file,
-            timeout => 10,
+            user                => $user,
+            key_path            => $identity_file,
+            timeout             => 10,
             kill_ssh_on_timeout => 10,
         ),
     );
     $ssh->error and die "Can't ssh to ". $host .": " . $ssh->error;
 
-    my @results;
-    {
-        my $opt = {};
-        my @cmds = ($cmd);
-        if($sudo) {
-            $opt->{tty} = 1;
+    my $password;
+    my ($out, $err);
+    if($sudo) {
+        my $ssh_params = {};
+        if($f_passwaord) {
+            if($g_password) {
+                $password = $g_password;
+            } else {
+                my $term = Yogafire::Term->new();
+                $password = $term->mask_password();
+            }
+            $ssh_params = { stdin_data => "$password\n" };
         }
-        @results = $ssh->capture(
-            $opt,
-            @cmds,
+        # execute ssh
+        ($out, $err) = $ssh->capture2(
+            $ssh_params,
+            join(' ', 'sudo', '-Sk', $cmd),
         );
-        $ssh->error and die "remote command failed: " . $ssh->error;
+    } else {
+        # execute ssh
+        ($out, $err) = $ssh->capture2($cmd);
     }
 
-    return \@results || ();
+    $ssh->error and die "remote command failed: " . $ssh->error ." ". $err;
+
+    # reuse password
+    $g_password = $password;
+
+    return $out;
 }
 
 1;
