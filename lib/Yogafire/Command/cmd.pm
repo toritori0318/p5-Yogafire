@@ -8,13 +8,6 @@ has filter => (
     cmd_aliases   => "f",
     documentation => "api filter",
 );
-has multi => (
-    traits        => [qw(Getopt)],
-    isa           => "Bool",
-    is            => "rw",
-    cmd_aliases   => "m",
-    documentation => "enable multi server.",
-);
 #has parallel => (
 #    traits        => [qw(Getopt)],
 #    isa           => "Bool",
@@ -70,8 +63,6 @@ sub execute {
     my @instances = list($self->ec2, $opt);
     if(scalar @instances == 0) {
         die "Not Found Instance. ";
-    } elsif(!$opt->{multi} && scalar @instances > 1) {
-        die "Disable Multi Server. ";
     }
 
     if($opt->{'dry-run'}) {
