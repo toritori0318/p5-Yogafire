@@ -1,6 +1,6 @@
 package Yogafire::Plugin::Command::ec2watcher;
 use Mouse;
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 has 'timeout' => (
     traits        => [qw(Getopt)],
     isa           => "Str",

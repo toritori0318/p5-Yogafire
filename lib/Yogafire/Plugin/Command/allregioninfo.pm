@@ -1,6 +1,6 @@
 package Yogafire::Plugin::Command::allregioninfo;
 use Mouse;
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 has all => (
     traits        => [qw(Getopt)],
     isa           => "Bool",

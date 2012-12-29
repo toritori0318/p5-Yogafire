@@ -1,6 +1,6 @@
 package Yogafire::Plugin::Command::hosts;
 use Mouse;
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 has 'preview' => (
     traits        => [qw(Getopt)],
     isa           => "Bool",

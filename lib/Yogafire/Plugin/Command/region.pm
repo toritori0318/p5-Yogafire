@@ -1,7 +1,7 @@
 package Yogafire::Plugin::Command::region;
 use Mouse;
 
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 
 no Mouse;
 

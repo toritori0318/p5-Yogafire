@@ -1,7 +1,7 @@
 package Yogafire::Command::config;
 use Mouse;
 
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 
 has init => (
     traits        => [qw(Getopt)],

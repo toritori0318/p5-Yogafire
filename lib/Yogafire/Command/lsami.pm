@@ -1,7 +1,7 @@
 package Yogafire::Command::lsami;
 use Mouse;
 
-extends qw(Yogafire::Command Yogafire::CommandAttribute);
+extends qw(Yogafire::CommandBase);
 
 has interactive => (
     traits          => [qw(Getopt)],
