@@ -81,17 +81,37 @@ sub execute {
         $term->set_completion_word( [ map { $_->name, $_->imageId} @images ] );
 
         while (1) {
-            my $input = $term->readline('  Input No > ');
+            my $input = $term->readline('no / name / image_id > ');
+            $input =~ s/^ //g;
+            $input =~ s/ $//g;
             last if $input =~ /^(q|quit|exit)$/;
 
-            if ($input !~ /^\d+$/ || !$images[$input-1]) {
-                print "Invalid Number. \n";
-                next;
+            my $target_image = $self->find_image_name(\@images, $input);
+            $target_image  ||= $self->find_image_id(\@images, $input);
+            $target_image  ||= $images[$input-1] if $input && $input =~ /^\d+$/;
+            if (!$target_image) {
+                die "Invalid Value. \n";
             }
-            $ia->confirm($images[$input-1]);
+
+            # show action
+            $ia->confirm($target_image, $opt);
             last;
         }
 
+    }
+}
+
+sub find_image_name {
+    my ($self, $images, $name ) = @_;
+    for my $image (@$images) {
+        return $image if $image->name eq $name;
+    }
+}
+
+sub find_image_id {
+    my ($self, $images, $image_id ) = @_;
+    for my $image (@$images) {
+        return $image if $image->imageId eq $image_id;
     }
 }
 
