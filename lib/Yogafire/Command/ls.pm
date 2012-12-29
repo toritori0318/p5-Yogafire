@@ -17,6 +17,13 @@ has state => (
     cmd_aliases     => "s",
     documentation   => "specified instance status (running / stopped)",
 );
+has tagsname => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "s",
+    documentation   => "specified instance tagsname.",
+);
 has filter => (
     traits          => [qw(Getopt)],
     isa             => "Str",
