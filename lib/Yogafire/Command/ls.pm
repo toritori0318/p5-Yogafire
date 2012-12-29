@@ -72,6 +72,7 @@ sub execute {
     }
 
     if($opt->{interactive}) {
+        my @ng_name = $self->ng_name(\@instances);
         my $ia = Yogafire::Instance::Action->new(ec2 => $self->ec2, config => $self->config);
         my $term = Yogafire::Term->new('Input Number');
         $term->set_completion_word( [ map { $_->tags->{Name}, $_->instanceId} @instances ] );
@@ -87,6 +88,10 @@ sub execute {
             $target_instance ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
             if (!$target_instance) {
                 print "Invalid Value. \n";
+                next;
+            }
+            if ($target_instance && grep { $_ eq $input } @ng_name) {
+                print "'Name' has been duplicated. Please use the 'no or instance_id' instead. \n";
                 next;
             }
 
