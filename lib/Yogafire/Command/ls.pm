@@ -77,17 +77,23 @@ sub execute {
         $term->set_completion_word( [ map { $_->tags->{Name}, $_->instanceId} @instances ] );
 
         while (1) {
-            my $input = $term->readline('Input No > ');
+            my $input = $term->readline('no / tags_Name / instance_id > ');
+            $input =~ s/^ //g;
+            $input =~ s/ $//g;
             last if $input =~ /^(q|quit|exit)$/;
 
-            if ($input !~ /^\d+$/ || !$instances[$input-1]) {
-                print "Invalid Number. \n";
+            my $target_instance = $self->find_name(\@instances, $input);
+            $target_instance ||= $self->find_id(\@instances, $input);
+            $target_instance ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
+            if (!$target_instance) {
+                print "Invalid Value. \n";
                 next;
             }
-            $ia->action_print($instances[$input-1]);
+
+            # show action
+            $ia->action_print($target_instance, $opt);
             last;
         }
-
     }
 }
 
