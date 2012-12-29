@@ -12,6 +12,7 @@ use Yogafire::Instance::Action::Info;
 use Yogafire::Instance::Action::Quit;
 use Yogafire::Instance::Action::CopyAndLaunch;
 use Yogafire::Instance::Action::UpdateTags;
+use Yogafire::Instance::Action::ExtendVolume;
 
 use Mouse;
 extends 'Yogafire::ActionBase';
@@ -30,6 +31,7 @@ has 'actions' => (
             Yogafire::Instance::Action::CreateImage->new(),
             Yogafire::Instance::Action::CopyAndLaunch->new(),
             Yogafire::Instance::Action::UpdateTags->new(),
+            Yogafire::Instance::Action::ExtendVolume->new(),
             Yogafire::Instance::Action::Info->new(),
             Yogafire::Instance::Action::Quit->new(),
         ];
@@ -43,6 +45,7 @@ use Yogafire::Term;
 sub action {
     my ($self, $name) = @_;
     my $action_class = (grep { $_->name eq $name } @{$self->actions})[0];
+    $action_class->ec2($self->ec2);
     $action_class->config($self->config);
     $action_class;
 };
