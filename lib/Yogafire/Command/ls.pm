@@ -74,6 +74,8 @@ sub execute {
     if($opt->{interactive}) {
         my $ia = Yogafire::Instance::Action->new(ec2 => $self->ec2, config => $self->config);
         my $term = Yogafire::Term->new('Input Number');
+        $term->set_completion_word( [ map { $_->tags->{Name}, $_->instanceId} @instances ] );
+
         while (1) {
             my $input = $term->readline('Input No > ');
             last if $input =~ /^(q|quit|exit)$/;
