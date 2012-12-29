@@ -79,6 +79,8 @@ sub execute {
     if($opt->{interactive}) {
         my $ia = Yogafire::Image::Action->new(ec2 => $self->ec2, config => $self->config);
         my $term = Yogafire::Term->new('Input Number');
+        $term->set_completion_word( [ map { $_->name, $_->imageId} @images ] );
+
         while (1) {
             my $input = $term->readline('  Input No > ');
             last if $input =~ /^(q|quit|exit)$/;
