@@ -59,6 +59,9 @@ sub run {
     }
 
     if($delete_snapshot && $snapshot_id) {
+        # wait for deregister...
+        sleep 3;
+
         print "Snapshot delete... \n";
         if($self->ec2->delete_snapshot($snapshot_id)) {
             print "Snapshot delete process. \n";
