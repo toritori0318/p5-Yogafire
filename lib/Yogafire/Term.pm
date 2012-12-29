@@ -5,6 +5,30 @@ use warnings;
 use parent "Term::ReadLine";
 use Term::UI;
 
+# コンストラクタ
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+
+    my $attribs = $self->Attribs;
+    $attribs->{completion_entry_function} = $attribs->{list_completion_function};
+
+    $self;
+}
+
+sub set_completion_word {
+    my ($self, $words) = @_;
+    my $attribs = $self->Attribs;
+    $attribs->{completion_word} = $words;
+}
+
+sub mask_password {
+    my ($self, $words) = @_;
+    my $attribs = $self->Attribs;
+    $attribs->{redisplay_function} = $attribs->{shadow_redisplay};
+    return $self->readline("password> ");
+}
+
 sub get_reply_required {
     my $self = shift;
     my (%opt) = @_;
