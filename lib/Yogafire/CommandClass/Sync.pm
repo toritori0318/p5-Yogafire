@@ -21,13 +21,13 @@ sub execute {
     my $sync_option = $self->parse_option($opt->{sync_option});
     $sync_option->{'dry-run'} = 1 if $opt->{'dry-run'};
 
-    my $host   = shift @$args;
-    my $src    = shift @$args;
-    my $dest   = shift @$args;
+    my $tagsname = shift @$args;
+    my $src      = shift @$args;
+    my $dest     = shift @$args;
 
-    my @instances = list($ec2, { tagsname => $host, });
-    if(scalar @instances == 1) {
-        $host = $instances[0]->dns_name;
+    my @instances = list($ec2, { tagsname => $tagsname, state => 'running' });
+    if(scalar @instances == 0) {
+        die "Not Found Instance. \n";
     }
 
     my $results = $self->exec_ssh(
