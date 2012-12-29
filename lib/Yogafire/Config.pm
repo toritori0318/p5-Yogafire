@@ -166,6 +166,9 @@ EOF
 
     # write
     $config->write($config_file);
+
+    # chmod
+    chmod(0600, $config_file);
 }
 
 sub current_profile {

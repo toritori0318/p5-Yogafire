@@ -64,6 +64,14 @@ sub validate_args_common {
         die sprintf("Can't find config file [%s]\nPlease excecute \"yoga config --init\"\n", $self->config->file);
     }
 
+    # permission check
+    if(-e $self->config->file) {
+        my $stat_inf = stat($self->config->file);
+        my $mode_8 = sprintf("%04o", $stat_inf->mode & 07777);
+        if ($mode_8 ne '0600') {
+            die sprintf("bad permissions: [%s][%s]\nPlease change the permissions to 0600\n", $self->config->file, $mode_8);
+        }
+    }
 };
 
 sub action_process {
