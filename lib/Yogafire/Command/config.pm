@@ -61,7 +61,7 @@ sub execute {
         printf " output config file : [%s]\n", $config->file;
 
     } elsif($opt->{edit}) {
-        my $editor = $ENV{EDITOR} || '/usr/bin/vi';
+        my $editor = $ENV{EDITOR} || 'vi';
         system($editor, $config->file);
 
     } elsif($opt->{show}) {
@@ -72,7 +72,7 @@ sub execute {
 }
 
 sub _cat_file {
-    my ($file) = @_;
+    my ($self, $file) = @_;
     open my $fh, '<', $file
         or die "Can't cat ". $file .": $!";
     while (<$fh>) { print $_; }
