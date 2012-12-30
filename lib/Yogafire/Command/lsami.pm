@@ -10,19 +10,26 @@ has interactive => (
     cmd_aliases     => "i",
     documentation   => "interactive mode.",
 );
+has name => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "n",
+    documentation   => "specified ami name.",
+);
 has state => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
     cmd_aliases     => "s",
-    documentation   => "specified instance status (available / pending / failed)",
+    documentation   => "specified ami status (available / pending / failed)",
 );
 has filter => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
     cmd_aliases     => "f",
-    documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
+    documentation   => "api filter. (ex.--filter='name=value,state=available')",
 );
 has notable => (
     traits          => [qw(Getopt)],

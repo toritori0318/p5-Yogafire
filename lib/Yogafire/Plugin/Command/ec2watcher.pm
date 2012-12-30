@@ -15,6 +15,13 @@ has 'watch-status' => (
     cmd_aliases   => "w",
     documentation => "specified instance status (running / stopped  default:running)",
 );
+has tagsname => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "n",
+    documentation   => "specified instance tagsname.",
+);
 no Mouse;
 
 use Yogafire::Instance qw/list display_list display_table/;

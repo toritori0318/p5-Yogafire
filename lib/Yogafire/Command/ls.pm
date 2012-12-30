@@ -21,7 +21,7 @@ has tagsname => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    cmd_aliases     => "s",
+    cmd_aliases     => "n",
     documentation   => "specified instance tagsname.",
 );
 has filter => (
