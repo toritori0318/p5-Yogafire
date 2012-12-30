@@ -49,7 +49,7 @@ sub command_names {'ls-ami'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga ls-ami [-?] <name>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub validate_args {

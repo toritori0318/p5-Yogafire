@@ -37,7 +37,7 @@ sub abstract {'EC2 Reboot Instances'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga reboot [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

@@ -37,7 +37,7 @@ sub abstract {'EC2 Start Instances'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga start [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

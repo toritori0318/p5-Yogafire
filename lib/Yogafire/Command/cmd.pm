@@ -48,7 +48,7 @@ sub abstract {'Execute remote command'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga cmd [-?] <tagsname> <cmd>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub validate_args {

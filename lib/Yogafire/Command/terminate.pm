@@ -37,7 +37,7 @@ sub abstract {'EC2 Terminate Instance'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga terminate [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

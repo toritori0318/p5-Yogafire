@@ -52,7 +52,7 @@ sub abstract {'EC2 SSH Instance'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga ssh [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

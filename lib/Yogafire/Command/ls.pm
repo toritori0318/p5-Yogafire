@@ -48,7 +48,7 @@ sub abstract {'EC2 List Instance'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga ls [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

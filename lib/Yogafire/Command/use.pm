@@ -10,7 +10,7 @@ sub abstract {'Use profile'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga use [-?] <profile_name>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub execute {

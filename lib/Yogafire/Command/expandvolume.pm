@@ -50,7 +50,7 @@ sub command_names {'expand-volume'}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga expand-volume [-?] <tagsname>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub validate_args {

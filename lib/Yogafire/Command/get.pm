@@ -26,7 +26,7 @@ sub abstract {'Rsync get file from remote. '}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga get [-?] <tagname or host> <from:remote_path> <to:local_path>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub validate_args {

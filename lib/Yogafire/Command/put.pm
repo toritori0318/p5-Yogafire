@@ -27,7 +27,7 @@ sub abstract {'Rsync put local file to remote. '}
 sub usage {
     my ( $self, $opt, $args ) = @_;
     $self->{usage}->{leader_text} = 'yoga put [-?] <tagname or host> <from:local_path> <to:remote_path>';
-    $self->{usage}->text;
+    $self->{usage};
 }
 
 sub validate_args {
