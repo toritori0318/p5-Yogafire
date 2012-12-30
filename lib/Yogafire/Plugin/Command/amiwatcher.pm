@@ -23,11 +23,22 @@ use Yogafire::Term;
 
 sub abstract {'EC2 image status watcher'}
 
+sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    $self->validate_args_common($opt, $args );
+
+    die "Please set the 'owner_id' attributes of the config.\n\n" . $self->usage
+         unless $self->config->get('owner_id');
+}
+
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'available';
+
+    my $owner_id = $self->config->get('owner_id') || '';
+    $opt->{owner_id} = $owner_id;
 
     # tags name filter
     my $name = $args->[0];
@@ -35,11 +46,11 @@ sub execute {
 
     my @images = list($self->ec2, $opt);
     if(scalar @images == 0) {
-        return print "Not Found Instance. \n";
+        die "Not Found Instance. \n";
     } elsif(scalar @images == 1) {
         exit $self->watch($images[0], $opt->{'watch-status'}, $opt->{'timeout'});
     } else {
-        return print "Found more than one target. \n";
+        die "Found more than one target. \n";
     }
 }
 
