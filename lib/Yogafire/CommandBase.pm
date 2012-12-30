@@ -82,7 +82,7 @@ sub action_process {
     my $ia_action = $ia->action($action_name);
     my $state = $ia_action->state;
 
-    $opt->{state} = $state;
+    $opt->{state} = $state unless $opt->{state};
 
     my @instances = list($self->ec2, $opt);
     if(scalar @instances == 0) {
