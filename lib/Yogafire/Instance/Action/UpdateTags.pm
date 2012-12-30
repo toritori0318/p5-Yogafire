@@ -27,7 +27,7 @@ sub run {
         default  => 'Name',
     );
     my $value = $term->get_reply_required(
-        prompt   => 'Tags keyname > ',
+        prompt   => 'Tags value > ',
         default  => $instance->tags->{$key}||'',
     );
 

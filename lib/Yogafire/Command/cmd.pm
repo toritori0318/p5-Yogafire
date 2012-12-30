@@ -6,7 +6,7 @@ has filter => (
     isa           => "Str",
     is            => "rw",
     cmd_aliases   => "f",
-    documentation => "api filter",
+    documentation => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
 #has parallel => (
 #    traits        => [qw(Getopt)],
@@ -55,22 +55,22 @@ sub validate_args {
     my ( $self, $opt, $args ) = @_;
     $self->validate_args_common($opt, $args );
 
-    die "<cmd> is required.\n\n" . $self->usage
+    die "<tagsname> and <cmd> is required.\n\n" . $self->usage
         if scalar @$args < 2;
 }
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
     my $tagsname = shift @$args;
-    my $cmd = shift @$args;
+    my $cmd      = shift @$args;
 
     # tags name filter
     $opt->{tagsname} = $tagsname if $tagsname;
-    $opt->{state} = 'running';
+    $opt->{state}    = 'running';
 
     my @instances = list($self->ec2, $opt);
     if(scalar @instances == 0) {
-        die "Not Found Instance. ";
+        die "Not Found Instance. \n";
     }
 
     if($opt->{'dry-run'}) {
@@ -80,7 +80,7 @@ sub execute {
 
     for (@instances) {
         my $name = $_->tags->{Name} || '';
-        my $results = [];
+        my $results;
         unless ($opt->{'dry-run'}) {
             $results = $self->exec_ssh(
                 {
