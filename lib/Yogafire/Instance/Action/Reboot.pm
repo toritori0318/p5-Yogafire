@@ -19,16 +19,20 @@ use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
 sub run {
-    my ($self, $instance) = @_;
+    my ($self, $instance, $opt) = @_;
+    $opt ||= {};
+    my $force = $opt->{force};
 
-    # show info
-    Yogafire::Instance::Action::Info->new()->run($instance);
+    unless($force) {
+        # show info
+        Yogafire::Instance::Action::Info->new()->run($instance);
 
-    my $term = Yogafire::Term->new();
-    print "\n";
-    return unless $term->ask_yn(
-        prompt   => 'Are you sure you want to reboot this instance? > ',
-    );
+        my $term = Yogafire::Term->new();
+        print "\n";
+        return unless $term->ask_yn(
+            prompt   => 'Are you sure you want to reboot this instance? > ',
+        );
+    }
 
     print "Instance reboot... \n";
     $instance->reboot;
