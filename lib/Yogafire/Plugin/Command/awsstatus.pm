@@ -36,6 +36,7 @@ use Yogafire::Regions qw/list display_table find/;
 use LWP::UserAgent qw/get/;
 use XML::RSS;
 use DateTime::Format::Strptime;
+$DateTime::Format::Strptime::ZONEMAP{PST} = '-0800';
 use Term::ANSIColor qw/colored/;
 
 my $feed = 'http://status.aws.amazon.com/rss/all.rss';
