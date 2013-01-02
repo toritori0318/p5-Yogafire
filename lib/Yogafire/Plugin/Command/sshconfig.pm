@@ -34,7 +34,7 @@ no Mouse;
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
 use Yogafire::Instance qw/list/;
-use Time::Piece;
+use DateTime;
 
 sub abstract {'Operation for sshconfig'}
 
@@ -98,7 +98,7 @@ sub execute {
 
         # backup
         if($opt->{backup}) {
-            my $save_sshconfig_file = $sshconfig_file . '.'. Time::Piece->new->strftime("%Y%m%d%H%M%S");
+            my $save_sshconfig_file = $sshconfig_file . '.'. DateTime->now->strftime("%Y%m%d%H%M%S");
             copy $sshconfig_file, $save_sshconfig_file or die "Can't copy file . [$sshconfig_file]->[$save_sshconfig_file]";
             print " backup sshconfig file -> $save_sshconfig_file\n";
         }

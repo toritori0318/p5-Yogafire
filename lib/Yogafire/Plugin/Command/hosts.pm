@@ -40,7 +40,7 @@ no Mouse;
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
 use Yogafire::Instance qw/list/;
-use Time::Piece;
+use DateTime;
 
 sub abstract {'Operation for hosts file'}
 
@@ -102,7 +102,7 @@ sub execute {
 
         # backup
         if($opt->{backup}) {
-            my $save_hosts_file = $hosts_file. '.'. Time::Piece->new->strftime("%Y%m%d%H%M%S");
+            my $save_hosts_file = $hosts_file. '.'. DateTime->now->strftime("%Y%m%d%H%M%S");
             copy $hosts_file, $save_hosts_file or die "Can't copy file . [$hosts_file]->[$save_hosts_file]";
             print " backup hosts file -> $save_hosts_file\n";
         }
