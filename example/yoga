@@ -1,0 +1,31 @@
+global:
+  access_key_id: aaaaaaaaaaaaaaaaaaa
+  identity_file: '/path/to/hoge.pem'
+  owner_id: 111111111111
+  region: ap-northeast-1
+  secret_access_key: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  ssh_port: 22
+  ssh_user: ec2-user
+app2:
+  access_key_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  identity_file: '/path/to/fuga.pem'
+  image_column:
+    - tags_Name
+    - name
+    - imageId
+    - colorfulImageState
+  instance_column:
+    - tags_Name
+    - tags_Role
+    - instanceId
+    - ipAddress
+    - privateIpAddress
+    - dnsName
+    - launchTime
+    - colorfulInstanceState
+  owner_id: 222222222222
+  region: ap-northeast-1
+  secret_access_key: zzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+  ssh_port: 11122
+  ssh_user: fugauser
+use_profile: app2
