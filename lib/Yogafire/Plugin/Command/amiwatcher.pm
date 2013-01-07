@@ -23,22 +23,13 @@ use Yogafire::Term;
 
 sub abstract {'EC2 image status watcher'}
 
-sub validate_args {
-    my ( $self, $opt, $args ) = @_;
-    $self->validate_args_common($opt, $args );
-
-    die "Please set the 'owner_id' attributes of the config.\n\n" . $self->usage
-         unless $self->config->get('owner_id');
-}
-
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'available';
 
-    my $owner_id = $self->config->get('owner_id') || '';
-    $opt->{owner_id} = $owner_id;
+    $opt->{owner_id} = $self->ec2->account_id;
 
     # tags name filter
     my $name = $args->[0];

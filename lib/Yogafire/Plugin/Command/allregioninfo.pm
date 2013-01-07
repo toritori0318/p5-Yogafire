@@ -51,20 +51,12 @@ use Yogafire::Instance qw/list/;
 sub abstract {'All Region Info'}
 sub command_names {'all-region-info'}
 
-sub validate_args {
-    my ( $self, $opt, $args ) = @_;
-    $self->validate_args_common($opt, $args );
-
-    $self->usage_error('Please set the "owner_id" attributes of the config.')
-         unless $self->config->get('owner_id');
-}
-
 sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
     my $ec2 = $self->ec2;
-    my $owner_id = $self->config->get('owner_id');
+    my $owner_id = $ec2->account_id;
 
     # 指定がなければinstance only
     unless(%$opt) {
