@@ -32,7 +32,10 @@ my $guard = mock_guard(
                 }
             );
             return ($mock1, $mock2);
-        }
+        },
+        'account_id' => sub {
+            return 'dummyowner';
+        },
     }
 );
 
