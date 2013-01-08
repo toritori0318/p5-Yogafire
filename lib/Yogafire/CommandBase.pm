@@ -32,15 +32,17 @@ sub vmec2 {
     my $region                = $config->get('region');
     return unless $aws_access_key_id;
 
-    my $endpoint = "https://ec2.${region}.amazonaws.com";
-
-    my $ec2 = VM::EC2->new(
+    my %params = (
         -access_key     => $aws_access_key_id,
         -secret_key     => $aws_secret_access_key,
-        -placement_zone => $region,
-        -endpoint       => $endpoint,
         -raise_error    => 1,
     );
+    if($region) {
+        $params{'-placement_zone'} = $region;
+        $params{'-endpoint'}       = "https://ec2.${region}.amazonaws.com";
+    }
+
+    VM::EC2->new(%params);
 }
 
 sub validate_args {
