@@ -59,8 +59,7 @@ sub execute {
     @instances = grep { $_->tags->{Name} && $_->{data}->{$ip_key} } @instances;
 
     if(scalar @instances == 0) {
-        print "Not Found Instance. \n";
-        return;
+        die "Not Found Instance. \n";
     }
 
     my $begin = $self->begin;

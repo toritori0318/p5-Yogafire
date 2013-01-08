@@ -40,5 +40,5 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
 
 ## Tutorial
 
-...
+http://d.hatena.ne.jp/tori243/20130102/1357142925
 

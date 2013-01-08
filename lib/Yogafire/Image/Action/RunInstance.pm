@@ -23,12 +23,12 @@ sub run {
     my ($input, $name) = $self->confirm_launch_instance($image, $opt);
     return unless $input;
 
-    print "Launsh instance start... \n";
+    print "Launch instance start... \n";
     my @instances = $image->run_instances( %$input );
     if($name) {
         $_->add_tags(Name => $name) for @instances;
     }
-    print "Launsh instance in process. \n";
+    print "Launch instance in process. \n";
 
 };
 
