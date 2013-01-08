@@ -39,8 +39,15 @@ sub display_table {
 }
 
 sub find {
-    my ($id) = @_;
-    my @search = grep { /^$id$/ } @instance_types;
+    my ($cond) = @_;
+    $cond ||= {};
+
+    my @search;
+    if($cond->{id}) {
+        @search = grep { $_->{id} =~ /^$cond->{id}$/ } @instance_types;
+    } elsif($cond->{name}) {
+        @search = grep { $_->{name} =~ /^$cond->{name}$/ } @instance_types;
+    }
     return shift @search;
 }
 

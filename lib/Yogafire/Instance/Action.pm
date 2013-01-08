@@ -8,6 +8,7 @@ use Yogafire::Instance::Action::Stop;
 use Yogafire::Instance::Action::Reboot;
 use Yogafire::Instance::Action::Terminate;
 use Yogafire::Instance::Action::CreateImage;
+use Yogafire::Instance::Action::ChangeInstanceType;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Instance::Action::Quit;
 use Yogafire::Instance::Action::CopyAndLaunch;
@@ -29,6 +30,7 @@ has 'actions' => (
             Yogafire::Instance::Action::Reboot->new(),
             Yogafire::Instance::Action::Terminate->new(),
             Yogafire::Instance::Action::CreateImage->new(),
+            Yogafire::Instance::Action::ChangeInstanceType->new(),
             Yogafire::Instance::Action::CopyAndLaunch->new(),
             Yogafire::Instance::Action::UpdateTags->new(),
             Yogafire::Instance::Action::ExtendVolume->new(),
