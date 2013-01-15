@@ -25,6 +25,13 @@ has filter => (
     cmd_aliases   => "f",
     documentation => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
+has loop => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    cmd_aliases     => "l",
+    documentation   => "Repeat without exit interactive mode.",
+);
 no Mouse;
 
 sub abstract {'EC2 Instance Infomation'}

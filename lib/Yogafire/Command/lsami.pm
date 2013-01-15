@@ -37,6 +37,13 @@ has notable => (
     is              => "rw",
     documentation   => "does not display of the table style.",
 );
+has loop => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    cmd_aliases     => "l",
+    documentation   => "Repeat without exit interactive mode.",
+);
 no Mouse;
 
 use Yogafire::Image qw/list display_list display_table/;
@@ -66,19 +73,15 @@ sub execute {
         die "Not Found Image. \n";
     }
 
-    my $column_list = $self->config->get('image_column');
-    if($opt->{interactive} || !$opt->{notable}) {
-        display_table(\@images, $column_list);
-    } else {
-        display_list(\@images, $column_list, $opt->{interactive});
-    }
-
     if($opt->{interactive}) {
         my $ia   = Yogafire::Image::Action->new(ec2 => $self->ec2, config => $self->config);
         my $term = Yogafire::Term->new('Input Number');
         $term->set_completion_word( [ map { $_->name, $_->imageId} @images ] );
 
         while (1) {
+            # display
+            $self->display_images(\@images, $opt);
+            # confirm
             my $input = $term->readline('no / name / image_id > ');
             $input =~ s/^ //g;
             $input =~ s/ $//g;
@@ -93,9 +96,28 @@ sub execute {
 
             # show action
             $ia->confirm($target_image, $opt);
-            last;
-        }
 
+            # for loop
+            last unless $opt->{loop};
+            my $term = Yogafire::Term->new();
+            my $yn = $term->ask_yn(
+                prompt   => "\ncontinue OK? > ",
+                default  => 'y',
+            );
+            last unless $yn;
+        }
+    } else {
+        $self->display_images(\@images, $opt);
+    }
+}
+
+sub display_images {
+    my ($self, $images, $opt) = @_;
+    my $column_list = $self->config->get('image_column');
+    if($opt->{interactive} || !$opt->{notable}) {
+        display_table($images, $column_list);
+    } else {
+        display_list($images, $column_list, $opt->{interactive});
     }
 }
 

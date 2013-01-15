@@ -37,6 +37,13 @@ has notable => (
     is              => "rw",
     documentation   => "does not display of the table style.",
 );
+has loop => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    cmd_aliases     => "l",
+    documentation   => "Repeat without exit interactive mode.",
+);
 no Mouse;
 
 use Yogafire::Instance qw/list display_list display_table/;
@@ -63,13 +70,6 @@ sub execute {
         die "Not Found Instance. \n";
     }
 
-    my $column_list = $self->config->get('instance_column');
-    if($opt->{interactive} || !$opt->{notable}) {
-        display_table(\@instances, $column_list);
-    } else {
-        display_list(\@instances, $column_list, $opt->{interactive});
-    }
-
     if($opt->{interactive}) {
         my @ng_name = $self->ng_name(\@instances);
         my $ia = Yogafire::Instance::Action->new(ec2 => $self->ec2, config => $self->config);
@@ -77,6 +77,9 @@ sub execute {
         $term->set_completion_word( [ map { $_->tags->{Name}, $_->instanceId} @instances ] );
 
         while (1) {
+            # display
+            $self->display_instances(\@instances, $opt);
+            # confirm
             my $input = $term->readline('no / tags_Name / instance_id > ');
             $input =~ s/^ //g;
             $input =~ s/ $//g;
@@ -96,8 +99,28 @@ sub execute {
 
             # show action
             $ia->action_print($target_instance, $opt);
-            last;
+
+            # for loop
+            last unless $opt->{loop};
+            my $term = Yogafire::Term->new();
+            my $yn = $term->ask_yn(
+                prompt   => "\ncontinue OK? > ",
+                default  => 'y',
+            );
+            last unless $yn;
         }
+    } else {
+        $self->display_instances(\@instances, $opt);
+    }
+}
+
+sub display_instances {
+    my ($self, $instances, $opt) = @_;
+    my $column_list = $self->config->get('instance_column');
+    if($opt->{interactive} || !$opt->{notable}) {
+        display_table($instances, $column_list);
+    } else {
+        display_list($instances, $column_list, $opt->{interactive});
     }
 }
 

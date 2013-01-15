@@ -93,14 +93,14 @@ sub action_process {
         return $ia_action->run($instances[0], $opt);
     }
 
-    my $column_list = $self->config->get('instance_column');
-    display_table(\@instances, $column_list, 1);
-
     my @ng_name = $self->ng_name(\@instances);
     my $term = Yogafire::Term->new('Input Number');
     $term->set_completion_word([map {$_->tags->{Name}} @instances]);
 
     while (1) {
+        # display
+        $self->display_instances(\@instances, $opt);
+        # confirm
         my $input = $term->readline('no / tags_Name / instance_id > ');
         $input =~ s/^ //g;
         $input =~ s/ $//g;
@@ -120,8 +120,22 @@ sub action_process {
 
         # run action
         $ia_action->run($target_instance, $opt);
-        last;
+
+        # for loop
+        last unless $opt->{loop};
+        my $term = Yogafire::Term->new();
+        my $yn = $term->ask_yn(
+            prompt   => "\ncontinue OK? > ",
+            default  => 'y',
+        );
+        last unless $yn;
     }
+}
+
+sub display_instances {
+    my ($self, $instances, $opt) = @_;
+    my $column_list = $self->config->get('instance_column');
+    display_table($instances, $column_list);
 }
 
 sub find_name {

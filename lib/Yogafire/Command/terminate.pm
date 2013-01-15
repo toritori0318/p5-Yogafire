@@ -30,6 +30,13 @@ has force => (
     is              => "rw",
     documentation   => "force execute.",
 );
+has loop => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    cmd_aliases     => "l",
+    documentation   => "Repeat without exit interactive mode.",
+);
 no Mouse;
 
 sub abstract {'EC2 Terminate Instance'}
