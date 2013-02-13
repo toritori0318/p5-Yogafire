@@ -65,7 +65,7 @@ sub validate_args {
     $self->validate_args_common($opt, $args );
 
     die "--size is required.\n\n" . $self->usage
-        unless $opt->{size};
+        if $opt->{force} && !$opt->{size};
 }
 
 sub execute {
