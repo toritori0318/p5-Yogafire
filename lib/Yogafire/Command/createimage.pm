@@ -19,7 +19,7 @@ has filter => (
 );
 has force => (
     traits          => [qw(Getopt)],
-    isa             => "Str",
+    isa             => "Bool",
     is              => "rw",
     documentation   => "force execute.",
 );
