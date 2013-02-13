@@ -90,7 +90,7 @@ sub action_process {
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     } elsif(scalar @instances == 1) {
-        return $ia_action->run($instances[0], $opt);
+        return $ia_action->run(\@instances, $opt);
     }
 
     my @ng_name = $self->ng_name(\@instances);
@@ -100,29 +100,37 @@ sub action_process {
     while (1) {
         # display
         $self->display_instances(\@instances, $opt);
-        # confirm
-        my $input = $term->readline('no / tags_Name / instance_id > ');
-        $input =~ s/^ //g;
-        $input =~ s/ $//g;
-        last if $input =~ /^(q|quit|exit)$/;
 
-        my $target_instance = $self->find_name(\@instances, $input);
-        $target_instance ||= $self->find_id(\@instances, $input);
-        $target_instance ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
-        if (!$target_instance) {
-            print "Invalid Value. \n";
-            next;
-        }
-        if ($target_instance && grep { $_ eq $input } @ng_name) {
-            print "'Name' has been duplicated. Please use the 'no or instance_id' instead. \n";
-            next;
+        my @target_instances;
+        if($opt->{force}) {
+            @target_instances = @instances;
+        } else {
+            # confirm
+            my $input = $term->readline('no / tags_Name / instance_id > ');
+            $input =~ s/^ //g;
+            $input =~ s/ $//g;
+            last if $input =~ /^(q|quit|exit)$/;
+
+            my $target_instance = $self->find_name(\@instances, $input);
+            $target_instance ||= $self->find_id(\@instances, $input);
+            $target_instance ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
+            if (!$target_instance) {
+                print "Invalid Value. \n";
+                next;
+            }
+            if ($target_instance && grep { $_ eq $input } @ng_name) {
+                print "'Name' has been duplicated. Please use the 'no or instance_id' instead. \n";
+                next;
+            }
+            push @target_instances, $target_instance;
         }
 
         # run action
-        $ia_action->run($target_instance, $opt);
+        $ia_action->run(\@target_instances, $opt);
 
         # for loop
         last unless $opt->{loop};
+
         my $term = Yogafire::Term->new();
         my $yn = $term->ask_yn(
             prompt   => "\ncontinue OK? > ",
@@ -161,3 +169,4 @@ sub ng_name {
 }
 
 1;
+
