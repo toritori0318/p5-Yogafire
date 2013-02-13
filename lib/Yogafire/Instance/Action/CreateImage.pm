@@ -55,7 +55,7 @@ sub confirm_create_image {
 
     unless($description) {
         print "\n";
-        my $description = $term->get_reply(
+        $description = $term->get_reply(
             prompt   => 'Image Description > ',
         );
     }
