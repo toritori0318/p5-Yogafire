@@ -21,11 +21,14 @@ use Yogafire::Image::Action::RunInstance;
 sub proc {
     my ($self, $instance) = @_;
 
+    my $tags = $instance->tags;
+    $tags = grep { $_ ne 'Name' } keys %$tags;
     my $option = {
         count             => 1,
         instance_type     => $instance->instanceType,
         availability_zone => $instance->placement,
         name              => $instance->tags->{Name},
+        tags              => $tags,
         keypair           => $instance->keyPair,
         groups            => [map {$_->groupName} $instance->groups],
     };
