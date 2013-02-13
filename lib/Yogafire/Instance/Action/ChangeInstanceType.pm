@@ -18,6 +18,7 @@ no Mouse;
 use Yogafire::Instance::Action::Info;
 use Yogafire::InstanceTypes;
 use Yogafire::Term;
+use Yogafire::Util qw/progress_dot/;
 
 sub proc {
     my ($self, $instance, $opt) = @_;
@@ -33,26 +34,24 @@ sub proc {
     if($save_state ne 'stopped') {
         print "[Start] Stop Instance. \n";
         $instance->stop;
-        # wait stopped...
-        while ($instance->current_state ne 'stopped') {
-            sleep 5;
-        };
+        progress_dot("Stop instance in process.", sub { $instance->current_state ne 'stopped' } );
+        print "[End] Stop Instance. \n";
     }
 
     # change type
     print "[Start] Change Instance Type. \n";
     $instance->instanceType($input->{instance_type});
+    print "[End] Change Instance Type. \n";
 
     # start instance
     if($save_state ne 'stopped') {
         print "[Start] Start Instance. \n";
         $instance->start;
         # wait running...
-        while ($instance->current_state ne 'running') {
-            sleep 5;
-        };
+        progress_dot("Start instance in process.", sub { $instance->current_state ne 'running' } );
         # associate eip
-        $instance->associate_address($input->{eip}) if $input->{eip};
+        $instance->associate_address($input->{eip}) if !$instance->vpcId && $input->{eip};
+        print "[End] Start Instance. \n";
     }
 
     print "[End] Change Instance Type. \n";

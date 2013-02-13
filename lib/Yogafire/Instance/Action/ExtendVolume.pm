@@ -17,6 +17,7 @@ no Mouse;
 
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
+use Yogafire::Util qw/progress_dot/;
 
 sub proc {
     my ($self, $instance, $opt) = @_;
@@ -36,10 +37,7 @@ sub proc {
     {
         print "[Start] Create new snapshot from this volume. \n";
         $snapshot = $cur_volume->create_snapshot("Yoga Extend Snapshot at ".localtime);
-        print "Snapshot create in process... \n";
-        while ($snapshot->current_status eq 'pending') {
-            sleep 5;
-        }
+        progress_dot("Snapshot create in process.", sub { $snapshot->current_status ne 'completed' } );
         printf "Snapshot status: [%s] [%s] \n", $snapshot->snapshotId, $snapshot->current_status;
         print "[End] Create new snapshot from this volume. \n";
     }
@@ -51,20 +49,16 @@ sub proc {
             -availability_zone => $input->{availability_zone},
         );
         $new_volume = $snapshot->create_volume(%args);
-        while ($new_volume->current_status eq 'pending') {
-            sleep 5;
-        }
+        progress_dot("Create new volume in process.", sub { $new_volume->current_status ne 'available' } );
         printf "New volume status: [%s] [%s] \n", $new_volume->volumeId, $new_volume->current_status;
         print "[End] Create new volume. \n";
     }
 
     eval {
         {
-            print "[Start] Detach current volume... \n";
+            print "[Start] Detach current volume. \n";
             my $attachment = $cur_volume->detach();
-            while ($attachment->current_status ne 'detached') {
-                sleep 5;
-            }
+            progress_dot("Detach current volume in process.", sub { $attachment->current_status ne 'detached' } );
             print "[End] Detach current volume... \n";
         }
 
@@ -75,9 +69,7 @@ sub proc {
                 -device      => $input->{device_name},
             );
             my $attachment = $new_volume->attach(%args);
-            while ($attachment->current_status ne 'attached') {
-                sleep 5;
-            }
+            progress_dot("Attach volume in process.", sub { $attachment->current_status ne 'attached' } );
             print "attachment status: ",$attachment->current_status,"\n";
             print "[End] Attach instance volume from new volume... \n";
         }
@@ -90,9 +82,7 @@ sub proc {
             -device      => $input->{device_name},
         );
         my $attachment = $cur_volume->attach(%args);
-        while ($attachment->current_status ne 'attached') {
-            sleep 5;
-        }
+        progress_dot("Rollback volume in process.", sub { $attachment->current_status ne 'attached' } );
         print "[End] Rollback... \n";
     }
 
