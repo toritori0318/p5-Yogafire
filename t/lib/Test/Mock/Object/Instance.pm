@@ -1,4 +1,4 @@
-package MockInstance;
+package Test::Mock::Object::Instance;
 
 use strict;
 use warnings;
@@ -26,6 +26,8 @@ my @attrs = qw/
     ip_address
     private_ip_address
     dns_name
+    monitoring
+    placement
 /;
 
 sub create {
@@ -51,6 +53,7 @@ sub create {
     my $state = $attr->{state} || 'running';
     $mock->{data}->{instanceState} = {};
     $mock->{data}->{instanceState}->{name} = $state;
+
     return $mock;
 }
 

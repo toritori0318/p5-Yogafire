@@ -1,4 +1,4 @@
-package MockImage;
+package Test::Mock::Object::Image;
 
 use strict;
 use warnings;

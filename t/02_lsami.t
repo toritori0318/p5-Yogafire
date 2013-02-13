@@ -3,10 +3,9 @@ use warnings;
 use Test::More;
 use App::Cmd::Tester;
 use Test::Mock::Guard qw(mock_guard);
-use Test::MockObject;
 
 use lib 't/lib';
-use MockImage;
+use Test::Mock::Set::Image;
 
 use Yogafire;
 
@@ -16,23 +15,7 @@ test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 my $guard = mock_guard(
     'VM::EC2' => {
-        'describe_images' => sub {
-            my $mock1 = MockImage::create(
-                {
-                    name       => 'wan',
-                    imageId    => 'img1',
-                    imageState => 'available',
-                }
-            );
-            my $mock2 = MockImage::create(
-                {
-                    name       => 'nyan',
-                    imageId    => 'img2',
-                    imageState => 'available',
-                }
-            );
-            return ($mock1, $mock2);
-        },
+        'describe_images' => sub { Test::Mock::Set::Image::mocks() },
         'account_id' => sub {
             return 'dummyowner';
         },

@@ -3,10 +3,9 @@ use warnings;
 use Test::More;
 use App::Cmd::Tester;
 use Test::Mock::Guard qw(mock_guard);
-use Test::MockObject;
 
 use lib 't/lib';
-use MockInstance;
+use Test::Mock::Set::Instance;
 
 use Yogafire;
 
@@ -16,35 +15,12 @@ test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 my $guard = mock_guard(
     'VM::EC2' => {
-        'describe_instances' => sub {
-            my $mock1 = MockInstance::create(
-                {
-                    instanceId       => 'ins1',
-                    tags_name        => 'hoge',
-                    state            => 'running',
-                    ipAddress        => '59.100.100.3',
-                    privateIpAddress => '176.0.0.1',
-                    dnsName          => 'hogehoge.com',
-                }
-            );
-            my $mock2 = MockInstance::create(
-                {
-                    instanceId       => 'ins2',
-                    tags_name        => 'fuga',
-                    state            => 'stopped',
-                    ipAddress        => '59.100.100.4',
-                    privateIpAddress => '176.0.0.2',
-                    dnsName          => 'fugafuga.com',
-                }
-            );
-            return ($mock1, $mock2);
-        }
+        'describe_instances' => sub { Test::Mock::Set::Instance::mocks() },
     }
 );
 
 # create config
 my $sshconfig_file = create_sshconfig_file();
-
 {
     my $str =<<'EOF';
 Host fugafuga
@@ -55,17 +31,16 @@ Host fugafuga
 
 #======== Yogafire Begen ========#
 Host hoge
-    HostName     hogehoge.com
+    HostName     59.100.100.1
     IdentityFile 
     User         ec2-user
     Port         22
 
 Host fuga
-    HostName     fugafuga.com
+    HostName     59.100.100.2
     IdentityFile 
     User         ec2-user
     Port         22
-
 #======== Yogafire End   ========#
 EOF
 
