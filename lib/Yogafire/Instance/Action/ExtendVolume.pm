@@ -10,7 +10,7 @@ has 'state' => (
     is => 'rw',
     isa => 'ArrayRef',
     default => sub {
-        [qw/stopping stopped/],
+        [qw/running stopped/],
     },
 );
 no Mouse;
