@@ -18,7 +18,7 @@ no Mouse;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
-sub run {
+sub proc {
     my ($self, $instance) = @_;
 
     my $term = Yogafire::Term->new();

@@ -15,7 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
-sub run {
+sub proc {
     my ($self, $instance) = @_;
     my $print = sub {
         printf "  %16s: %s\n", $_[0], $_[1]||'';

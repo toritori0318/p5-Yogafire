@@ -18,7 +18,7 @@ no Mouse;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Image::Action::RunInstance;
 
-sub run {
+sub proc {
     my ($self, $instance) = @_;
 
     my $option = {
@@ -31,7 +31,7 @@ sub run {
     };
     my $image = $instance->aws->describe_images(-image_id => $instance->imageId);
     # copy launch
-    Yogafire::Image::Action::RunInstance->new()->run($image, $option);
+    Yogafire::Image::Action::RunInstance->new()->proc($image, $option);
 };
 
 1;

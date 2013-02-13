@@ -15,7 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
-sub run {
+sub proc {
     my ($self, $instance) = @_;
     exit;
 };

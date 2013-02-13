@@ -66,7 +66,7 @@ sub action_print {
         prompt   => '  Input No > ',
         choices  => [map {$_->{name}} @commands],
     );
-    $self->action($command)->run($instance);
+    $self->action($command)->proc($instance);
 }
 
 sub get_commands {

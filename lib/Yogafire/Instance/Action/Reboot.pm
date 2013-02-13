@@ -18,14 +18,14 @@ no Mouse;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
-sub run {
+sub proc {
     my ($self, $instance, $opt) = @_;
     $opt ||= {};
     my $force = $opt->{force};
 
     unless($force) {
         # show info
-        Yogafire::Instance::Action::Info->new()->run($instance);
+        Yogafire::Instance::Action::Info->new()->proc($instance);
 
         my $term = Yogafire::Term->new();
         print "\n";

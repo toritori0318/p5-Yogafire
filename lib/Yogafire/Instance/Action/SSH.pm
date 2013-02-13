@@ -15,8 +15,11 @@ has 'state' => (
 );
 no Mouse;
 
-sub run {
+use Yogafire::Instance qw/list/;
+
+sub proc {
     my ($self, $instance, $opt) = @_;
+
     my $identity_file = $opt->{identity_file} || $self->config->get('identity_file') || '';
     my $user          = $opt->{user} || $self->config->get('ssh_user') || '';
     my $ssh_port      = $opt->{port} || $self->config->get('ssh_port') || '22';
