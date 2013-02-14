@@ -13,13 +13,9 @@ use Net::OpenSSH;
 use Yogafire::Instance qw/list/;
 
 sub execute {
-    my ( $self, $opt, $args ) = @_;
+    my ( $self, $opt, $args, $default_option ) = @_;
     my $ec2  = $self->ec2;
     my $config = $self->config;
-
-    # parse option
-    my $sync_option = $self->parse_option($opt->{sync_option});
-    $sync_option->{'dry-run'} = 1 if $opt->{'dry-run'};
 
     my $tagsname = shift @$args;
     my $src      = shift @$args;
@@ -30,6 +26,10 @@ sub execute {
         die "Not Found Instance. \n";
     }
 
+    # parse option
+    my $parse_option = $self->parse_option($opt->{sync_option}, $default_option);
+    $parse_option->{'dry-run'} = 1 if $opt->{'dry-run'};
+
     for (@instances) {
         my $name = $_->tags->{Name} || '';
         printf "# Sync %s@%s(%s)\n", $self->config->get('ssh_user'), $_->ip_address, $name;
@@ -39,21 +39,29 @@ sub execute {
             $_->dns_name,
             $src,
             $dest,
-            $sync_option,
+            $parse_option,
         );
     }
 }
 
 sub parse_option {
-    my ($self, $sync_option) = @_;
+    my ($self, $sync_option, $default_option) = @_;
     my $cnv_option = {};
+    # default option
+    if($default_option) {
+        $cnv_option->{verbose}   = 1;
+        $cnv_option->{update}    = 1;
+        $cnv_option->{archive}   = 1;
+        $cnv_option->{compress}  = 1;
+    }
     if($sync_option) {
         my @options = split / /, $sync_option;
         for (@options) {
             $_ =~ s/-//g;
             if($_ =~ m/=/) {
                 my ($key, $value) = split /=/, $_;
-                $cnv_option->{$key} = $value;
+                $cnv_option->{$key} = [] unless defined $cnv_option->{$key};
+                push @{$cnv_option->{$key}}, $value;
             } else {
                 $cnv_option->{$_} = 1;
             }
@@ -72,14 +80,6 @@ sub exec_ssh {
         ),
     );
     $ssh->error and die "Can't ssh to ". $host .": " . $ssh->error;
-
-    $sync_option ||= {};
-    $sync_option->{recursive} = 1;
-    $sync_option->{glob} = 1;
-    $sync_option->{verbose} = 1;
-    $sync_option->{update} = 1;
-    $sync_option->{archive} = 1;
-    $sync_option->{compress} = 1;
 
     # rsync
     if($self->mode eq 'put') {

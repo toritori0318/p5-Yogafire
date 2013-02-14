@@ -9,20 +9,19 @@ has 'dry-run'=> (
     is            => "rw",
     documentation => "dry run mode.",
 );
-
 has sync_option => (
     traits        => [qw(Getopt)],
     isa           => "Str",
     is            => "rw",
     cmd_aliases   => "o",
-    documentation => "sync option",
+    documentation => "rsync option.",
 );
 no Mouse;
 
 use Net::OpenSSH;
 use Yogafire::Instance qw/list/;
 
-sub abstract {'Rsync put local file to remote. '}
+sub abstract {'Rsync put local file to remote.(rsync -avuc) '}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
@@ -41,11 +40,12 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
     $opt  ||= {};
+    my $default_option = 1;
     Yogafire::CommandClass::Sync->new(
-        mode   => 'put',
-        ec2    => $self->ec2,
-        config => $self->config,
-    )->execute($opt, $args);
+        mode           => 'put',
+        ec2            => $self->ec2,
+        config         => $self->config,
+    )->execute($opt, $args, $default_option);
 }
 
 1;

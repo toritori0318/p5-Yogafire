@@ -1,4 +1,4 @@
-package Yogafire::Command::get;
+package Yogafire::Command::putnoopt;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -9,7 +9,6 @@ has 'dry-run'=> (
     is            => "rw",
     documentation => "dry run mode.",
 );
-
 has sync_option => (
     traits        => [qw(Getopt)],
     isa           => "Str",
@@ -19,13 +18,15 @@ has sync_option => (
 );
 no Mouse;
 
-use Yogafire::CommandClass::Sync;
+use Net::OpenSSH;
+use Yogafire::Instance qw/list/;
 
-sub abstract {'Rsync get file from remote. (rsync -avuc)'}
+sub abstract {'Rsync put local file to remote. '}
+sub command_names {'put-noopt'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga get [-?] <tagname or host> <from:remote_path> <to:local_path>';
+    $self->{usage}->{leader_text} = 'yoga put [-?] <tagname or host> <from:local_path> <to:remote_path>';
     $self->{usage};
 }
 
@@ -33,16 +34,16 @@ sub validate_args {
     my ( $self, $opt, $args ) = @_;
     $self->validate_args_common($opt, $args );
 
-    die "tagname(or host) / remote_path / local_path is required.\n\n" . $self->usage
-        if scalar @$args != 3;
+    die "tagname(or host) / local_path / remote_path is required.\n\n" . $self->usage
+         if scalar @$args != 3;
 }
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
+    my $default_option = 0;
     $opt  ||= {};
-    my $default_option = 1;
     Yogafire::CommandClass::Sync->new(
-        mode           => 'get',
+        mode           => 'put',
         ec2            => $self->ec2,
         config         => $self->config,
     )->execute($opt, $args, $default_option);
