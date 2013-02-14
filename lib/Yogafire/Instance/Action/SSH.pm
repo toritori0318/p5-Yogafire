@@ -23,7 +23,7 @@ sub proc {
     my $identity_file = $opt->{identity_file} || $self->config->get('identity_file') || '';
     my $user          = $opt->{user} || $self->config->get('ssh_user') || '';
     my $ssh_port      = $opt->{port} || $self->config->get('ssh_port') || '22';
-    my @cmd = ('ssh', '-p', $ssh_port, '-i', $identity_file, '-l', $user, $instance->dns_name);
+    my @cmd = ('ssh', '-p', $ssh_port, '-i', $identity_file, '-l', $user, $instance->ipAddress);
     print join(' ', @cmd), "\n";
     exec(join(' ', @cmd));
 };

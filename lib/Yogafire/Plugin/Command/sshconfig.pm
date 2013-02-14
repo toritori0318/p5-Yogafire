@@ -114,19 +114,19 @@ sub execute {
 sub _sshconfig {
     my ( $self, $instances ) = @_;
 
-    my $config = $self->config;
-    my $user     = $config->get('ssh_user');
+    my $config        = $self->config;
+    my $user          = $config->get('ssh_user');
     my $identity_file = $config->get('identity_file');
-    my $ssh_port = $config->get('ssh_port');
+    my $ssh_port      = $config->get('ssh_port');
 
     my $replace_hosts = '';
     for (@$instances) {
         my $name        = $_->tags->{Name};
-        my $dns_name    = $_->dnsName;
+        my $ip_address  = $_->ipAddress;
         next unless $name;
 
         $replace_hosts .= sprintf ("Host %s\n" , $name);
-        $replace_hosts .= sprintf ("    HostName     %s\n" , $dns_name);
+        $replace_hosts .= sprintf ("    HostName     %s\n" , $ip_address);
         $replace_hosts .= sprintf ("    IdentityFile %s\n" , $identity_file);
         $replace_hosts .= sprintf ("    User         %s\n" , $user);
         $replace_hosts .= sprintf ("    Port         %s\n" , $ssh_port);
