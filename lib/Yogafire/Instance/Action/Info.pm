@@ -23,12 +23,13 @@ sub proc {
     printf "%s Instance Info %s\n", '='x16, '='x16;
     $print->('Name', $instance->tags->{Name});
     $print->('current_status', $instance->current_status);
-    for my $key ( qw/instanceId ipAddress privateIpAddress dnsName privateDnsName imageId architecture instanceType rootDeviceType dnsName launchTime/) {
+    for my $key ( qw/instanceId ipAddress privateIpAddress dnsName privateDnsName imageId architecture instanceType rootDeviceType launchTime/) {
         $print->($key, $instance->{data}->{$key});
     }
     $print->('monitoring', $instance->monitoring);
     $print->('availabilityZone', $instance->placement);
-    $print->('groupSet', join(',', (map {$_->groupName} $instance->groups) ) );
+    my $group_set = ($instance->groups) ? join(',', (map {$_->groupName} $instance->groups)) : '';
+    $print->('groupSet', $group_set);
 };
 
 1;

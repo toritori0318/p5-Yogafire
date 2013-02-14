@@ -16,17 +16,22 @@ has 'state' => (
 no Mouse;
 
 use Yogafire::Term;
+use Yogafire::InstanceTypes;
 
 sub run {
     my ($self, $image, $opt) = @_;
 
-    my ($input, $name) = $self->confirm_launch_instance($image, $opt);
+    my ($input, $tags) = $self->confirm_launch_instance($image, $opt);
     return unless $input;
 
     print "Launch instance start... \n";
     my @instances = $image->run_instances( %$input );
-    if($name) {
-        $_->add_tags(Name => $name) for @instances;
+    if($tags && scalar (keys %$tags) > 0 ) {
+        for my $instance (@instances) {
+            for my $key (keys %$tags) {
+                $instance->add_tags($key => $tags->{$key});
+            }
+        }
     }
     print "Launch instance in process. \n";
 
@@ -43,8 +48,7 @@ sub confirm_launch_instance {
     my $keypair           = $opt->{keypair};
     my @groups            = ($opt->{groups}) ? @{$opt->{groups}} : ();
     my $force             = $opt->{force};
-
-    my $instance_type_name = '';
+    my $tags              = $opt->{tags} || {};
 
     my $term = Yogafire::Term->new();
 
@@ -57,34 +61,20 @@ sub confirm_launch_instance {
         );
     }
 
-    my @select_instance_type = (
-        { type => 't1.micro',   name => 'Micro Instance', },
-        { type => 'm1.small',   name => 'Small Instance', },
-        { type => 'm1.medium',  name => 'Medium Instance', },
-        { type => 'm1.large',   name => 'Large Instance', },
-        { type => 'm1.xlarge',  name => 'Extra Large Instance', },
-        { type => 'm2.xlarge',  name => 'High-Memory Extra Large Instance', },
-        { type => 'm2.2xlarge', name => 'High-Memory Double Extra Large Instance', },
-        { type => 'm2.4xlarge', name => 'High-Memory Quadruple Extra Large Instance', },
-        { type => 'c1.medium',  name => 'High-CPU Medium Instance', },
-        { type => 'c1.xlarge',  name => 'High-CPU Extra Large Instance', },
-    );
+    my $instance_types = Yogafire::InstanceTypes::list();
 
     unless($instance_type) {
         print "\n";
-        $instance_type_name = $term->get_reply(
+        $instance_type = $term->get_reply(
             prompt   => 'Instance Type List > ',
-            choices  => [map {$_->{name}} @select_instance_type],
-            default  => 'Micro Instance',
+            choices  => [map { $_->{id} } @$instance_types],
+            default  => 't1.micro',
         );
-        $instance_type = (map { $_->{type} } grep { $_->{name} eq $instance_type_name } @select_instance_type)[0];
-    } else {
-        $instance_type_name = (map { $_->{name} } grep { $_->{type} eq $instance_type } @select_instance_type)[0];
     }
 
     unless($availability_zone) {
         print "\n";
-        my @select_zone = $self->ec2->describe_availability_zones({ state=>'available' });
+        my @select_zone = $self->ec2->describe_availability_zones({ state => 'available' });
         push @select_zone, ' ';
         $availability_zone = $term->get_reply(
             prompt   => 'Availability Zone List > ',
@@ -127,7 +117,7 @@ sub confirm_launch_instance {
 Launch Info
 
      Launch Count : $count
-    Instance Type : $instance_type_name ($instance_type)
+    Instance Type : $instance_type
 Availability Zone : $availability_zone
              Name : $name
           Keypair : $keypair
@@ -151,7 +141,12 @@ EOF
         -security_group => \@groups,
     );
     $args{'-placement_zone'} = $availability_zone if $availability_zone;
-    return (\%args, $name);
+
+    # tag
+    my $return_tags = $tags;
+    $return_tags->{Name} = $name;
+
+    return (\%args, $return_tags);
 };
 
 1;

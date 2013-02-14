@@ -30,8 +30,18 @@ sub proc {
     my $input = $self->confirm_create_image($instance, $opt);
     return unless $input;
 
-    my $cur_volume = $input->{volume};
+    print "[Start] Extend Volume. \n";
 
+    my $save_state = $instance->instanceState;
+    # stop instance
+    if($save_state ne 'stopped') {
+        print "[Start] Stop Instance. \n";
+        $instance->stop;
+        progress_dot("Stop instance in process.", sub { $instance->current_state ne 'stopped' } );
+        print "[End] Stop Instance. \n";
+    }
+
+    my $cur_volume = $input->{volume};
     my $snapshot;
     my $new_volume;
     {
@@ -54,6 +64,7 @@ sub proc {
         print "[End] Create new volume. \n";
     }
 
+    my $device_name = $input->{device_name};
     eval {
         {
             print "[Start] Detach current volume. \n";
@@ -66,7 +77,7 @@ sub proc {
             print "[Start] Attach instance volume from new volume... \n";
             my %args = (
                 -instance_id => $instance->instanceId,
-                -device      => $input->{device_name},
+                -device      => $device_name,
             );
             my $attachment = $new_volume->attach(%args);
             progress_dot("Attach volume in process.", sub { $attachment->current_status ne 'attached' } );
@@ -75,24 +86,37 @@ sub proc {
         }
     };
     if($@) {
-        warn $@;
+        warn "[Exception] $@";
         print "[Start] Rollback... \n";
         my %args = (
             -instance_id => $instance->instanceId,
-            -device      => $input->{device_name},
+            -device      => $device_name,
         );
         my $attachment = $cur_volume->attach(%args);
         progress_dot("Rollback volume in process.", sub { $attachment->current_status ne 'attached' } );
         print "[End] Rollback... \n";
+        return;
     }
 
-    print "Extend Volume completed. \n";
+    # start instance
+    if($save_state ne 'stopped') {
+        print "[Start] Start Instance. \n";
+        $instance->start;
+        # wait running...
+        progress_dot("Start instance in process.", sub { $instance->current_state ne 'running' } );
+        # associate eip
+        $instance->associate_address($input->{eip}) if !$instance->vpcId && $input->{eip};
+        print "[End] Start Instance. \n";
+    }
+
+    print "[End] Extend Volume. \n";
+
     my $complete_str =<<"EOF";
 
 Please execute the following commands. (After loggin as root)
 
 # resize fs
-resize2fs /dev/sda1
+resize2fs $device_name
 
 # confirm
 df -h
@@ -110,8 +134,10 @@ sub confirm_create_image {
     my $availability_zone = $opt->{availability_zone} || $instance->placement;
 
     # 現在のボリューム情報取得
-    my @devices   = $instance->blockDeviceMapping;
-    my $device    = shift @devices;
+    my $instance_name   = $instance->tags->{Name};
+    my $instance_id     = $instance->instanceId;
+    my @devices         = $instance->blockDeviceMapping;
+    my $device          = shift @devices;
     my $cur_device_name = $device->deviceName;
     my $cur_volume_id   = $device->volume->volumeId;
     my $cur_size        = $device->volume->size;
@@ -119,11 +145,33 @@ sub confirm_create_image {
     my $force = $opt->{force};
 
     my $term = Yogafire::Term->new();
+    unless($update_size) {
+        while(1) {
+            print "\n";
+            $update_size = $term->get_reply(
+                prompt   => "Update Volume Size [$cur_size]> ",
+                allow    => qr/\d+/,
+            );
+
+            #size validation
+            if($cur_size >= $update_size) {
+                print "[warn] size is invalid. (cur_size >= update_size).\n";
+                next;
+            }
+            last;
+        }
+    }
+
+    my $find_eip = eval { $instance->ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
+    my $eip      = ($find_eip) ? $instance->ipAddress : '';
 
     my $confirm_str =<<"EOF";
 ================================================================
 Expand Volume
 
+               Name : $instance_name
+        Instance Id : $instance_id
+         Elastic IP : $eip
         device_name : $cur_device_name
           volume_id : $cur_volume_id
   availability zone : $availability_zone
@@ -132,18 +180,13 @@ Expand Volume
 ================================================================
 EOF
 
-
-    #size validation
-    if($cur_size >= $update_size) {
-        die "--size is invalid. [cur_size >= update_size].";
-    }
-
-
     unless($force) {
         print "\n";
+        my $prompt = "Expand Volume OK?";
+        $prompt .= " ([important] Instance will stop once, and resume after.) " if $instance->instanceState ne 'stopped';
         my $bool = $term->ask_yn(
             print_me => $confirm_str,
-            prompt   => 'Expand Volume OK? ',
+            prompt   => $prompt,
         );
         exit unless $bool;
     }
@@ -156,6 +199,7 @@ EOF
         size              => $cur_size,
         update_size       => $update_size,
         availability_zone => $availability_zone,
+        eip               => $eip,
     };
 }
 
