@@ -45,6 +45,12 @@ has port => (
     cmd_aliases     => "p",
     documentation   => "specified port number",
 );
+has proxy => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    documentation   => "specified proxy server name(tagsname).",
+);
 no Mouse;
 
 sub abstract {'EC2 SSH Instance'}

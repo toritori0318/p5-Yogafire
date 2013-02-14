@@ -41,7 +41,6 @@ Host fuga
     IdentityFile 
     User         ec2-user
     Port         22
-
 #======== Yogafire End   ========#
 EOF
 

@@ -1,7 +1,7 @@
 package Yogafire::Plugin::Command::sshconfig;
 use Mouse;
 extends qw(Yogafire::CommandBase);
-has 'preview' => (
+has preview => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
@@ -28,6 +28,12 @@ has 'sshconfig-file' => (
     is            => "rw",
     cmd_aliases   => "f",
     documentation => 'specify sshconfig file path. (default: {$HOME}/.ssh/config )',
+);
+has 'proxy' => (
+    traits        => [qw(Getopt)],
+    isa           => "Str",
+    is            => "rw",
+    documentation => "specified proxy server name(tagsname).",
 );
 no Mouse;
 
@@ -80,7 +86,17 @@ sub execute {
         $new_data .= sprintf("\n%s%s", $self->begin, $self->end);
     }
 
-    my $hosts = $self->_sshconfig(\@instances, $opt->{private});
+    my $hosts;
+    if($opt->{proxy}) {
+        my $opt_proxy = { tagsname => $opt->{proxy} };
+        my @proxy_instances = list($self->ec2, $opt_proxy);
+        my $proxy_instance  = shift @proxy_instances;
+        die "Not found proxy server.\n" unless $proxy_instance;
+
+        $hosts = $self->_sshconfig_proxy($proxy_instance, \@instances, $opt->{private});
+    } else {
+        $hosts = $self->_sshconfig(\@instances, $opt->{private});
+    }
     $new_data =~ s/${begin}(.*)${end}/${begin}${hosts}${end}/sg;
     #print $new_data;
     close $rfh;
@@ -112,27 +128,86 @@ sub execute {
 }
 
 sub _sshconfig {
-    my ( $self, $instances ) = @_;
+    my ( $self, $instances, $private ) = @_;
 
     my $config        = $self->config;
     my $user          = $config->get('ssh_user');
     my $identity_file = $config->get('identity_file');
     my $ssh_port      = $config->get('ssh_port');
 
-    my $replace_hosts = '';
+    my @replace_hosts;
     for (@$instances) {
         my $name        = $_->tags->{Name};
-        my $ip_address  = $_->ipAddress;
+        my $host        = ($private) ? $_->privateIpAddress : $_->ipAddress;
         next unless $name;
 
-        $replace_hosts .= sprintf ("Host %s\n" , $name);
-        $replace_hosts .= sprintf ("    HostName     %s\n" , $ip_address);
-        $replace_hosts .= sprintf ("    IdentityFile %s\n" , $identity_file);
-        $replace_hosts .= sprintf ("    User         %s\n" , $user);
-        $replace_hosts .= sprintf ("    Port         %s\n" , $ssh_port);
-        $replace_hosts .= sprintf ("\n");
+        push @replace_hosts, $self->_build_ssh_config(
+            {
+                name          => $name,
+                host          => $host,
+                identity_file => $identity_file,
+                user          => $user,
+                ssh_port      => $ssh_port,
+            }
+        );
     }
-    return $replace_hosts;
+    return join("\n", @replace_hosts);
+}
+
+sub _sshconfig_proxy {
+    my ( $self, $proxy_instance, $instances, $private ) = @_;
+
+    my $config        = $self->config;
+    my $user          = $config->get('ssh_user');
+    my $identity_file = $config->get('identity_file');
+    my $ssh_port      = $config->get('ssh_port');
+
+    my @replace_hosts;
+
+    my $proxy_name    = $proxy_instance->tags->{Name};
+    my $proxy_host    = ($private) ? $proxy_instance->privateIpAddress : $proxy_instance->ipAddress;
+    # proxy server
+    push @replace_hosts, $self->_build_ssh_config(
+        {
+            name          => $proxy_name,
+            host          => $proxy_host,
+            identity_file => $identity_file,
+            user          => $user,
+            ssh_port      => $ssh_port,
+        }
+    );
+
+    for (@$instances) {
+        my $name        = $_->tags->{Name};
+        my $host        = ($private) ? $_->privateIpAddress : $_->ipAddress;
+        next unless $name;
+
+        push @replace_hosts, $self->_build_ssh_config(
+            {
+                name          => $name,
+                host          => $host,
+                identity_file => $identity_file,
+                user          => $user,
+                ssh_port      => $ssh_port,
+                proxy         => $proxy_name,
+            }
+        );
+    }
+    return join("\n", @replace_hosts);
+}
+
+sub _build_ssh_config {
+    my ( $self, $opt ) = @_;
+
+    my $str = sprintf ("Host %s\n" ,             $opt->{name});
+    $str   .= sprintf ("    HostName     %s\n" , $opt->{host});
+    $str   .= sprintf ("    IdentityFile %s\n" , $opt->{identity_file});
+    $str   .= sprintf ("    User         %s\n" , $opt->{user});
+    $str   .= sprintf ("    Port         %s\n" , $opt->{ssh_port});
+
+    $str   .= sprintf ("    ProxyCommand ssh %s -W %h:%p\n" , $opt->{proxy}) if $opt->{proxy};
+
+    return $str;
 }
 
 1;
