@@ -26,7 +26,7 @@ has password => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
-    cmd_aliases   => "p",
+    cmd_aliases   => "P",
     documentation => "send sudo password.",
 );
 has 'dry-run'=> (
@@ -34,6 +34,33 @@ has 'dry-run'=> (
     isa           => "Bool",
     is            => "rw",
     documentation => "dry run mode.",
+);
+has user => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "u",
+    documentation   => "specified login user",
+);
+has identity_file => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "i",
+    documentation   => "specified identity file",
+);
+has port => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "p",
+    documentation   => "specified port number",
+);
+has proxy => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    documentation   => "specified proxy server name(tagsname).",
 );
 
 
@@ -61,14 +88,21 @@ sub validate_args {
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
-    my $tagsname = shift @$args;
-    my $cmd      = shift @$args;
+    my $ec2    = $self->ec2;
+    my $config = $self->config;
 
-    # tags name filter
-    $opt->{tagsname} = $tagsname if $tagsname;
-    $opt->{state}    = 'running';
+    my $host   = shift @$args;
+    my $cmd    = shift @$args;
 
-    my @instances = list($self->ec2, $opt);
+    my $condition = {};
+    if ($host =~ /^(\d+).(\d+).(\d+).(\d+)$/) {
+        $condition->{filter} = ($1 == 10) ? "private-ip-address=$host" : "ip-address=$host";
+    } else {
+        $condition->{tagsname} = $host;
+    }
+    $condition->{state} = 'running';
+
+    my @instances = list($ec2, $condition);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }
@@ -79,45 +113,47 @@ sub execute {
     }
 
     for (@instances) {
+        my $yoga_ssh = Yogafire::CommandClass::SSH->new(
+            {
+                ec2    => $ec2,
+                config => $config,
+                opt    => $opt,
+            }
+        );
+
         my $name = $_->tags->{Name} || '';
+        my $host = $yoga_ssh->target_host($_);
         my $results;
         unless ($opt->{'dry-run'}) {
-            $results = $self->exec_ssh(
+            # exec ssh
+            my $ssh = $yoga_ssh->ssh(
                 {
-                    identity_file   => $self->config->get('identity_file'),
-                    user            => $self->config->get('ssh_user'),
-                    host            => $_->dns_name,
+                    host    => $host,
+                    timeout => 10,
+                }
+            );
+
+            $results = $self->exec_cmd(
+                $ssh,
+                {
                     cmd             => $cmd,
                     sudo            => $opt->{sudo},
                     f_passwaord     => $opt->{password},
                 }
             );
         }
-        printf "# Connected to %s@%s(%s)\n%s", $self->config->get('ssh_user'), $_->ip_address, $name, $results || '';
+
+        printf "# Connected to %s@%s(%s)\n%s", $self->config->get('ssh_user'), $host, $name, $results || '';
     }
 }
 
 my $g_password = '';
-sub exec_ssh {
-    my ($self, $args) = @_;
+sub exec_cmd {
+    my ($self, $ssh, $args) = @_;
 
-    my $identity_file = $args->{identity_file} ||'';
-    my $user          = $args->{user} ||'';
-    my $host          = $args->{host} ||'';
     my $cmd           = $args->{cmd} ||'';
     my $sudo          = $args->{sudo} ||'';
     my $f_passwaord   = $args->{f_passwaord};
-
-    my $ssh = Net::OpenSSH->new(
-        $host,
-        (
-            user                => $user,
-            key_path            => $identity_file,
-            timeout             => 10,
-            kill_ssh_on_timeout => 10,
-        ),
-    );
-    $ssh->error and die "Can't ssh to ". $host .": " . $ssh->error;
 
     my $password;
     my ($out, $err);

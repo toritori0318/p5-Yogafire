@@ -16,9 +16,35 @@ has sync_option => (
     cmd_aliases   => "o",
     documentation => "rsync option.",
 );
+has user => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "u",
+    documentation   => "specified login user",
+);
+has identity_file => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "i",
+    documentation   => "specified identity file",
+);
+has port => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "p",
+    documentation   => "specified port number",
+);
+has proxy => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    documentation   => "specified proxy server name(tagsname).",
+);
 no Mouse;
 
-use Net::OpenSSH;
 use Yogafire::Instance qw/list/;
 
 sub abstract {'Rsync put local file to remote.(rsync -avuc) '}
