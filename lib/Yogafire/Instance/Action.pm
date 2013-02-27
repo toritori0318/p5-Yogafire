@@ -12,7 +12,6 @@ use Yogafire::Instance::Action::ChangeInstanceType;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Instance::Action::Quit;
 use Yogafire::Instance::Action::CopyAndLaunch;
-use Yogafire::Instance::Action::UpdateTags;
 use Yogafire::Instance::Action::ExtendVolume;
 
 use Mouse;
@@ -32,7 +31,6 @@ has 'actions' => (
             Yogafire::Instance::Action::CreateImage->new(),
             Yogafire::Instance::Action::ChangeInstanceType->new(),
             Yogafire::Instance::Action::CopyAndLaunch->new(),
-            Yogafire::Instance::Action::UpdateTags->new(),
             Yogafire::Instance::Action::ExtendVolume->new(),
             Yogafire::Instance::Action::Info->new(),
             Yogafire::Instance::Action::Quit->new(),
