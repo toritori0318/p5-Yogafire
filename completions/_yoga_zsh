@@ -13,7 +13,7 @@ function _yoga {
         (command)
             local -a subcommands
             IFS=$'\n';
-            subcommands=(`yoga --help | sed 's/^ *//g' |awk 'NR>4 && NR<30 && NF>0 {q="\047";print $0}'`)
+            subcommands=(`yoga --help | sed 's/^ *//g' |awk 'NR>4 && NR<100 && NF>0 {q="\047";print $0}'`)
             _describe -t commands "yoga" subcommands
             ;;
 
