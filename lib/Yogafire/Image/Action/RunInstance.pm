@@ -61,8 +61,8 @@ sub confirm_launch_instance {
         );
     }
 
-    my $instance_types = Yogafire::InstanceTypes::list();
-
+    my $y_instance_types = Yogafire::InstanceTypes->new();
+    my $instance_types = $y_instance_types->instance_types;
     unless($instance_type) {
         print "\n";
         $instance_type = $term->get_reply(

@@ -1,11 +1,9 @@
 package Yogafire::Plugin::Command::instancetype;
 use Mouse;
-
 extends qw(Yogafire::CommandBase);
-
 no Mouse;
 
-use Yogafire::InstanceTypes qw/list display_table/;
+use Yogafire::InstanceTypes;
 
 sub abstract {'Show Instance Types'}
 
@@ -14,7 +12,8 @@ sub command_names {'instance-type'}
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    display_table();
+    my $y_instance_types = Yogafire::InstanceTypes->new({ ec2 => $self->ec2 });
+    $y_instance_types->output();
 }
 
 1;

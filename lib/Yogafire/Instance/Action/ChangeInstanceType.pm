@@ -67,7 +67,8 @@ sub confirm_create_image {
     my $instance_id       = $instance->instanceId;
     my $old_instance_type = $instance->instanceType;
 
-    my $instance_types = Yogafire::InstanceTypes::list();
+    my $y_instance_types = Yogafire::InstanceTypes->new();
+    my $instance_types = $y_instance_types->instance_types;
 
     my $term = Yogafire::Term->new();
     my $m_instance_type;
