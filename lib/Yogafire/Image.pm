@@ -1,14 +1,25 @@
 package Yogafire::Image;
 use strict;
 use warnings;
-use base 'Exporter';
-our @EXPORT_OK = qw/list display_list display_table convert_row/;
+use Mouse;
+has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
+has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name name imageId colorfulImageState/] }, );
+has 'out_format'  => (is => 'rw');
+has 'images'      => (is => 'rw');
+no Mouse;
 
+use Yogafire::Output;
 use Text::ASCIITable;
 use Term::ANSIColor qw/colored/;
 
-sub list {
-    my ($ec2, $opts) = @_;
+sub find {
+    my ($self, $opts) = @_;
+    my @rows = $self->search($opts);
+    return shift @rows;
+}
+
+sub search {
+    my ($self, $opts) = @_;
     $opts ||= {};
 
     my $owner_id     = ($opts->{owner_id}) ? $opts->{owner_id} : '';
@@ -29,61 +40,44 @@ sub list {
     $filter{'name'}     = $name     if $name;
     %filter = (%filter, %$_) for (@filters);
 
-    my @images = $ec2->describe_images(
+    my @images = $self->ec2->describe_images(
         -owner  => $owner_id,
         -filter => \%filter,
     );
+
+    $self->images(\@images);
+
     return @images;
 }
 
-sub display_list {
-    my ($images, $columns, $interactive) = @_;
-    my @header = ($columns) ? @$columns : qw/tags_Name name imageId colorfulImageState/;
+sub output {
+    my ($self, $columns) = @_;
+    my $output = Yogafire::Output->new({ format => $self->out_format });
+    $output->header($self->out_columns);
 
-    my $print_format = '';
-    $print_format .= "%-14s " for @header;
-
-    my $no = 0;
-    for (@$images) {
-        my $cols = convert_row($_, \@header);
-        if($interactive) {
-            $print_format = '  %2d> ' . $print_format;
-            printf ("$print_format\n" , ++$no, map { $_->{value} } @$cols);
-        } else {
-            printf ("$print_format\n" , map { $_->{value} } @$cols);
-        }
+    my @data;
+    for my $row (@{$self->images}) {
+        my $cols = $self->convert_row($row, $self->out_columns);
+        push @data, [map { $_->{value} } @$cols];
     }
-}
-
-sub display_table {
-    my ($images, $columns) = @_;
-    my @data_header = ($columns) ? @$columns : qw/tags_Name name imageId colorfulImageState/;
-    my @disp_header = ('no', @data_header);
-    my $t = Text::ASCIITable->new();
-    $t->setCols(@disp_header);
-
-    my $no = 0;
-    for (@$images) {
-        my $cols = convert_row($_, \@data_header);
-        $t->addRow([++$no, map { $_->{value} } @$cols]);
-    }
-    print $t;
+    $output->output(\@data);
 }
 
 sub convert_row {
-    my ($image, $cols) = @_;
+    my ($self, $image, $cols) = @_;
 
     my @results;
     for (@$cols) {
         push @results, {
             key   => $_,
-            value => attribute_mapping($image, $_),
+            value => $self->attribute_mapping($image, $_),
         };
     }
     return \@results;
 }
+
 sub attribute_mapping {
-    my ($image, $key) = @_;
+    my ($self, $image, $key) = @_;
 
     my $value;
     if ($_ =~ /^tags_(.*)/) {
@@ -92,7 +86,7 @@ sub attribute_mapping {
         $value = $image->blockDeviceMapping;
     } elsif ($_ =~ /^colorfulImageState$/) {
         my $state = $image->imageState;
-        $value = colored($state, _get_state_color($state));
+        $value = colored($state, $self->_get_state_color($state));
     } else {
         $value = $image->{data}->{$_};
     }
@@ -100,7 +94,7 @@ sub attribute_mapping {
 }
 
 sub _get_state_color {
-    my ($status) = @_;
+    my ($self, $status) = @_;
     if($status eq 'available') {
         return 'green';
     } elsif($status eq 'pending') {
@@ -108,6 +102,31 @@ sub _get_state_color {
     } elsif($status eq 'failed') {
         return 'red';
     }
+}
+
+sub find_from_cache {
+    my ($self, $cond) = @_;
+    my @rows = $self->search_from_cache($cond);
+    return shift @rows;
+}
+sub search_from_cache {
+    my ($self, $cond ) = @_;
+    $cond ||= {};
+
+    my @search;
+    for my $key (qw/id name/) {
+        my $cond_val = quotemeta($cond->{$key}||'');
+        next unless $cond_val;
+
+        for my $image (@{$self->images}) {
+            if(($key eq 'id'   && $image->imageId eq $cond_val) ||
+               ($key eq 'name' && $image->name    eq $cond_val)
+            ) {
+                push @search, $image;
+            }
+        }
+    }
+    return @search;
 }
 
 1;

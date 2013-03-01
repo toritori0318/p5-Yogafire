@@ -31,11 +31,11 @@ has filter => (
     cmd_aliases     => "f",
     documentation   => "api filter. (ex.--filter='name=value,state=available')",
 );
-has notable => (
+has format => (
     traits          => [qw(Getopt)],
     isa             => "Bool",
     is              => "rw",
-    documentation   => "does not display of the table style.",
+    documentation   => "specified output format(default:table). (table / plain / json)",
 );
 has loop => (
     traits          => [qw(Getopt)],
@@ -46,7 +46,7 @@ has loop => (
 );
 no Mouse;
 
-use Yogafire::Image qw/list display_list display_table/;
+use Yogafire::Image;
 use Yogafire::Image::Action;
 use Yogafire::Term;
 
@@ -64,11 +64,16 @@ sub execute {
 
     $opt->{owner_id} = $self->ec2->account_id;
 
+    my $y_image = Yogafire::Image->new();
+    $y_image->ec2($self->ec2);
+    $y_image->out_columns($self->config->get('image_column')) if $self->config->get('image_column');
+    $y_image->out_format($opt->{format} || 'table');
+
     # name filter
     my $name = $args->[0];
     $opt->{name} = $name if $name;
 
-    my @images = list($self->ec2, $opt);
+    my @images = $y_image->search($opt);
     if(scalar @images == 0) {
         die "Not Found Image. \n";
     }
@@ -80,15 +85,15 @@ sub execute {
 
         while (1) {
             # display
-            $self->display_images(\@images, $opt);
+            $y_image->output();
             # confirm
             my $input = $term->readline('no / name / image_id > ');
             $input =~ s/^ //g;
             $input =~ s/ $//g;
             last if $input =~ /^(q|quit|exit)$/;
 
-            my $target_image = $self->find_image_name(\@images, $input);
-            $target_image  ||= $self->find_image_id(\@images, $input);
+            my $target_image = $y_image->find_from_cache({ name => $input });
+            $target_image  ||= $y_image->find_from_cache({ id => $input });
             $target_image  ||= $images[$input-1] if $input && $input =~ /^\d+$/;
             if (!$target_image) {
                 die "Invalid Value. \n";
@@ -107,31 +112,7 @@ sub execute {
             last unless $yn;
         }
     } else {
-        $self->display_images(\@images, $opt);
-    }
-}
-
-sub display_images {
-    my ($self, $images, $opt) = @_;
-    my $column_list = $self->config->get('image_column');
-    if($opt->{interactive} || !$opt->{notable}) {
-        display_table($images, $column_list);
-    } else {
-        display_list($images, $column_list, $opt->{interactive});
-    }
-}
-
-sub find_image_name {
-    my ($self, $images, $name ) = @_;
-    for my $image (@$images) {
-        return $image if $image->name eq $name;
-    }
-}
-
-sub find_image_id {
-    my ($self, $images, $image_id ) = @_;
-    for my $image (@$images) {
-        return $image if $image->imageId eq $image_id;
+        $y_image->output();
     }
 }
 

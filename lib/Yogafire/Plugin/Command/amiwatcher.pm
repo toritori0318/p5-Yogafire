@@ -17,7 +17,7 @@ has 'watch-status' => (
 );
 no Mouse;
 
-use Yogafire::Image qw/list display_list display_table/;
+use Yogafire::Image;
 use Yogafire::Image::Action;
 use Yogafire::Term;
 
@@ -31,11 +31,13 @@ sub execute {
 
     $opt->{owner_id} = $self->ec2->account_id;
 
+    my $y_image = Yogafire::Image->new({ ec2 => $self->ec2 });
+
     # tags name filter
     my $name = $args->[0];
     $opt->{name} = $name if $name;
 
-    my @images = list($self->ec2, $opt);
+    my @images = $y_image->search($opt);
     if(scalar @images == 0) {
         die "Not Found Instance. \n";
     } elsif(scalar @images == 1) {

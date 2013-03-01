@@ -31,8 +31,6 @@ has service => (
 );
 no Mouse;
 
-use Yogafire::Regions qw/list display_table find/;
-
 use LWP::UserAgent qw/get/;
 use XML::RSS;
 use DateTime::Format::Strptime;
@@ -60,6 +58,8 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
+    my $y_image = Yogafire::Image->new({ ec2 => $self->ec2 });
+
     my $ua = LWP::UserAgent->new;
     $ua->timeout(10);
     $ua->env_proxy;
@@ -70,7 +70,7 @@ sub execute {
         die $response->status_line;
     }
 
-    my $regions = list();
+    my $regions = $y_image->search();
     my $rss = XML::RSS->new;
     $rss->parse($response->content);
     for (@{$rss->{items}}) {
