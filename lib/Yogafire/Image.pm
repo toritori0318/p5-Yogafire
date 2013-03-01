@@ -5,7 +5,7 @@ use Mouse;
 has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
 has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name name imageId colorfulImageState/] }, );
 has 'out_format'  => (is => 'rw');
-has 'images'      => (is => 'rw');
+has 'cache'      => (is => 'rw');
 no Mouse;
 
 use Yogafire::Output;
@@ -45,7 +45,7 @@ sub search {
         -filter => \%filter,
     );
 
-    $self->images(\@images);
+    $self->cache(\@images);
 
     return @images;
 }
@@ -56,7 +56,7 @@ sub output {
     $output->header($self->out_columns);
 
     my @data;
-    for my $row (@{$self->images}) {
+    for my $row (@{$self->cache}) {
         my $cols = $self->convert_row($row, $self->out_columns);
         push @data, [map { $_->{value} } @$cols];
     }
@@ -113,16 +113,29 @@ sub search_from_cache {
     my ($self, $cond ) = @_;
     $cond ||= {};
 
+    my $terms = {
+        id => sub {
+            my ($i, $cond) = @_;
+            return unless $cond;
+            my $id = $i->imageId;
+            return $id =~ /$cond/
+        },
+        name => sub {
+            my ($i, $cond) = @_;
+            return unless $cond;
+            my $name = $i->name || '';
+            return $name =~ /$cond/
+        },
+    };
+
     my @search;
-    for my $key (qw/id name/) {
-        my $cond_val = quotemeta($cond->{$key}||'');
+    for my $key (keys %$cond) {
+        my $cond_val = $cond->{$key}||'';
         next unless $cond_val;
 
-        for my $image (@{$self->images}) {
-            if(($key eq 'id'   && $image->imageId eq $cond_val) ||
-               ($key eq 'name' && $image->name    eq $cond_val)
-            ) {
-                push @search, $image;
+        for my $instance (@{$self->cache}) {
+            if($terms->{$key}->($instance, $cond_val)) {
+                push @search, $instance;
             }
         }
     }

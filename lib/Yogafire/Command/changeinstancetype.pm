@@ -46,6 +46,8 @@ has loop => (
 );
 no Mouse;
 
+use Yogafire::CommandClass::InstanceProc;
+
 sub abstract {'EC2 Change Instance Type'}
 sub command_names {'change-instance-type'}
 
@@ -66,10 +68,24 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $tagsname = $args->[0];
-    $opt->{tagsname} = $tagsname if $tagsname;
-
-    $self->action_process('changeinstancetype', $opt);
+    my $proc = Yogafire::CommandClass::InstanceProc->new(
+        {
+            action       => 'changeinstancetype',
+            ec2          => $self->ec2,
+            config       => $self->config,
+            opt          => $opt,
+            force        => $opt->{force},
+            interactive  => 1,
+            loop         => $opt->{loop},
+        }
+    );
+    if($opt->{self}) {
+        $proc->self_process();
+    } else {
+        my $tagsname = $args->[0];
+        $opt->{tagsname} = $tagsname if $tagsname;
+        $proc->action_process();
+    }
 }
 
 1;

@@ -50,6 +50,8 @@ has loop => (
 );
 no Mouse;
 
+use Yogafire::CommandClass::InstanceProc;
+
 sub abstract {'EC2 Create Image'}
 sub command_names {'create-image'}
 
@@ -62,10 +64,24 @@ sub usage {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $tagsname = $args->[0];
-    $opt->{tagsname} = $tagsname if $tagsname;
-
-    $self->action_process('createimage', $opt);
+    my $proc = Yogafire::CommandClass::InstanceProc->new(
+        {
+            action       => 'createimage',
+            ec2          => $self->ec2,
+            config       => $self->config,
+            opt          => $opt,
+            force        => $opt->{force},
+            interactive  => 1,
+            loop         => $opt->{loop},
+        }
+    );
+    if($opt->{self}) {
+        $proc->self_process();
+    } else {
+        my $tagsname = $args->[0];
+        $opt->{tagsname} = $tagsname if $tagsname;
+        $proc->action_process();
+    }
 }
 
 1;

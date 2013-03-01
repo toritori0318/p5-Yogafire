@@ -1,0 +1,89 @@
+package Yogafire::CommandClass::ImageProc;
+use Mouse;
+has ec2         => ( is  => "rw" );
+has config      => ( is  => "rw" );
+has opt         => ( is  => "rw" );
+has action      => ( is  => "rw" );
+has force       => ( is  => "rw" );
+has interactive => ( is  => "rw" );
+has loop        => ( is  => "rw" );
+no Mouse;
+
+use LWP::UserAgent;
+use Yogafire::Image;
+use Yogafire::Image::Action;
+use Yogafire::Term;
+
+sub action_process {
+    my ($self) = @_;
+    my $action_name = $self->action;
+    my $opt         = $self->opt || {};
+
+    $opt->{owner_id} = $self->ec2->account_id;
+
+    my $y_image = Yogafire::Image->new();
+    $y_image->ec2($self->ec2);
+    $y_image->out_columns($self->config->get('image_column')) if $self->config->get('image_column');
+    $y_image->out_format($opt->{format} || 'table');
+
+    # action class
+    my $ia = Yogafire::Image::Action->new(
+        ec2          => $self->ec2,
+        config       => $self->config,
+        action_name  => $action_name,
+    );
+
+    my @images = $y_image->search($opt);
+    if(scalar @images == 0) {
+        die "Not Found Image. \n";
+    }
+
+    # force
+    if($self->force && $ia->action_class) {
+        return $ia->run(\@images, $opt);
+    }
+
+    my $term = Yogafire::Term->new();
+    $term->set_completion_word([map {$_->name} @images]);
+
+    while (1) {
+        # display
+        $y_image->output();
+        return unless $self->interactive;
+
+        # confirm
+        my $input = $term->readline('no / name / image_id > ');
+        $input =~ s/^ //g;
+        $input =~ s/ $//g;
+        last if $input =~ /^(q|quit|exit)$/;
+        next unless $input;
+
+        my $target_image = $y_image->find_from_cache({ name => qr/^$input$/ });
+        $target_image  ||= $y_image->find_from_cache({ id   => qr/^$input$/ });
+        $target_image  ||= $images[$input-1] if $input && $input =~ /^\d+$/;
+        if (!$target_image) {
+            my @target_images = $y_image->search_from_cache({ name => qr/$input/ });
+            if(scalar @target_images == 0) {
+                print "Invalid Value. \n";
+            } else {
+                $y_image->cache(\@target_images);
+            }
+            next;
+        }
+
+        # run action
+        $ia->run($target_image, $opt);
+
+        # for loop
+        last unless $self->loop;
+
+        my $term = Yogafire::Term->new();
+        my $yn = $term->ask_yn(
+            prompt   => "\ncontinue OK? > ",
+            default  => 'y',
+        );
+        last unless $yn;
+    }
+}
+
+1;

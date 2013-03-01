@@ -5,7 +5,7 @@ use Mouse;
 has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
 has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/] }, );
 has 'out_format'  => (is => 'rw');
-has 'instances'   => (is => 'rw');
+has 'cache'       => (is => 'rw');
 no Mouse;
 
 use Yogafire::Output;
@@ -41,7 +41,7 @@ sub search {
       -filter => \%filter,
     );
 
-    $self->instances(\@instances);
+    $self->cache(\@instances);
 
     return @instances;
 }
@@ -52,7 +52,7 @@ sub output {
     $output->header($self->out_columns);
 
     my @data;
-    for my $row (@{$self->instances}) {
+    for my $row (@{$self->cache}) {
         my $cols = $self->convert_row($row, $self->out_columns);
         push @data, [map { $_->{value} } @$cols];
     }
@@ -115,28 +115,33 @@ sub search_from_cache {
     my ($self, $cond ) = @_;
     $cond ||= {};
 
+    my $terms = {
+        id => sub {
+            my ($i, $cond) = @_;
+            return unless $cond;
+            my $id = $i->instanceId;
+            return $id =~ /$cond/
+        },
+        name => sub {
+            my ($i, $cond) = @_;
+            return unless $cond;
+            my $name = $i->tags->{Name} || '';
+            return $name =~ /$cond/
+        },
+    };
+
     my @search;
-    for my $key (qw/id name/) {
-        my $cond_val = quotemeta($cond->{$key}||'');
+    for my $key (keys %$cond) {
+        my $cond_val = $cond->{$key}||'';
         next unless $cond_val;
 
-        for my $instance (@{$self->instances}) {
-            if(($key eq 'id'   && $instance->instanceId   eq $cond_val) ||
-               ($key eq 'name' && $instance->tags->{Name} eq $cond_val)
-            ) {
+        for my $instance (@{$self->cache}) {
+            if($terms->{$key}->($instance, $cond_val)) {
                 push @search, $instance;
             }
         }
     }
     return @search;
-}
-
-sub ng_name {
-    my ($self, $instances) = @_;
-    my @names = grep { $_ if $_ } map { $_->tags->{Name} } @$instances;
-    my %sum_name;
-    $sum_name{$_}++ for @names;
-    return grep { $sum_name{$_} > 1 } keys %sum_name;
 }
 
 1;

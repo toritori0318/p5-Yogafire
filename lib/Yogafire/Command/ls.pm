@@ -61,61 +61,22 @@ sub usage {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $y_ins = Yogafire::Instance->new();
-    $y_ins->ec2($self->ec2);
-    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
-    $y_ins->out_format($opt->{format} || 'table');
-
-    # tags name filter
-    my $tagsname = $args->[0];
-    $opt->{tagsname} = $tagsname if $tagsname;
-
-    my @instances = $y_ins->search($opt);
-    if(scalar @instances == 0) {
-        die "Not Found Instance. \n";
-    }
-
-    if($opt->{interactive}) {
-        my @ng_name = $self->ng_name(\@instances);
-        my $ia = Yogafire::Instance::Action->new(ec2 => $self->ec2, config => $self->config);
-        my $term = Yogafire::Term->new('Input Number');
-        $term->set_completion_word( [ map { $_->tags->{Name}, $_->instanceId} @instances ] );
-
-        while (1) {
-            # display
-            $y_ins->output();
-            # confirm
-            my $input = $term->readline('no / tags_Name / instance_id > ');
-            $input =~ s/^ //g;
-            $input =~ s/ $//g;
-            last if $input =~ /^(q|quit|exit)$/;
-
-            my $target_instance = $self->find_name(\@instances, $input);
-            $target_instance ||= $self->find_id(\@instances, $input);
-            $target_instance ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
-            if (!$target_instance) {
-                print "Invalid Value. \n";
-                next;
-            }
-            if ($target_instance && grep { $_ eq $input } @ng_name) {
-                print "'Name' has been duplicated. Please use the 'no or instance_id' instead. \n";
-                next;
-            }
-
-            # show action
-            $ia->action_print($target_instance, $opt);
-
-            # for loop
-            last unless $opt->{loop};
-            my $term = Yogafire::Term->new();
-            my $yn = $term->ask_yn(
-                prompt   => "\ncontinue OK? > ",
-                default  => 'y',
-            );
-            last unless $yn;
+    my $proc = Yogafire::CommandClass::InstanceProc->new(
+        {
+            action       => undef,
+            ec2          => $self->ec2,
+            config       => $self->config,
+            opt          => $opt,
+            interactive  => $opt->{interactive},
+            loop         => $opt->{loop},
         }
+    );
+    if($opt->{self}) {
+        $proc->self_process();
     } else {
-        $y_ins->output(\@instances);
+        my $tagsname = $args->[0];
+        $opt->{tagsname} = $tagsname if $tagsname;
+        $proc->action_process();
     }
 }
 
