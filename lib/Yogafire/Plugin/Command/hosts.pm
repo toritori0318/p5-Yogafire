@@ -39,7 +39,7 @@ no Mouse;
 
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
 use DateTime;
 
 sub abstract {'Operation for hosts file'}
@@ -58,9 +58,11 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
+    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+
     my $ip_key = ($opt->{'private-ip'}) ? 'privateIpAddress' : 'ipAddress';
 
-    my @instances = list($self->ec2, $opt);
+    my @instances = $y_ins->search($opt);
     # name & ip is required.
     @instances = grep { $_->tags->{Name} && $_->{data}->{$ip_key} } @instances;
 

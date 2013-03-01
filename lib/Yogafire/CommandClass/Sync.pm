@@ -10,13 +10,15 @@ has config => ( is  => "rw" );
 no Mouse;
 
 use Net::OpenSSH;
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
 use Yogafire::CommandClass::SSH;
 
 sub execute {
     my ( $self, $opt, $args, $is_default_option ) = @_;
     my $ec2  = $self->ec2;
     my $config = $self->config;
+
+    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
 
     my $host = shift @$args;
     my $src  = shift @$args;
@@ -30,7 +32,7 @@ sub execute {
     }
     $condition->{state} = 'running';
 
-    my @instances = list($ec2, $condition);
+    my @instances = $y_ins->search($condition);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }

@@ -46,8 +46,6 @@ has address => (
 
 no Mouse;
 
-use Yogafire::Instance qw/list/;
-
 sub abstract {'All Region Info'}
 sub command_names {'all-region-info'}
 

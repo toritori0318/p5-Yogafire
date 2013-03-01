@@ -1,14 +1,25 @@
 package Yogafire::Instance;
 use strict;
 use warnings;
-use base 'Exporter';
-our @EXPORT_OK = qw/list display_list display_table attribute_mapping/;
+use Mouse;
+has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
+has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/] }, );
+has 'out_format'  => (is => 'rw');
+has 'instances'   => (is => 'rw');
+no Mouse;
 
+use Yogafire::Output;
 use Text::ASCIITable;
 use Term::ANSIColor qw/colored/;
 
-sub list {
-    my ($ec2, $opts) = @_;
+sub find {
+    my ($self, $opts) = @_;
+    my @rows = $self->search($opts);
+    return shift @rows;
+}
+
+sub search {
+    my ($self, $opts) = @_;
     $opts ||= {};
 
     my $state        = $opts->{state};
@@ -26,61 +37,43 @@ sub list {
     $filter{'tag:Name'}            = $tagsname if $tagsname;
     %filter = (%filter, %$_) for (@filters);
 
-    my @instances = $ec2->describe_instances(
+    my @instances = $self->ec2->describe_instances(
       -filter => \%filter,
     );
+
+    $self->instances(\@instances);
+
     return @instances;
 }
 
-sub display_list {
-    my ($instances, $columns, $interactive) = @_;
-    my @header = ($columns) ? @$columns : qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/;
+sub output {
+    my ($self, $columns) = @_;
+    my $output = Yogafire::Output->new({ format => $self->out_format });
+    $output->header($self->out_columns);
 
-    my $print_format = '';
-    $print_format .= "%-14s " for @header;
-
-    my $no = 0;
-    for (@$instances) {
-        my $cols = convert_row($_, \@header);
-        if($interactive) {
-            $print_format = '  %2d> ' . $print_format;
-            printf ("$print_format\n" , ++$no, map { $_->{value} } @$cols);
-        } else {
-            printf ("$print_format\n" , map { $_->{value} } @$cols);
-        }
+    my @data;
+    for my $row (@{$self->instances}) {
+        my $cols = $self->convert_row($row, $self->out_columns);
+        push @data, [map { $_->{value} } @$cols];
     }
-}
-
-sub display_table {
-    my ($instances, $columns) = @_;
-    my @data_header = ($columns) ? @$columns : qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/;
-    my @disp_header = ('no', @data_header);
-    my $t = Text::ASCIITable->new();
-    $t->setCols(@disp_header);
-
-    my $no = 0;
-    for (@$instances) {
-        my $cols = convert_row($_, \@data_header);
-        $t->addRow([++$no, map { $_->{value} } @$cols]);
-    }
-    print $t;
+    $output->output(\@data);
 }
 
 sub convert_row {
-    my ($instance, $cols) = @_;
+    my ($self, $instance, $cols) = @_;
 
     my @results;
     for (@$cols) {
         push @results, {
             key   => $_,
-            value => attribute_mapping($instance, $_),
+            value => $self->attribute_mapping($instance, $_),
         };
     }
     return \@results;
 }
 
 sub attribute_mapping {
-    my ($instance, $key) = @_;
+    my ($self, $instance, $key) = @_;
 
     my $value;
     if ($_ =~ /^tags_(.*)/) {
@@ -95,7 +88,7 @@ sub attribute_mapping {
         $value = $instance->placement;
     } elsif ($_ =~ /^colorfulInstanceState$/) {
         my $state = $instance->{data}->{instanceState}->{name};
-        $value = colored($state, _get_state_color($state));
+        $value = colored($state, $self->_get_state_color($state));
     } else {
         $value = $instance->{data}->{$_};
     }
@@ -103,7 +96,7 @@ sub attribute_mapping {
 }
 
 sub _get_state_color {
-    my ($status) = @_;
+    my ($self, $status) = @_;
     if($status eq 'running') {
         return 'green';
     } elsif($status =~ m/^(pending|shutting-down|stopping)$/) {
@@ -111,6 +104,39 @@ sub _get_state_color {
     } elsif($status =~ m/^(terminated|stopped)$/) {
         return 'red';
     }
+}
+
+sub find_from_cache {
+    my ($self, $cond) = @_;
+    my @rows = $self->search_from_cache($cond);
+    return shift @rows;
+}
+sub search_from_cache {
+    my ($self, $cond ) = @_;
+    $cond ||= {};
+
+    my @search;
+    for my $key (qw/id name/) {
+        my $cond_val = quotemeta($cond->{$key}||'');
+        next unless $cond_val;
+
+        for my $instance (@{$self->instances}) {
+            if(($key eq 'id'   && $instance->instanceId   eq $cond_val) ||
+               ($key eq 'name' && $instance->tags->{Name} eq $cond_val)
+            ) {
+                push @search, $instance;
+            }
+        }
+    }
+    return @search;
+}
+
+sub ng_name {
+    my ($self, $instances) = @_;
+    my @names = grep { $_ if $_ } map { $_->tags->{Name} } @$instances;
+    my %sum_name;
+    $sum_name{$_}++ for @names;
+    return grep { $sum_name{$_} > 1 } keys %sum_name;
 }
 
 1;

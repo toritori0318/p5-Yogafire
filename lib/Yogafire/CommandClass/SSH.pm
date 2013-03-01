@@ -12,7 +12,7 @@ has sync_option   => ( is  => "rw", default => sub { {} });
 no Mouse;
 
 use Net::OpenSSH;
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
 
 sub BUILD {
     my $self = shift;
@@ -26,9 +26,9 @@ sub BUILD {
     }
 
     if($self->opt->{proxy}) {
+        my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
         $self->opt->{tagsname} = $self->opt->{proxy};
-        my @proxy_servers = list($self->ec2, $self->opt);
-        my $proxy_instance  = shift @proxy_servers;
+        my $proxy_instance = $y_ins->find($self->opt);
         die "Not found proxy server.\n" unless $proxy_instance;
 
         $self->proxy($proxy_instance)

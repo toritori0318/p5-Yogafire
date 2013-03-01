@@ -67,7 +67,7 @@ has proxy => (
 no Mouse;
 
 use Net::OpenSSH;
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
 use Yogafire::Term;
 
 sub abstract {'Execute remote command'}
@@ -91,6 +91,8 @@ sub execute {
     my $ec2    = $self->ec2;
     my $config = $self->config;
 
+    my $y_ins = Yogafire::Instance->new({ ec2 => $ec2 });
+
     my $host   = shift @$args;
     my $cmd    = shift @$args;
 
@@ -102,7 +104,7 @@ sub execute {
     }
     $condition->{state} = 'running';
 
-    my @instances = list($ec2, $condition);
+    my @instances = $y_ins->search($condition);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }

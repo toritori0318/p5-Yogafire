@@ -24,9 +24,7 @@ has tagsname => (
 );
 no Mouse;
 
-use Yogafire::Instance qw/list display_list display_table/;
-use Yogafire::Instance::Action;
-use Yogafire::Term;
+use Yogafire::Instance;
 
 sub abstract {'EC2 instance status watcher'}
 
@@ -36,11 +34,13 @@ sub execute {
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'running';
 
+    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+
     # tags name filter
     my $tagsname = $args->[0];
     $opt->{tagsname} = $tagsname if $tagsname;
 
-    my @instances = list($self->ec2, $opt);
+    my @instances = $y_ins->search($opt);
     if(scalar @instances == 0) {
         return print "Not Found Instance. \n";
     } elsif(scalar @instances == 1) {

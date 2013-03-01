@@ -34,7 +34,7 @@ has template => (
 
 no Mouse;
 
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
 
 sub abstract {'Render Tool'}
 
@@ -50,11 +50,13 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
+    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+
     # tags name filter
     my $tagsname = $args->[0];
     $opt->{tagsname} = $tagsname if $tagsname;
 
-    my @instances = list($self->ec2, $opt);
+    my @instances = $y_ins->search($opt);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }

@@ -31,11 +31,11 @@ has filter => (
     cmd_aliases     => "f",
     documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
-has notable => (
+has format => (
     traits          => [qw(Getopt)],
     isa             => "Bool",
     is              => "rw",
-    documentation   => "does not display of the table style.",
+    documentation   => "specified output format(default:table). (table / plain / json)",
 );
 has loop => (
     traits          => [qw(Getopt)],
@@ -46,7 +46,7 @@ has loop => (
 );
 no Mouse;
 
-use Yogafire::Instance qw/list display_list display_table/;
+use Yogafire::Instance;
 use Yogafire::Instance::Action;
 use Yogafire::Term;
 
@@ -61,11 +61,16 @@ sub usage {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
+    my $y_ins = Yogafire::Instance->new();
+    $y_ins->ec2($self->ec2);
+    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
+    $y_ins->out_format($opt->{format} || 'table');
+
     # tags name filter
     my $tagsname = $args->[0];
     $opt->{tagsname} = $tagsname if $tagsname;
 
-    my @instances = list($self->ec2, $opt);
+    my @instances = $y_ins->search($opt);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }
@@ -78,7 +83,7 @@ sub execute {
 
         while (1) {
             # display
-            $self->display_instances(\@instances, $opt);
+            $y_ins->output();
             # confirm
             my $input = $term->readline('no / tags_Name / instance_id > ');
             $input =~ s/^ //g;
@@ -110,17 +115,7 @@ sub execute {
             last unless $yn;
         }
     } else {
-        $self->display_instances(\@instances, $opt);
-    }
-}
-
-sub display_instances {
-    my ($self, $instances, $opt) = @_;
-    my $column_list = $self->config->get('instance_column');
-    if($opt->{interactive} || !$opt->{notable}) {
-        display_table($instances, $column_list);
-    } else {
-        display_list($instances, $column_list, $opt->{interactive});
+        $y_ins->output(\@instances);
     }
 }
 

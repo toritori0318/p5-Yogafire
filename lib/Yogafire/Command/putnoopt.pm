@@ -45,8 +45,6 @@ has proxy => (
 );
 no Mouse;
 
-use Yogafire::Instance qw/list/;
-
 sub abstract {'Rsync put local file to remote. '}
 sub command_names {'put-noopt'}
 

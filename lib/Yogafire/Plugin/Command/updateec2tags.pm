@@ -32,7 +32,7 @@ has force => (
 
 no Mouse;
 
-use Yogafire::Instance qw/list display_list display_table/;
+use Yogafire::Instance;
 
 sub abstract {'Update EC2 Tags'}
 sub command_names {'update-ec2-tags'}
@@ -48,11 +48,16 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
+    my $y_ins = Yogafire::Instance->new();
+    $y_ins->ec2($self->ec2);
+    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
+    $y_ins->out_format($opt->{format} || 'table');
+
     # tags name filter
     my $tagsname = $args->[0];
     $opt->{tagsname} = $tagsname if $tagsname;
 
-    my @instances = list($self->ec2, $opt);
+    my @instances = $y_ins->search($opt);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     }
@@ -65,7 +70,7 @@ sub execute {
 
     unless($force) {
         my $column_list = $self->config->get('instance_column');
-        display_table(\@instances, $column_list);
+        $y_ins->output();
 
         my $term = Yogafire::Term->new();
         my $yn = $term->ask_yn(
