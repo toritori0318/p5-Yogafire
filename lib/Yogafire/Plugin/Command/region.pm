@@ -9,27 +9,15 @@ has 'zones' => (
 );
 no Mouse;
 
-use Yogafire::Regions qw/list find display_table/;
+use Yogafire::Regions;
 
 sub abstract {'Show AWS Regions'}
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
-    use Data::Dumper;
-    my @regions  = $self->ec2->describe_regions();
 
-    my @records;
-    for my $region (@regions) {
-        my $id     = $region->regionName;
-        my $name   = find($id)->{name};
-        my $record = { id => $id, name => $name };
-        if($opt->{zones}) {
-           $record->{zones} = [map { $_->zoneName } $region->zones];
-        }
-        push @records, $record;
-    }
-
-    display_table(\@records, $opt->{zones});
+    my $yoga_regions = Yogafire::Regions->new({ ec2 => $self->ec2 });
+    $yoga_regions->output($opt->{zones});
 }
 
 1;
