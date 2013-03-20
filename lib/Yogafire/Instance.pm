@@ -9,7 +9,6 @@ has 'cache'       => (is => 'rw');
 no Mouse;
 
 use Yogafire::Output;
-use Text::ASCIITable;
 use Term::ANSIColor qw/colored/;
 
 sub find {

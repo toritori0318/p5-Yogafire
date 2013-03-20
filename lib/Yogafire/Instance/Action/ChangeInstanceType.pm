@@ -90,7 +90,9 @@ sub confirm_create_image {
     my $find_eip = eval { $instance->ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
     my $eip      = ($find_eip) ? $instance->ipAddress : '';
 
-    my $confirm_str =<<"EOF";
+    unless($force) {
+        print "\n";
+        my $confirm_str =<<"EOF";
 ================================================================
 Change Instance Type
 
@@ -100,8 +102,6 @@ Change Instance Type
       Instance Type : $old_instance_type -> $instance_type
 ================================================================
 EOF
-    unless($force) {
-        print "\n";
 
         my $prompt = "Change Instance Type OK?";
         $prompt .= " ([important] Instance will stop once, and resume after.) " if $instance->instanceState ne 'stopped';

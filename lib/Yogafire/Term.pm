@@ -5,7 +5,6 @@ use warnings;
 use parent "Term::ReadLine";
 use Term::UI;
 
-# コンストラクタ
 sub new {
     my $class = shift;
     my $self = $class->SUPER::new(@_);

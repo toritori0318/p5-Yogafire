@@ -25,8 +25,6 @@ sub proc {
     # show info
     Yogafire::Instance::Action::Info->new()->proc($instance);
 
-    $DB::single = 1;
-
     my $input = $self->confirm_create_image($instance, $opt);
     return unless $input;
 

@@ -20,7 +20,6 @@ my @meta_regions = (
 );
 
 use Yogafire::Output;
-use Text::ASCIITable;
 use Term::ANSIColor qw/colored/;
 
 sub BUILD {
