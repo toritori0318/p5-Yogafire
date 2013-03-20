@@ -69,8 +69,11 @@ sub action_process {
             my @target_instances = $y_ins->search_from_cache({ name => qr/$input/ });
             if(scalar @target_instances == 0) {
                 print "Invalid Value. \n";
+            } elsif(scalar @target_instances == 1) {
+                # run action
+                $ia->run($target_instances[0], $opt);
             } else {
-                $y_ins->instances(\@target_instances);
+                $y_ins->cache(\@target_instances);
             }
             next;
         }

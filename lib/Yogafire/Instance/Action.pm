@@ -67,14 +67,14 @@ sub state {
 }
 
 sub run {
-    my ($self, $target_instance, $opt) = @_;
+    my ($self, $target_instances, $opt) = @_;
 
     if($self->action_class) {
         # run action
-        $self->action_class->run([$target_instance], $opt);
+        $self->action_class->run($target_instances, $opt);
     } else {
         # show action list
-        $self->action_list($target_instance, $opt);
+        $self->action_list($target_instances, $opt);
     }
 };
 

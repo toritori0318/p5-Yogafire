@@ -50,7 +50,7 @@ sub run {
 
     if($self->action_class) {
         # run action
-        $self->action_class->run([$target_image], $opt);
+        $self->action_class->run($target_image, $opt);
     } else {
         # show action list
         $self->action_list($target_image, $opt);
