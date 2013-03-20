@@ -17,7 +17,7 @@ WriteMakefile(
         'YAML::Tiny'                 => '0',
         'DateTime'                   => '0',
         'DateTime::Format::Strptime' => '0',
-        'Text::ASCIITable'           => '0',
+        'Text::UnicodeTable::Simple' => '0',
         'Test::MockObject'           => '0',
         'Test::Mock::Guard'          => '0',
     },
