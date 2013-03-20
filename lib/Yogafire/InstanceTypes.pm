@@ -28,7 +28,6 @@ my @instance_types = (
 );
 
 use Yogafire::Output;
-use Text::ASCIITable;
 use Term::ANSIColor qw/colored/;
 
 sub BUILD {
@@ -41,40 +40,38 @@ sub output {
     my $output = Yogafire::Output->new({ format => $self->out_format });
     $output->header($self->out_columns);
     my @rows = @{$self->instance_types};
-    @rows = map { [$_->{id}, $_->{name}, $_->{cpu}, $_->{memory}, $_->{io}, $_->{price}, ] } @rows;
+    @rows = map {
+        [
+            colored($_->{id}, $self->_get_group_color($_->{id})),
+            $_->{name},
+            $_->{cpu},
+            $_->{memory},
+            $_->{io},
+            $_->{price},
+        ]
+    } @rows;
     $output->output(\@rows);
 }
 
-sub display_table {
-    my @header = qw/id instance_name cpu memory io price/;
-    my $t = Text::ASCIITable->new();
-    $t->setCols(@header);
-
-    my $no = 0;
-    for my $row (@instance_types) {
-        $t->addRow([$row->{id}, $row->{name}, $row->{cpu}, $row->{memory}, $row->{io}, $row->{price}]);
+sub _get_group_color {
+    my ($self, $id) = @_;
+    if($id =~ /^t1/) {
+        return 'bold';
+    } elsif($id =~ /^m1/) {
+        return 'green';
+    } elsif($id =~ /^m3/) {
+        return 'yellow';
+    } elsif($id =~ /^m2/) {
+        return 'blue';
+    } elsif($id =~ /^c1/) {
+        return 'cyan';
+    } elsif($id =~ /^cc/) {
+        return 'magenta';
+    } elsif($id =~ /^cg/) {
+        return 'red';
+    } elsif($id =~ /^hi/) {
+        return 'red bold';
     }
-    print $t;
 }
-
-sub find {
-    my ($cond) = @_;
-    $cond ||= {};
-
-    my @search;
-    for my $key (qw/id name/) {
-        next unless $cond->{$key};
-
-        for (@{build_instance_types()}) {
-            my $list_val = $_->{$key};
-            my $cond_val = quotemeta($cond->{$key});
-            if($list_val =~ /$cond_val/) {
-                push @search, $_;
-            }
-        }
-    }
-    return shift @search;
-}
-
 
 1;
