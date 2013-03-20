@@ -10,7 +10,7 @@ has 'state' => (
     is => 'rw',
     isa => 'ArrayRef',
     default => sub {
-        [qw/running pending shutting-down terminated stopping stopped/],
+        [qw/running stopped/],
     },
 );
 no Mouse;
@@ -34,7 +34,7 @@ sub proc {
     };
     my $image = $instance->aws->describe_images(-image_id => $instance->imageId);
     # copy launch
-    Yogafire::Image::Action::RunInstance->new()->proc($image, $option);
+    Yogafire::Image::Action::RunInstance->new()->run($image, $option);
 };
 
 1;
