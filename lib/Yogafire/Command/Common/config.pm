@@ -40,32 +40,31 @@ sub validate_args {
 }
 
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
-    my $ec2  = $self->ec2;
-    my $config = $self->config;
 
-    printf "======== config file : [%s] =========\n", $config->file;
+    printf "======== config file : [%s] =========\n", config->file;
     if($opt->{init}) {
-        if(-e $config->file) {
+        if(-e config->file) {
             my $term = Yogafire::Term->new();
             my $yn = $term->ask_yn(
-                prompt   => $config->file ." is exists. continue? > ",
+                prompt   => config->file ." is exists. continue? > ",
                 default  => 'n',
             );
             return unless $yn;
         }
         # init value
-        $config->init($opt);
-        printf " output config file : [%s]\n", $config->file;
+        config->init($opt);
+        printf " output config file : [%s]\n", config->file;
 
     } elsif($opt->{edit}) {
         my $editor = $ENV{EDITOR} || 'vi';
-        system($editor, $config->file);
+        system($editor, config->file);
 
     } elsif($opt->{show}) {
-        $self->_cat_file($config->file);
+        $self->_cat_file(config->file);
 
     }
 

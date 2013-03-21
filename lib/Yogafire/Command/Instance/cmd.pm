@@ -69,6 +69,7 @@ no Mouse;
 use Net::OpenSSH;
 use Yogafire::Instance;
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub abstract {'Execute remote command'}
 
@@ -88,10 +89,8 @@ sub validate_args {
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
-    my $ec2    = $self->ec2;
-    my $config = $self->config;
 
-    my $y_ins = Yogafire::Instance->new({ ec2 => $ec2 });
+    my $y_ins = Yogafire::Instance->new();
 
     my $host   = shift @$args;
     my $cmd    = shift @$args;
@@ -117,8 +116,6 @@ sub execute {
     for (@instances) {
         my $yoga_ssh = Yogafire::CommandClass::SSH->new(
             {
-                ec2    => $ec2,
-                config => $config,
                 opt    => $opt,
             }
         );
@@ -145,7 +142,7 @@ sub execute {
             );
         }
 
-        printf "# Connected to %s@%s(%s)\n%s", $self->config->get('ssh_user'), $host, $name, $results || '';
+        printf "# Connected to %s@%s(%s)\n%s", config->get('ssh_user'), $host, $name, $results || '';
     }
 }
 

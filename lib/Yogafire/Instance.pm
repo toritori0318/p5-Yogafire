@@ -2,7 +2,6 @@ package Yogafire::Instance;
 use strict;
 use warnings;
 use Mouse;
-has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
 has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/] }, );
 has 'out_format'  => (is => 'rw');
 has 'cache'       => (is => 'rw');
@@ -10,6 +9,7 @@ no Mouse;
 
 use Yogafire::Output;
 use Term::ANSIColor qw/colored/;
+use Yogafire::Declare qw/ec2 config/;
 
 sub find {
     my ($self, $opts) = @_;
@@ -36,7 +36,7 @@ sub search {
     $filter{'tag:Name'}            = $tagsname if $tagsname;
     %filter = (%filter, %$_) for (@filters);
 
-    my @instances = $self->ec2->describe_instances(
+    my @instances = ec2->describe_instances(
       -filter => \%filter,
     );
 

@@ -15,8 +15,6 @@ use Yogafire::Instance::Action::CopyAndLaunch;
 use Yogafire::Instance::Action::ExtendVolume;
 
 use Mouse;
-has 'ec2'          => (is => 'rw', isa => 'VM::EC2');
-has 'config'       => (is => 'rw', isa => 'Yogafire::Config');
 has 'action_name'  => (is => 'rw');
 has 'action_class' => (is => 'rw');
 has 'actions'      => (
@@ -56,8 +54,6 @@ sub BUILD {
 sub init_action {
     my ($self, $name) = @_;
     my $action_class = (grep { $_->name eq $name } @{$self->actions})[0];
-    $action_class->ec2($self->ec2);
-    $action_class->config($self->config);
     $action_class;
 };
 

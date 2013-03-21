@@ -34,7 +34,7 @@ sub execute {
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'running';
 
-    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+    my $y_ins = Yogafire::Instance->new();
 
     # tags name filter
     my $tagsname = $args->[0];

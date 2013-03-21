@@ -1,7 +1,5 @@
 package Yogafire::CommandClass::SSH;
 use Mouse;
-has ec2           => ( is  => "rw" );
-has config        => ( is  => "rw" );
 has opt           => ( is  => "rw" );
 
 has port          => ( is  => "rw" );
@@ -13,20 +11,21 @@ no Mouse;
 
 use Net::OpenSSH;
 use Yogafire::Instance;
+use Yogafire::Declare qw/ec2 config/;
 
 sub BUILD {
     my $self = shift;
 
-    $self->port($self->opt->{port} || $self->config->get('ssh_port') || '22');
-    $self->user($self->opt->{user} || $self->config->get('ssh_user') || '');
-    $self->identity_file($self->opt->{identity_file} || $self->config->get('identity_file') || '');
+    $self->port($self->opt->{port} || config->get('ssh_port') || '22');
+    $self->user($self->opt->{user} || config->get('ssh_user') || '');
+    $self->identity_file($self->opt->{identity_file} || config->get('identity_file') || '');
 
     if($self->opt->{sync_option}) {
         $self->sync_option($self->parse_option());
     }
 
     if($self->opt->{proxy}) {
-        my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+        my $y_ins = Yogafire::Instance->new();
         $self->opt->{tagsname} = $self->opt->{proxy};
         my $proxy_instance = $y_ins->find($self->opt);
         die "Not found proxy server.\n" unless $proxy_instance;

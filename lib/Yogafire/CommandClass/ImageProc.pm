@@ -1,7 +1,5 @@
 package Yogafire::CommandClass::ImageProc;
 use Mouse;
-has ec2         => ( is  => "rw" );
-has config      => ( is  => "rw" );
 has opt         => ( is  => "rw" );
 has action      => ( is  => "rw" );
 has force       => ( is  => "rw" );
@@ -13,23 +11,21 @@ use LWP::UserAgent;
 use Yogafire::Image;
 use Yogafire::Image::Action;
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub action_process {
     my ($self) = @_;
     my $action_name = $self->action;
     my $opt         = $self->opt || {};
 
-    $opt->{owner_id} = $self->ec2->account_id;
+    $opt->{owner_id} = ec2->account_id;
 
     my $y_image = Yogafire::Image->new();
-    $y_image->ec2($self->ec2);
-    $y_image->out_columns($self->config->get('image_column')) if $self->config->get('image_column');
+    $y_image->out_columns(config->get('image_column')) if config->get('image_column');
     $y_image->out_format($opt->{format} || 'table');
 
     # action class
     my $ia = Yogafire::Image::Action->new(
-        ec2          => $self->ec2,
-        config       => $self->config,
         action_name  => $action_name,
     );
 
@@ -72,7 +68,7 @@ sub action_process {
         }
 
         # run action
-        $ia->run($target_image, $opt);
+        $ia->run([$target_image], $opt);
 
         # for loop
         last unless $self->loop;

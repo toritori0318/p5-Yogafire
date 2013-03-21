@@ -64,8 +64,6 @@ sub execute {
     my $proc = Yogafire::CommandClass::InstanceProc->new(
         {
             action       => undef,
-            ec2          => $self->ec2,
-            config       => $self->config,
             opt          => $opt,
             interactive  => $opt->{interactive},
             loop         => $opt->{loop},

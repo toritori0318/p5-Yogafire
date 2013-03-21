@@ -33,6 +33,7 @@ has force => (
 no Mouse;
 
 use Yogafire::Instance;
+use Yogafire::Declare qw/ec2 config/;
 
 sub abstract {'Update EC2 Tags'}
 sub command_names {'update-ec2-tags'}
@@ -49,8 +50,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
 
     my $y_ins = Yogafire::Instance->new();
-    $y_ins->ec2($self->ec2);
-    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
+    $y_ins->out_columns(config->get('instance_column')) if config->get('instance_column');
     $y_ins->out_format($opt->{format} || 'table');
 
     # tags name filter
@@ -69,7 +69,7 @@ sub execute {
     my $tags = $self->convert_hash($keyvalue);
 
     unless($force) {
-        my $column_list = $self->config->get('instance_column');
+        my $column_list = config->get('instance_column');
         $y_ins->output();
 
         my $term = Yogafire::Term->new();

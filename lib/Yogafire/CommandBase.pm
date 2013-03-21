@@ -11,23 +11,31 @@ use Yogafire::Term;
 use File::stat;
 use VM::EC2;
 
-my ($vmec2, $config);
+{
+    our $EC2; # You can localize this variable in your application.
+    sub ec2 { $EC2 }
+    sub set_ec2 { $EC2 = $_[1] }
+}
+
+{
+    our $CONFIG; # You can localize this variable in your application.
+    sub config { $CONFIG }
+    sub set_config { $CONFIG = $_[1] }
+}
 
 sub BUILD {
     my ($self) = @_;
-    $config = Yogafire::Config->new;
-    $vmec2 = vmec2() if $config->config;
+    $self->set_config(Yogafire::Config->new);
+    $self->set_ec2(vmec2()) if $self->config;
 }
 
-sub ec2 { $vmec2; }
-sub config { $config; }
-
 sub vmec2 {
+    my ($self) = @_;
     # Config取得
-    my $aws_access_key_id     = $config->get('access_key_id');
-    my $aws_secret_access_key = $config->get('secret_access_key');
-    my $identity_file         = $config->get('identity_file');
-    my $region                = $config->get('region');
+    my $aws_access_key_id     = config->get('access_key_id');
+    my $aws_secret_access_key = config->get('secret_access_key');
+    my $identity_file         = config->get('identity_file');
+    my $region                = config->get('region');
     return unless $aws_access_key_id;
 
     my %params = (
@@ -59,17 +67,18 @@ sub validate_args_common {
         $self->usage_error("$_: illegal option.") if $_ =~ /^-/;
     }
 
+    my $file = config->file;
     #
-    if(ref $self ne 'Yogafire::Command::config' && !-e $self->config->file) {
-        die sprintf("Can't find config file [%s]\nPlease excecute \"yoga config --init\"\n", $self->config->file);
+    if(ref $self ne 'Yogafire::Command::config' && !-e $file) {
+        die sprintf("Can't find config file [%s]\nPlease excecute \"yoga config --init\"\n", $file);
     }
 
     # permission check
-    if(-e $self->config->file) {
-        my $stat_inf = stat($self->config->file);
+    if(-e $file) {
+        my $stat_inf = stat($file);
         my $mode_8 = sprintf("%04o", $stat_inf->mode & 07777);
         if ($mode_8 ne '0600') {
-            die sprintf("bad permissions: [%s][%s]\nPlease change the permissions to 0600\n", $self->config->file, $mode_8);
+            die sprintf("bad permissions: [%s][%s]\nPlease change the permissions to 0600\n", $file, $mode_8);
         }
     }
 };

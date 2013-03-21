@@ -23,8 +23,6 @@ sub proc {
 
     my $yoga_ssh = Yogafire::CommandClass::SSH->new(
         {
-            ec2    => $self->ec2,
-            config => $self->config,
             opt    => $opt,
         }
     );

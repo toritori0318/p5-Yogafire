@@ -37,9 +37,11 @@ has 'proxy' => (
 );
 no Mouse;
 
+use Yogafire::Instance;
+use Yogafire::Declare qw/ec2 config/;
+
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
-use Yogafire::Instance;
 use DateTime;
 
 sub abstract {'Operation for sshconfig'}
@@ -58,7 +60,7 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+    my $y_ins = Yogafire::Instance->new();
 
     my $ip_key = ($opt->{private}) ? 'privateIpAddress' : 'ipAddress';
 
@@ -132,10 +134,9 @@ sub execute {
 sub _sshconfig {
     my ( $self, $instances, $private ) = @_;
 
-    my $config        = $self->config;
-    my $user          = $config->get('ssh_user');
-    my $identity_file = $config->get('identity_file');
-    my $ssh_port      = $config->get('ssh_port');
+    my $user          = config->get('ssh_user');
+    my $identity_file = config->get('identity_file');
+    my $ssh_port      = config->get('ssh_port');
 
     my @replace_hosts;
     for (@$instances) {
@@ -159,10 +160,9 @@ sub _sshconfig {
 sub _sshconfig_proxy {
     my ( $self, $proxy_instance, $instances, $private ) = @_;
 
-    my $config        = $self->config;
-    my $user          = $config->get('ssh_user');
-    my $identity_file = $config->get('identity_file');
-    my $ssh_port      = $config->get('ssh_port');
+    my $user          = config->get('ssh_user');
+    my $identity_file = config->get('identity_file');
+    my $ssh_port      = config->get('ssh_port');
 
     my @replace_hosts;
 

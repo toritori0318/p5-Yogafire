@@ -58,7 +58,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
-    my $y_image = Yogafire::Image->new({ ec2 => $self->ec2 });
+    my $y_image = Yogafire::Image->new();
 
     my $ua = LWP::UserAgent->new;
     $ua->timeout(10);

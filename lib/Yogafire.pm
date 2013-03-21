@@ -8,6 +8,9 @@ use Mouse;
 extends qw(MouseX::App::Cmd);
 no Mouse;
 
+use Yogafire::CommandBase;
+use Yogafire::Declare;
+
 sub plugin_search_path {
     [
         qw/

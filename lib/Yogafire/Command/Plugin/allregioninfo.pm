@@ -46,6 +46,8 @@ has address => (
 
 no Mouse;
 
+use Yogafire::Declare qw/ec2 config/;
+
 sub abstract {'All Region Info'}
 sub command_names {'all-region-info'}
 
@@ -53,8 +55,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
-    my $ec2 = $self->ec2;
-    my $owner_id = $ec2->account_id;
+    my $owner_id = ec2->account_id;
 
     # 指定がなければinstance only
     unless(%$opt) {
@@ -64,16 +65,16 @@ sub execute {
         $opt->{$_} = 1 for (qw/instance image volume snapshot group address/);
     }
 
-    my @regions = $ec2->describe_regions();
+    my @regions = ec2->describe_regions();
     for my $region (@regions) {
 
         printf "%s %s %s\n", '='x16, $region, '='x16;
 
-        $ec2->endpoint("https://" . $region->regionEndpoint ."/");
+        ec2->endpoint("https://" . $region->regionEndpoint ."/");
 
         # instances
         if($opt->{instance}) {
-            my @instances = $ec2->describe_instances();
+            my @instances = ec2->describe_instances();
             if(scalar @instances > 0 ){
                 print  "  instances\n";
                 printf "    %-20s %-20s %s \n", $_->tags->{Name}||'', $_->instance_id, $_->instanceState for @instances;
@@ -82,7 +83,7 @@ sub execute {
 
         # images
         if($opt->{image}) {
-            my @images = $ec2->describe_images(-owner => $owner_id);
+            my @images = ec2->describe_images(-owner => $owner_id);
             if(scalar @images > 0 ){
                 print  "  images\n";
                 printf "    %-20s %-20s %-20s %s \n", $_->tags->{Name}||'', $_->name, $_->imageId, $_->imageState for @images;
@@ -91,7 +92,7 @@ sub execute {
 
         # volumes
         if($opt->{volume}) {
-            my @volumes = $ec2->describe_volumes();
+            my @volumes = ec2->describe_volumes();
             if(scalar @volumes > 0 ){
                 print  "  volumes\n";
                 printf "    %-20s %-20s %-20s %s \n", $_->tags->{Name}||'', $_->volumeId, $_->snapshotId, $_->status for @volumes;
@@ -100,7 +101,7 @@ sub execute {
 
         # snapshots
         if($opt->{snapshot}) {
-            my @snapshots = $ec2->describe_snapshots(-owner => $owner_id);
+            my @snapshots = ec2->describe_snapshots(-owner => $owner_id);
             if(scalar @snapshots > 0 ){
                 print  "  snapshots\n";
                 printf "    %-20s %-20s %-20s %s \n", $_->tags->{Name}||'', $_->snapshotId, $_->volumeId, $_->status for @snapshots;
@@ -109,7 +110,7 @@ sub execute {
 
         # Security Groups
         if($opt->{group}) {
-            my @groups = $ec2->describe_security_groups();
+            my @groups = ec2->describe_security_groups();
             if(scalar @groups > 0 ){
                 print  "  security groups\n";
                 printf "    %-20s %-20s \n", $_->groupName, $_->groupId for @groups;
@@ -118,7 +119,7 @@ sub execute {
 
         # Elastic Address
         if($opt->{address}) {
-            my @addresses = $ec2->describe_addresses();
+            my @addresses = ec2->describe_addresses();
             if(scalar @addresses > 0 ){
                 print  "  addresses\n";
                 printf "    %-20s %-20s %s \n", $_->publicIp, $_->allocationId||'', $_->instanceId for @addresses;

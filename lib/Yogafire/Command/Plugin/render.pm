@@ -50,7 +50,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
-    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+    my $y_ins = Yogafire::Instance->new();
 
     # tags name filter
     my $tagsname = $args->[0];

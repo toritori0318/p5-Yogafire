@@ -68,8 +68,6 @@ sub execute {
     $opt  ||= {};
     Yogafire::CommandClass::Sync->new(
         mode           => 'put',
-        ec2            => $self->ec2,
-        config         => $self->config,
     )->execute($opt, $args, $default_option);
 }
 

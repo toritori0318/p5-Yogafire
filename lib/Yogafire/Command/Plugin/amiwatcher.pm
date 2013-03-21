@@ -20,6 +20,7 @@ no Mouse;
 use Yogafire::Image;
 use Yogafire::Image::Action;
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub abstract {'EC2 image status watcher'}
 
@@ -29,9 +30,9 @@ sub execute {
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'available';
 
-    $opt->{owner_id} = $self->ec2->account_id;
+    $opt->{owner_id} = ec2->account_id;
 
-    my $y_image = Yogafire::Image->new({ ec2 => $self->ec2 });
+    my $y_image = Yogafire::Image->new();
 
     # tags name filter
     my $name = $args->[0];

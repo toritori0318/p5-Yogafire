@@ -1,7 +1,5 @@
 package Yogafire::CommandClass::InstanceProc;
 use Mouse;
-has ec2         => ( is  => "rw" );
-has config      => ( is  => "rw" );
 has opt         => ( is  => "rw" );
 has action      => ( is  => "rw" );
 has force       => ( is  => "rw" );
@@ -13,6 +11,7 @@ use LWP::UserAgent;
 use Yogafire::Instance;
 use Yogafire::Instance::Action;
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub action_process {
     my ($self) = @_;
@@ -21,14 +20,11 @@ sub action_process {
 
     # instance class
     my $y_ins = Yogafire::Instance->new();
-    $y_ins->ec2($self->ec2);
-    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
+    $y_ins->out_columns(config->get('instance_column')) if config->get('instance_column');
     $y_ins->out_format($opt->{format} || 'table');
 
     # action class
     my $ia = Yogafire::Instance::Action->new(
-        ec2          => $self->ec2,
-        config       => $self->config,
         action_name  => $action_name,
     );
     $opt->{state} = $ia->state if $ia->state && !$opt->{state};
@@ -79,7 +75,7 @@ sub action_process {
         }
 
         # run action
-        $ia->run($target_instance, $opt);
+        $ia->run([$target_instance], $opt);
 
         # for loop
         last unless $self->loop;
@@ -100,14 +96,11 @@ sub self_process {
 
     # instance class
     my $y_ins = Yogafire::Instance->new();
-    $y_ins->ec2($self->ec2);
-    $y_ins->out_columns($self->config->get('instance_column')) if $self->config->get('instance_column');
+    $y_ins->out_columns(config->get('instance_column')) if config->get('instance_column');
     $y_ins->out_format($opt->{format} || 'table');
 
     # action class
     my $ia = Yogafire::Instance::Action->new(
-        ec2          => $self->ec2,
-        config       => $self->config,
         action_name  => $action_name,
     );
 
@@ -137,7 +130,7 @@ sub get_self_instance {
     return unless $response->is_success;
 
     my $instance_id = $response->decoded_content;
-    my @instances = $self->ec2->describe_instances($instance_id);
+    my @instances = ec2->describe_instances($instance_id);
     return shift @instances;
 }
 

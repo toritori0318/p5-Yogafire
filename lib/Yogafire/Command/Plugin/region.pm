@@ -16,7 +16,7 @@ sub abstract {'Show AWS Regions'}
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $yoga_regions = Yogafire::Regions->new({ ec2 => $self->ec2 });
+    my $yoga_regions = Yogafire::Regions->new();
     $yoga_regions->output($opt->{zones});
 }
 

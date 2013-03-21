@@ -2,7 +2,6 @@ package Yogafire::InstanceTypes;
 use strict;
 use warnings;
 use Mouse;
-has 'ec2'            => (is => 'rw');
 has 'out_columns'    => (is => 'rw', default => sub { [qw/id instance_name cpu memory io price/] }, );
 has 'out_format'     => (is => 'rw');
 has 'instance_types' => (is => 'rw');

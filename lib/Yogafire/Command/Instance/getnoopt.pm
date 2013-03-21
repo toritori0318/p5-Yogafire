@@ -70,8 +70,6 @@ sub execute {
     my $default_option = 0;
     Yogafire::CommandClass::Sync->new(
         mode           => 'get',
-        ec2            => $self->ec2,
-        config         => $self->config,
         default_option => 0,
     )->execute($opt, $args, $default_option);
 }

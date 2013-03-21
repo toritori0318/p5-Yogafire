@@ -2,7 +2,6 @@ package Yogafire::Regions;
 use strict;
 use warnings;
 use Mouse;
-has 'ec2'         => (is => 'rw');
 has 'out_columns' => (is => 'rw', default => sub { [qw/region_id region_name/] }, );
 has 'out_format'  => (is => 'rw');
 has 'regions'     => (is => 'rw');
@@ -21,10 +20,11 @@ my @meta_regions = (
 
 use Yogafire::Output;
 use Term::ANSIColor qw/colored/;
+use Yogafire::Declare qw/ec2 config/;
 
 sub BUILD {
     my ($self) = @_;
-    my @regions  = $self->ec2->describe_regions();
+    my @regions  = ec2->describe_regions();
     for my $region (@regions) {
         for my $meta_region (@meta_regions) {
             if($region->regionName eq $meta_region->{id}) {

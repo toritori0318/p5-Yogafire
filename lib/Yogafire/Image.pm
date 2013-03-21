@@ -2,7 +2,6 @@ package Yogafire::Image;
 use strict;
 use warnings;
 use Mouse;
-has 'ec2'         => (is => 'rw', isa => 'VM::EC2');
 has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name name imageId colorfulImageState/] }, );
 has 'out_format'  => (is => 'rw');
 has 'cache'      => (is => 'rw');
@@ -10,6 +9,7 @@ no Mouse;
 
 use Yogafire::Output;
 use Term::ANSIColor qw/colored/;
+use Yogafire::Declare qw/ec2 config/;
 
 sub find {
     my ($self, $opts) = @_;
@@ -39,7 +39,7 @@ sub search {
     $filter{'name'}     = $name     if $name;
     %filter = (%filter, %$_) for (@filters);
 
-    my @images = $self->ec2->describe_images(
+    my @images = ec2->describe_images(
         -owner  => $owner_id,
         -filter => \%filter,
     );

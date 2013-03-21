@@ -17,6 +17,7 @@ no Mouse;
 
 use Yogafire::Image::Action::Info;
 use Yogafire::Term;
+use Yogafire::Declare qw/ec2 config/;
 
 sub run {
     my ($self, $image) = @_;
@@ -52,7 +53,7 @@ sub run {
     );
 
     print "Image Deregister... \n";
-    if($self->ec2->deregister_image($image->imageId)) {
+    if(ec2->deregister_image($image->imageId)) {
         print "Image Deregister process. \n";
     } else {
         print "Image Deregister fail. \n";
@@ -63,7 +64,7 @@ sub run {
         sleep 3;
 
         print "Snapshot delete... \n";
-        if($self->ec2->delete_snapshot($snapshot_id)) {
+        if(ec2->delete_snapshot($snapshot_id)) {
             print "Snapshot delete process. \n";
         } else {
             print "Snapshot delete fail. \n";

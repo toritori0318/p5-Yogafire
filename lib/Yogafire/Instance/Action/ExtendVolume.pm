@@ -18,6 +18,7 @@ no Mouse;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 use Yogafire::Util qw/progress_dot/;
+use Yogafire::Declare qw/ec2 config/;
 
 sub proc {
     my ($self, $instance, $opt) = @_;
@@ -160,7 +161,7 @@ sub confirm_create_image {
         }
     }
 
-    my $find_eip = eval { $instance->ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
+    my $find_eip = eval { ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
     my $eip      = ($find_eip) ? $instance->ipAddress : '';
 
     my $confirm_str =<<"EOF";

@@ -37,9 +37,10 @@ has 'hosts-file' => (
 );
 no Mouse;
 
+use Yogafire::Instance;
+
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
-use Yogafire::Instance;
 use DateTime;
 
 sub abstract {'Operation for hosts file'}
@@ -58,7 +59,7 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
 
-    my $y_ins = Yogafire::Instance->new({ ec2 => $self->ec2 });
+    my $y_ins = Yogafire::Instance->new();
 
     my $ip_key = ($opt->{'private-ip'}) ? 'privateIpAddress' : 'ipAddress';
 
