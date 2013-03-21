@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::render;
+package Yogafire::Command::Plugin::render;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 

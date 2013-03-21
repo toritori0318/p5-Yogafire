@@ -1,4 +1,4 @@
-package Yogafire::Command::get;
+package Yogafire::Command::Instance::getnoopt;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -14,7 +14,7 @@ has sync_option => (
     isa           => "Str",
     is            => "rw",
     cmd_aliases   => "o",
-    documentation => "rsync option.",
+    documentation => "rsync option (default-rsync-option: rsync  --archive --update --verbvose --compress)",
 );
 has user => (
     traits          => [qw(Getopt)],
@@ -47,7 +47,8 @@ no Mouse;
 
 use Yogafire::CommandClass::Sync;
 
-sub abstract {'Rsync get file from remote. (rsync -avuc)'}
+sub abstract {'Rsync get file from remote. '}
+sub command_names {'get-noopt'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
@@ -66,11 +67,12 @@ sub validate_args {
 sub execute {
     my ( $self, $opt, $args ) = @_;
     $opt  ||= {};
-    my $default_option = 1;
+    my $default_option = 0;
     Yogafire::CommandClass::Sync->new(
         mode           => 'get',
         ec2            => $self->ec2,
         config         => $self->config,
+        default_option => 0,
     )->execute($opt, $args, $default_option);
 }
 

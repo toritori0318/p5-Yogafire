@@ -1,4 +1,4 @@
-package Yogafire::Command::put;
+package Yogafire::Command::Instance::get;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -45,11 +45,13 @@ has proxy => (
 );
 no Mouse;
 
-sub abstract {'Rsync put local file to remote.(rsync -avuc) '}
+use Yogafire::CommandClass::Sync;
+
+sub abstract {'Rsync get file from remote. (rsync -avuc)'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga put [-?] <tagname or host> <from:local_path> <to:remote_path>';
+    $self->{usage}->{leader_text} = 'yoga get [-?] <tagname or host> <from:remote_path> <to:local_path>';
     $self->{usage};
 }
 
@@ -57,8 +59,8 @@ sub validate_args {
     my ( $self, $opt, $args ) = @_;
     $self->validate_args_common($opt, $args );
 
-    die "tagname(or host) / local_path / remote_path is required.\n\n" . $self->usage
-         if scalar @$args != 3;
+    die "tagname(or host) / remote_path / local_path is required.\n\n" . $self->usage
+        if scalar @$args != 3;
 }
 
 sub execute {
@@ -66,7 +68,7 @@ sub execute {
     $opt  ||= {};
     my $default_option = 1;
     Yogafire::CommandClass::Sync->new(
-        mode           => 'put',
+        mode           => 'get',
         ec2            => $self->ec2,
         config         => $self->config,
     )->execute($opt, $args, $default_option);

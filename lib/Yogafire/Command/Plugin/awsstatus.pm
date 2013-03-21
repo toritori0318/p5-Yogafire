@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::awsstatus;
+package Yogafire::Command::Plugin::awsstatus;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has from => (

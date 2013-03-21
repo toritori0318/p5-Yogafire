@@ -1,4 +1,4 @@
-package Yogafire::Command::changeinstancetype;
+package Yogafire::Command::Instance::createimage;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -23,19 +23,23 @@ has force => (
     is              => "rw",
     documentation   => "force execute.",
 );
-has tagsname => (
+has name => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    cmd_aliases     => "n",
-    documentation   => "specified instance tagsname.",
+    documentation   => "The name of the image.",
 );
-has type => (
+has description => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    cmd_aliases     => "t",
-    documentation   => "specified instance type.(ex: t1.micro / m1.small / ..)",
+    documentation   => "The description of the image.",
+);
+has noreboot => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    documentation   => "The instance will not be rebooted during the bundle process.",
 );
 has loop => (
     traits          => [qw(Getopt)],
@@ -48,21 +52,13 @@ no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;
 
-sub abstract {'EC2 Change Instance Type'}
-sub command_names {'change-instance-type'}
+sub abstract {'EC2 Create Image'}
+sub command_names {'create-image'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga change-instance-type [-?] <tagsname>';
+    $self->{usage}->{leader_text} = 'yoga createimage [-?] <tagsname>';
     $self->{usage};
-}
-
-sub validate_args {
-    my ( $self, $opt, $args ) = @_;
-    $self->validate_args_common($opt, $args );
-
-    die "--type is required.\n\n" . $self->usage
-        if $opt->{force} && !$opt->{type};
 }
 
 sub execute {
@@ -70,7 +66,7 @@ sub execute {
 
     my $proc = Yogafire::CommandClass::InstanceProc->new(
         {
-            action       => 'changeinstancetype',
+            action       => 'createimage',
             ec2          => $self->ec2,
             config       => $self->config,
             opt          => $opt,

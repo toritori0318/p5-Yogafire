@@ -1,4 +1,4 @@
-package Yogafire::Command::cmd;
+package Yogafire::Command::Instance::cmd;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has filter => (

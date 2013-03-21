@@ -1,8 +1,15 @@
-package Yogafire::Command::ssh;
+package Yogafire::Command::Instance::ls;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
 
+has interactive => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    cmd_aliases     => "i",
+    documentation   => "interactive mode.",
+);
 has state => (
     traits          => [qw(Getopt)],
     isa             => "Str",
@@ -24,42 +31,30 @@ has filter => (
     cmd_aliases     => "f",
     documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
-has user => (
+has format => (
     traits          => [qw(Getopt)],
-    isa             => "Str",
+    isa             => "Bool",
     is              => "rw",
-    cmd_aliases     => "u",
-    documentation   => "specified login user",
+    documentation   => "specified output format(default:table). (table / plain / json)",
 );
-has identity_file => (
+has loop => (
     traits          => [qw(Getopt)],
-    isa             => "Str",
+    isa             => "Bool",
     is              => "rw",
-    cmd_aliases     => "i",
-    documentation   => "specified identity file",
-);
-has port => (
-    traits          => [qw(Getopt)],
-    isa             => "Str",
-    is              => "rw",
-    cmd_aliases     => "p",
-    documentation   => "specified port number",
-);
-has proxy => (
-    traits          => [qw(Getopt)],
-    isa             => "Str",
-    is              => "rw",
-    documentation   => "specified proxy server name(tagsname).",
+    cmd_aliases     => "l",
+    documentation   => "Repeat without exit interactive mode.",
 );
 no Mouse;
 
-use Yogafire::CommandClass::InstanceProc;
+use Yogafire::Instance;
+use Yogafire::Instance::Action;
+use Yogafire::Term;
 
-sub abstract {'EC2 SSH Instance'}
+sub abstract {'EC2 List Instance'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga ssh [-?] <tagsname>';
+    $self->{usage}->{leader_text} = 'yoga ls [-?] <tagsname>';
     $self->{usage};
 }
 
@@ -68,12 +63,11 @@ sub execute {
 
     my $proc = Yogafire::CommandClass::InstanceProc->new(
         {
-            action       => 'ssh',
+            action       => undef,
             ec2          => $self->ec2,
             config       => $self->config,
             opt          => $opt,
-            force        => $opt->{force},
-            interactive  => 1,
+            interactive  => $opt->{interactive},
             loop         => $opt->{loop},
         }
     );

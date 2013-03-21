@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::hosts;
+package Yogafire::Command::Plugin::hosts;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has 'preview' => (

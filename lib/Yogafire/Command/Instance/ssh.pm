@@ -1,4 +1,4 @@
-package Yogafire::Command::reboot;
+package Yogafire::Command::Instance::ssh;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -24,28 +24,42 @@ has filter => (
     cmd_aliases     => "f",
     documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
-has force => (
+has user => (
     traits          => [qw(Getopt)],
-    isa             => "Bool",
+    isa             => "Str",
     is              => "rw",
-    documentation   => "force execute.",
+    cmd_aliases     => "u",
+    documentation   => "specified login user",
 );
-has loop => (
+has identity_file => (
     traits          => [qw(Getopt)],
-    isa             => "Bool",
+    isa             => "Str",
     is              => "rw",
-    cmd_aliases     => "l",
-    documentation   => "Repeat without exit interactive mode.",
+    cmd_aliases     => "i",
+    documentation   => "specified identity file",
+);
+has port => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "p",
+    documentation   => "specified port number",
+);
+has proxy => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    documentation   => "specified proxy server name(tagsname).",
 );
 no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;
 
-sub abstract {'EC2 Reboot Instances'}
+sub abstract {'EC2 SSH Instance'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga reboot [-?] <tagsname>';
+    $self->{usage}->{leader_text} = 'yoga ssh [-?] <tagsname>';
     $self->{usage};
 }
 
@@ -54,7 +68,7 @@ sub execute {
 
     my $proc = Yogafire::CommandClass::InstanceProc->new(
         {
-            action       => 'reboot',
+            action       => 'ssh',
             ec2          => $self->ec2,
             config       => $self->config,
             opt          => $opt,

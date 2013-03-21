@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::instancetype;
+package Yogafire::Command::Plugin::instancetype;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 no Mouse;

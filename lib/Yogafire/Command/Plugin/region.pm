@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::region;
+package Yogafire::Command::Plugin::region;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has 'zones' => (

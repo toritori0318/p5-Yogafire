@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::sshconfig;
+package Yogafire::Command::Plugin::sshconfig;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has preview => (

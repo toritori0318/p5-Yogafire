@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::updateec2tags;
+package Yogafire::Command::Plugin::updateec2tags;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 

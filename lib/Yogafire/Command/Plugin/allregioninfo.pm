@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::allregioninfo;
+package Yogafire::Command::Plugin::allregioninfo;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has all => (

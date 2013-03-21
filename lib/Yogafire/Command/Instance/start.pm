@@ -1,15 +1,8 @@
-package Yogafire::Command::ls;
+package Yogafire::Command::Instance::start;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
 
-has interactive => (
-    traits          => [qw(Getopt)],
-    isa             => "Bool",
-    is              => "rw",
-    cmd_aliases     => "i",
-    documentation   => "interactive mode.",
-);
 has state => (
     traits          => [qw(Getopt)],
     isa             => "Str",
@@ -31,11 +24,11 @@ has filter => (
     cmd_aliases     => "f",
     documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
-has format => (
+has force => (
     traits          => [qw(Getopt)],
     isa             => "Bool",
     is              => "rw",
-    documentation   => "specified output format(default:table). (table / plain / json)",
+    documentation   => "force execute.",
 );
 has loop => (
     traits          => [qw(Getopt)],
@@ -46,15 +39,13 @@ has loop => (
 );
 no Mouse;
 
-use Yogafire::Instance;
-use Yogafire::Instance::Action;
-use Yogafire::Term;
+use Yogafire::CommandClass::InstanceProc;
 
-sub abstract {'EC2 List Instance'}
+sub abstract {'EC2 Start Instances'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga ls [-?] <tagsname>';
+    $self->{usage}->{leader_text} = 'yoga start [-?] <tagsname>';
     $self->{usage};
 }
 
@@ -63,11 +54,12 @@ sub execute {
 
     my $proc = Yogafire::CommandClass::InstanceProc->new(
         {
-            action       => undef,
+            action       => 'start',
             ec2          => $self->ec2,
             config       => $self->config,
             opt          => $opt,
-            interactive  => $opt->{interactive},
+            force        => $opt->{force},
+            interactive  => 1,
             loop         => $opt->{loop},
         }
     );

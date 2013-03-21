@@ -1,4 +1,4 @@
-package Yogafire::Command::putnoopt;
+package Yogafire::Command::Instance::put;
 use Mouse;
 
 extends qw(Yogafire::CommandBase);
@@ -45,8 +45,7 @@ has proxy => (
 );
 no Mouse;
 
-sub abstract {'Rsync put local file to remote. '}
-sub command_names {'put-noopt'}
+sub abstract {'Rsync put local file to remote.(rsync -avuc) '}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
@@ -64,8 +63,8 @@ sub validate_args {
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
-    my $default_option = 0;
     $opt  ||= {};
+    my $default_option = 1;
     Yogafire::CommandClass::Sync->new(
         mode           => 'put',
         ec2            => $self->ec2,

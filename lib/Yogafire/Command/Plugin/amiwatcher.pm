@@ -1,4 +1,4 @@
-package Yogafire::Plugin::Command::amiwatcher;
+package Yogafire::Command::Plugin::amiwatcher;
 use Mouse;
 extends qw(Yogafire::CommandBase);
 has 'timeout' => (
