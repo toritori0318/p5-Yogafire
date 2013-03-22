@@ -23,7 +23,7 @@ my @instance_types = (
     { id => 'cc1.4xlarge', name => 'Cluster Compute Quadruple Extra Large Instance', cpu => '2 x Intel Xeon X5570, quad-core "Nehalem" arch',          memory => '23GB',   io => 'Very High', price => '-', } ,
     { id => 'cc2.8xlarge', name => 'Cluster Compute Quadruple Extra Large Instance', cpu => '2 x Intel Xeon E5-2670, eight-core "Sandy Bridge" arch',  memory => '60.5GB', io => 'Very High', price => '-', } ,
     { id => 'cg1.4xlarge', name => 'Cluster GPU Quadruple Extra Large Instance'    , cpu => '2 x Intel Xeon X5570, quad-core "Nehalem" arch',          memory => '22GB',   io => 'Very High', price => '-', } ,
-    { id => 'hi1.4xlarge', name => 'High I/O Quadruple Extra Large Instance'       , cpu => '4.4ECU x 8', memory => '60.5GB', io => 'Extremely high', price => '3.100', } ,
+    { id => 'hi1.4xlarge', name => 'High I/O Quadruple Extra Large Instance'       , cpu => '4.4ECU x 8', memory => '60.5GB', io => 'Extremely high', price => '-', } ,
 );
 
 use Yogafire::Output;
