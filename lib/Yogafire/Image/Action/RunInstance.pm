@@ -19,7 +19,7 @@ use Yogafire::Term;
 use Yogafire::InstanceTypes;
 use Yogafire::Declare qw/ec2 config/;
 
-sub run {
+sub proc {
     my ($self, $image, $opt) = @_;
 
     my ($input, $tags) = $self->confirm_launch_instance($image, $opt);
@@ -29,6 +29,8 @@ sub run {
     my @instances = $image->run_instances( %$input );
     if($tags && scalar (keys %$tags) > 0 ) {
         for my $instance (@instances) {
+            # waiting status
+            while ($instance->current_state ne 'running') { sleep 3; }
             for my $key (keys %$tags) {
                 $instance->add_tags($key => $tags->{$key});
             }

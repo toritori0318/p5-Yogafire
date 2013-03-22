@@ -34,13 +34,13 @@ sub action_process {
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
     } elsif(scalar @instances == 1) {
-        $ia->run(\@instances, $opt) if $ia->action_class;
+        $ia->procs(\@instances, $opt) if $ia->action_class;
         return;
     }
 
     # force
     if($self->force && $ia->action_class) {
-        return $ia->run(\@instances, $opt);
+        return $ia->procs(\@instances, $opt);
     }
 
     my $term = Yogafire::Term->new();
@@ -67,7 +67,7 @@ sub action_process {
                 print "Invalid Value. \n";
             } elsif(scalar @target_instances == 1) {
                 # run action
-                $ia->run($target_instances[0], $opt);
+                $ia->procs($target_instances[0], $opt);
             } else {
                 $y_ins->cache(\@target_instances);
             }
@@ -75,7 +75,7 @@ sub action_process {
         }
 
         # run action
-        $ia->run([$target_instance], $opt);
+        $ia->procs($target_instance, $opt);
 
         # for loop
         last unless $self->loop;
@@ -110,7 +110,7 @@ sub self_process {
     }
 
     if($self->force) {
-        $ia->run([$instance], $opt);
+        $ia->procs($instance, $opt);
     }
 
     my $term = Yogafire::Term->new();

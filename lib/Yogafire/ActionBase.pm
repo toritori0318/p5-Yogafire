@@ -5,9 +5,13 @@ use warnings;
 use Mouse;
 no Mouse;
 
-sub run {
+sub procs {
     my ($self, $instances, $opt) = @_;
-    $self->proc($_, $opt) for @$instances;
+    if(ref $instances eq "ARRAY") {
+        $self->proc($_, $opt) for @$instances;
+    } else {
+        $self->proc($instances, $opt);
+    }
 }
 
 sub proc {

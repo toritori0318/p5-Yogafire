@@ -19,11 +19,11 @@ use Yogafire::Image::Action::Info;
 use Yogafire::Term;
 use Yogafire::Declare qw/ec2 config/;
 
-sub run {
+sub proc {
     my ($self, $image) = @_;
 
     # show info
-    Yogafire::Image::Action::Info->new()->run($image);
+    Yogafire::Image::Action::Info->new()->procs($image);
 
     my $term = Yogafire::Term->new();
     my $delete_snapshot;

@@ -41,12 +41,12 @@ sub init_action {
     $action_class;
 };
 
-sub run {
+sub procs {
     my ($self, $target_image, $opt) = @_;
 
     if($self->action_class) {
         # run action
-        $self->action_class->run($target_image, $opt);
+        $self->action_class->procs($target_image, $opt);
     } else {
         # show action list
         $self->action_list($target_image, $opt);
@@ -65,7 +65,7 @@ sub action_list {
         prompt   => '  Input No > ',
         choices  => [map {$_->{name}} @commands],
     );
-    $self->init_action($command)->run($image, $opt);
+    $self->init_action($command)->procs($image, $opt);
 }
 
 1;

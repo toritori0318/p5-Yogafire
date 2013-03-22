@@ -36,7 +36,7 @@ sub action_process {
 
     # force
     if($self->force && $ia->action_class) {
-        return $ia->run(\@images, $opt);
+        return $ia->procs(\@images, $opt);
     }
 
     my $term = Yogafire::Term->new();
@@ -68,7 +68,7 @@ sub action_process {
         }
 
         # run action
-        $ia->run([$target_image], $opt);
+        $ia->procs($target_image, $opt);
 
         # for loop
         last unless $self->loop;

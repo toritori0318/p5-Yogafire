@@ -62,12 +62,12 @@ sub state {
     return ($self->action_class) ? $self->action_class->state : undef ;
 }
 
-sub run {
+sub procs {
     my ($self, $target_instances, $opt) = @_;
 
     if($self->action_class) {
         # run action
-        $self->action_class->run($target_instances, $opt);
+        $self->action_class->procs($target_instances, $opt);
     } else {
         # show action list
         $self->action_list($target_instances, $opt);

@@ -34,7 +34,7 @@ sub proc {
     };
     my $image = $instance->aws->describe_images(-image_id => $instance->imageId);
     # copy launch
-    Yogafire::Image::Action::RunInstance->new()->run($image, $option);
+    Yogafire::Image::Action::RunInstance->new()->procs($image, $option);
 };
 
 1;
