@@ -1,6 +1,12 @@
 use strict;
 use warnings;
 use Test::More;
+
+use t::Util;
+BEGIN {
+    t::Util::set_env();
+}
+
 use App::Cmd::Tester;
 use Test::Mock::Guard qw(mock_guard);
 
@@ -9,8 +15,7 @@ use Test::Mock::Set::Image;
 
 use Yogafire;
 
-use t::Util;
-t::Util::set_env();
+
 test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 my $guard = mock_guard(

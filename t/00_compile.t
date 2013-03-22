@@ -2,6 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 
+use Yogafire;
+
 BEGIN {
     use_ok ("Yogafire::ActionBase");
     use_ok ("Yogafire::Command::Common::config");
@@ -57,7 +59,6 @@ BEGIN {
     use_ok ("Yogafire::Instance::Action");
     use_ok ("Yogafire::Instance");
     use_ok ("Yogafire::InstanceTypes");
-    use_ok ("Yogafire::Output::Info");
     use_ok ("Yogafire::Output::Table");
     use_ok ("Yogafire::Output");
     use_ok ("Yogafire::Regions");

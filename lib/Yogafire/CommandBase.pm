@@ -12,21 +12,22 @@ use File::stat;
 use VM::EC2;
 
 {
-    our $EC2; # You can localize this variable in your application.
+    our $EC2;
     sub ec2 { $EC2 }
     sub set_ec2 { $EC2 = $_[1] }
 }
 
 {
-    our $CONFIG; # You can localize this variable in your application.
+    our $CONFIG;
     sub config { $CONFIG }
     sub set_config { $CONFIG = $_[1] }
 }
 
 sub BUILD {
     my ($self) = @_;
-    $self->set_config(Yogafire::Config->new);
-    $self->set_ec2(vmec2()) if $self->config;
+    my $config = Yogafire::Config->new;
+    $self->set_config($config);
+    $self->set_ec2(vmec2()) if $config && $config->config;
 }
 
 sub vmec2 {
@@ -69,7 +70,7 @@ sub validate_args_common {
 
     my $file = config->file;
     #
-    if(ref $self ne 'Yogafire::Command::config' && !-e $file) {
+    if(ref $self ne 'Yogafire::Command::Common::config' && !-e $file) {
         die sprintf("Can't find config file [%s]\nPlease excecute \"yoga config --init\"\n", $file);
     }
 
