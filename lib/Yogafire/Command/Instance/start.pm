@@ -59,6 +59,7 @@ sub execute {
             force        => $opt->{force},
             interactive  => 1,
             loop         => $opt->{loop},
+            yogafire     => 1,
         }
     );
     if($opt->{self}) {
