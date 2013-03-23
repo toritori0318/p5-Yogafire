@@ -1,0 +1,117 @@
+[% SET NAME       = 'hogehoge_service' %]
+[% SET NAME_ALIAS = 'hoge' %]
+[% SET MAIL       = 'alert@hogehogehogehoge.com' %]
+
+################################################################################
+# TEMPLATE CONTACT
+################################################################################
+define contact{
+  contact_name            [% NAME_ALIAS %]-contact       ; Short name of user
+  use                     generic-contact     ; Inherit default values from generic-contact template (defined above)
+  alias                   [% NAME %] contact ; Full name of user
+  email                   [% MAIL %]    ;
+}
+define contactgroup{
+  contactgroup_name       [% NAME_ALIAS %]-contacts
+  alias                   [% NAME %] contact group
+  members                 [% MAIL %]-contact
+}
+###############################################################################
+# TEMPLATE SERVICE
+###############################################################################
+define service{
+  name               [% NAME_ALIAS %]-service
+  use                generic-service
+  contact_groups     [% NAME_ALIAS %]-contacts
+}
+###############################################################################
+# TEMPLATE COMMAND
+###############################################################################
+# 'check_nrpe' command definition
+define command {
+  command_name    check_[% NAME_ALIAS %]_nrpe
+  command_line    $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$ -a $ARG2$
+}
+# 'check_disk' command definition
+define command{
+  command_name    check_[% NAME_ALIAS %]_disk
+  command_line    $USER1$/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
+}
+
+# 'check_http_www' command definition
+define command{
+  command_name    check_[% NAME_ALIAS %]_http_www
+  command_line    $USER1$/check_http -H $HOSTADDRESS$ -u /check.html
+}
+# 'check_http_api' command definition
+define command{
+  command_name    check_[% NAME_ALIAS %]_http_api
+  command_line    $USER1$/check_http -H $HOSTADDRESS$ -p 5050 -u /static/check.html
+}
+# 'check_mysql' command definition
+define command{
+  command_name    check_[% NAME_ALIAS %]_mysql
+  command_line    $USER1$/check_mysql -H $HOSTADDRESS$ -u $ARG1$ -p $ARG2$
+}
+# 'check_memcached' command definition
+define command {
+ command_name    check_[% NAME_ALIAS %]_memcached
+ command_line       $USER1$/check_tcp \
+   -H $HOSTADDRESS$ \
+   -p 11211 \
+   -t 5
+}
+# 'check_groonga' command definition
+define command {
+  command_name    check_[% NAME_ALIAS %]_http_groonga
+  command_line    $USER1$/check_http -H $HOSTADDRESS$ -p 10041 -u /d/status
+}
+
+
+###############################################################################
+# HOSTGROUP
+###############################################################################
+define hostgroup{
+  hostgroup_name  [% NAME %]
+  alias           [% NAME_ALIAS %]
+  members         [% NAME_ALIAS %]-contact
+}
+
+
+[% FOREACH i IN instances %]
+###############################################################################
+# HOST [% i.tags.Name %]
+###############################################################################
+define host{
+  use                     linux-server
+  host_name               [% i.tags.Name %]
+  alias                   [% i.tags.Name %]
+  address                 [% i.tags.dnsName %]
+}
+###############################################################################
+# SERVICE [% i.tags.Name %]
+###############################################################################
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     PING
+  check_command           check_ping!300.0,20%!800.0,60%
+}
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     LOAD
+  check_command           check_[% NAME_ALIAS %]_nrpe!check_load!2,2,2 4,4,4
+}
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     DISK
+  check_command           check_[% NAME_ALIAS %]_nrpe!check_disk!20%!10%!/
+}
+
+[% IF i.tags.Role  %]
+[% INCLUDE "./example/render/nagios/inc/" _ i.tags.Role _ ".tt" WITH NAME_ALIAS=NAME_ALIAS, i=i %]
+[% END %]
+
+[% END %]

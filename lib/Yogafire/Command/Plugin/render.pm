@@ -32,9 +32,19 @@ has template => (
     documentation   => "template text. (ex. --template='\"[% dnsName %]\",' )",
 );
 
+has 'template-file' => (
+    traits          => [qw(Getopt)],
+    isa             => "Str",
+    is              => "rw",
+    cmd_aliases     => "f",
+    documentation   => "specified template file.",
+);
+
 no Mouse;
 
 use Yogafire::Instance;
+use Text::Xslate;
+use JSON;
 
 sub abstract {'Render Tool'}
 
@@ -42,8 +52,8 @@ sub validate_args {
     my ( $self, $opt, $args ) = @_;
     $self->validate_args_common($opt, $args );
 
-    $self->usage_error('<template> option is required.')
-         unless $opt->{template};
+    $self->usage_error('<template> or <template-file> option is required.')
+         unless $opt->{template} || $opt->{'template-file'};
 }
 
 sub execute {
@@ -61,10 +71,26 @@ sub execute {
         die "Not Found Instance. \n";
     }
 
-    my $template = $opt->{template};
-    for my $instance (@instances) {
-        $self->render($instance, $template);
+    # build render string
+    my $string;
+    my $template_file = $opt->{'template-file'};
+    if($opt->{template}) {
+        $string = sprintf('[%% FOREACH i IN instances %%]%s[%% END %%]', $opt->{template});
+    } elsif($template_file) {
+        $string = $self->slurp($template_file);
     }
+
+    # xslate
+    my $tx = Text::Xslate->new(
+        syntax => 'TTerse',
+        module => [
+            'Text::Xslate::Bridge::TT2Like'
+        ],
+        'function' => {
+            decode_json => sub { return ($_[0]) ? JSON::decode_json($_[0]) : undef; },
+        },
+    );
+    print $tx->render_string($string, { instances => \@instances });
 }
 
 sub search_tags {
@@ -132,6 +158,14 @@ sub render {
     $str =~ s/\\n/\n/;
 
     print $str;
+}
+
+sub slurp {
+    my ($self, $file) = @_;
+    open my $fh, "<", $file or die "Can't open file [$file].\n";
+    my $data = do{ local $/; <$fh>};
+    close $fh;
+    return $data;
 }
 
 1;

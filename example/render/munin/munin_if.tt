@@ -1,0 +1,12 @@
+[%# instance loop  %]
+[% FOREACH i IN instances %]
+  [%# GROUPの設定。設定されていなければ「default」にする %]
+  [% SET GROUP = i.tags.Role %]
+  [% UNLESS GROUP %]
+    [% GROUP = 'default' %]
+  [% END %]
+  [%# インスタンス毎に出力 %]
+  [% GROUP %];[% i.tags.Name %]
+      address [% i.ipAddress %]
+      use_node_name yes
+[% END %]
