@@ -44,6 +44,12 @@ has loop => (
     cmd_aliases     => "l",
     documentation   => "Repeat without exit interactive mode.",
 );
+has self => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    documentation   => "To target myself.",
+);
 no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;
