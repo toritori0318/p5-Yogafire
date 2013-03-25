@@ -24,9 +24,10 @@ sub BUILD {
         $self->sync_option($self->parse_option());
     }
 
-    if($self->opt->{proxy}) {
+    my $proxy = $self->opt->{proxy} || config->get('proxy');
+    if($proxy) {
         my $y_ins = Yogafire::Instance->new();
-        $self->opt->{tagsname} = $self->opt->{proxy};
+        $self->opt->{host} = $self->opt->{proxy};
         my $proxy_instance = $y_ins->find($self->opt);
         die "Not found proxy server.\n" unless $proxy_instance;
 

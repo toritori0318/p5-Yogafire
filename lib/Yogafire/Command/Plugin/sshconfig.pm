@@ -33,7 +33,7 @@ has 'proxy' => (
     traits        => [qw(Getopt)],
     isa           => "Str",
     is            => "rw",
-    documentation => "specified proxy server name(tagsname).",
+    documentation => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
 no Mouse;
 
@@ -91,10 +91,10 @@ sub execute {
     }
 
     my $hosts;
-    if($opt->{proxy}) {
-        my $opt_proxy = { tagsname => $opt->{proxy} };
-        my @proxy_instances = $y_ins->search($opt_proxy);
-        my $proxy_instance  = shift @proxy_instances;
+    my $proxy = $opt->{proxy} || config->{proxy};
+    if($proxy) {
+        my $opt_proxy = { host => $opt->{proxy} };
+        my $proxy_instance = $y_ins->find($opt_proxy);
         die "Not found proxy server.\n" unless $proxy_instance;
 
         $hosts = $self->_sshconfig_proxy($proxy_instance, \@instances, $opt->{private});
@@ -199,15 +199,15 @@ sub _sshconfig_proxy {
 }
 
 sub _build_ssh_config {
-    my ( $self, $opt ) = @_;
+    my ( $self, $params ) = @_;
 
-    my $str = sprintf ("Host %s\n" ,             $opt->{name});
-    $str   .= sprintf ("    HostName     %s\n" , $opt->{host});
-    $str   .= sprintf ("    IdentityFile %s\n" , $opt->{identity_file});
-    $str   .= sprintf ("    User         %s\n" , $opt->{user});
-    $str   .= sprintf ("    Port         %s\n" , $opt->{ssh_port});
+    my $str = sprintf ("Host %s\n" ,             $params->{name});
+    $str   .= sprintf ("    HostName     %s\n" , $params->{host});
+    $str   .= sprintf ("    IdentityFile %s\n" , $params->{identity_file});
+    $str   .= sprintf ("    User         %s\n" , $params->{user});
+    $str   .= sprintf ("    Port         %s\n" , $params->{ssh_port});
 
-    $str   .= sprintf ("    ProxyCommand ssh %s -W %h:%p\n" , $opt->{proxy}) if $opt->{proxy};
+    $str   .= sprintf ("    ProxyCommand ssh %s -W %h:%p\n" , $params->{proxy}) if $params->{proxy};
 
     return $str;
 }

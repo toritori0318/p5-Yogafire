@@ -49,7 +49,7 @@ has proxy => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    documentation   => "specified proxy server name(tagsname).",
+    documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
 no Mouse;
 
@@ -78,8 +78,8 @@ sub execute {
     if($opt->{self}) {
         $proc->self_process();
     } else {
-        my $tagsname = $args->[0];
-        $opt->{tagsname} = $tagsname if $tagsname;
+        my $host = $args->[0];
+        $opt->{host} = $host if $host;
         $proc->action_process();
     }
 }

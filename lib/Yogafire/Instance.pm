@@ -22,7 +22,7 @@ sub search {
     $opts ||= {};
 
     my $state        = $opts->{state};
-    my $tagsname     = $opts->{tagsname};
+    my $host         = $opts->{host} || $opts->{tagsname};
     my $customfilter = $opts->{filter} || '';
     my @filters = ();
     for (split /,/, $customfilter) {
@@ -32,8 +32,11 @@ sub search {
 
     # filter
     my %filter = ();
-    $filter{'instance-state-name'} = $state    if $state;
-    $filter{'tag:Name'}            = $tagsname if $tagsname;
+    $filter{'instance-state-name'} = $state if $state;
+    if($host) {
+        my %host_filter = $self->get_filter_from_host($host);
+        %filter = (%filter, %host_filter);
+    }
     %filter = (%filter, %$_) for (@filters);
 
     my @instances = ec2->describe_instances(
@@ -141,6 +144,34 @@ sub search_from_cache {
         }
     }
     return @search;
+}
+
+sub get_filter_from_host {
+    my ($self, $host) = @_;
+
+    my %filter = ();
+    if ($host =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
+        # ip address
+        if($1 == 10) {
+            $filter{'private-ip-address'} = $host;
+        } else {
+            $filter{'ip-address'} = $host;
+        }
+    } elsif ($host =~ /^ip-(\d+)-(\d+)-(\d+)-(\d+)/) {
+        # private dns name
+        $filter{'private-dns-name'} = $host;
+    } elsif ($host =~ /^ec2-(\d+)-(\d+)-(\d+)-(\d+)/) {
+        # public dns name
+        $filter{'dns-name'} = $host;
+    } elsif($host =~ m/^i-[0-9a-zA-Z]{8}$/) {
+        # instance id
+        $filter{'instance-id'} = $host;
+    } else {
+        # tag name
+        $filter{'tag:Name'} = $host;
+    }
+
+    return %filter;
 }
 
 1;

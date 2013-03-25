@@ -36,8 +36,7 @@ has self => (
     traits          => [qw(Getopt)],
     isa             => "Bool",
     is              => "rw",
-    cmd_aliases     => "l",
-    documentation   => "Target to self.",
+    documentation   => "To target myself.",
 );
 no Mouse;
 
@@ -66,8 +65,8 @@ sub execute {
     if($opt->{self}) {
         $proc->self_process();
     } else {
-        my $tagsname = $args->[0];
-        $opt->{tagsname} = $tagsname if $tagsname;
+        my $host = $args->[0];
+        $opt->{host} = $host if $host;
         $proc->action_process();
     }
 }

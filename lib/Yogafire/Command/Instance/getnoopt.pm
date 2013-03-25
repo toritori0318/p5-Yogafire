@@ -41,7 +41,7 @@ has proxy => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    documentation   => "specified proxy server name(tagsname).",
+    documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
 no Mouse;
 

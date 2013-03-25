@@ -60,7 +60,7 @@ has proxy => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    documentation   => "specified proxy server name(tagsname).",
+    documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
 
 
@@ -96,11 +96,7 @@ sub execute {
     my $cmd    = shift @$args;
 
     my $condition = {};
-    if ($host =~ /^(\d+).(\d+).(\d+).(\d+)$/) {
-        $condition->{filter} = ($1 == 10) ? "private-ip-address=$host" : "ip-address=$host";
-    } else {
-        $condition->{tagsname} = $host;
-    }
+    $condition->{host}  = $host;
     $condition->{state} = 'running';
 
     my @instances = $y_ins->search($condition);
