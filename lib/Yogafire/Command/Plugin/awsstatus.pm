@@ -31,6 +31,8 @@ has service => (
 );
 no Mouse;
 
+use Yogafire::Regions;
+
 use LWP::UserAgent qw/get/;
 use XML::RSS;
 use DateTime::Format::Strptime;
@@ -58,7 +60,7 @@ sub execute {
     my ( $self, $opt, $args ) = @_;
     my $cmd = shift @$args;
 
-    my $y_image = Yogafire::Image->new();
+    my $y_region = Yogafire::Regions->new();
 
     my $ua = LWP::UserAgent->new;
     $ua->timeout(10);
@@ -70,7 +72,6 @@ sub execute {
         die $response->status_line;
     }
 
-    my $regions = $y_image->search();
     my $rss = XML::RSS->new;
     $rss->parse($response->content);
     for (@{$rss->{items}}) {
@@ -87,7 +88,7 @@ sub execute {
 
         my $service_status = $self->service_status($_->{title});
         my $service_name   = $self->service_name($_->{guid});
-        my $find_region = $self->find_region($regions, $_->{guid});
+        my $find_region    = $y_region->find($_->{guid});
 
         # filter
         next if $from_dt && $rss_dt < $from_dt;
@@ -125,19 +126,6 @@ sub service_status {
         return colored('Error', 'red');
     }
     return 'Unknown';
-}
-
-sub find_region {
-    my ($self, $regions, $text) = @_;
-    for (@$regions) {
-        if($text =~ /$_->{id}/) {
-            return {
-                id => $_->{id},
-                name => $_->{name},
-            };
-        }
-    }
-    return {};
 }
 
 sub service_name {
