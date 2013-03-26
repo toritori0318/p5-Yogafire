@@ -117,16 +117,8 @@ sub self_process {
         die "Not Found Instance. \n";
     }
 
-    if($self->force) {
-        $ia->procs($instance, $opt);
-    }
-
-    my $term = Yogafire::Term->new();
-    my $yn = $term->ask_yn(
-        prompt   => " target self instance, OK? [$action_name] > ",
-        default  => 'n',
-    );
-    return unless $yn;
+    # run action
+    $ia->procs($instance, $opt);
 }
 
 sub get_self_instance {
