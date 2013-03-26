@@ -1,11 +1,13 @@
 package Yogafire::Regions;
 use strict;
 use warnings;
+use Mouse;
+has 'out_columns' => (is => 'rw', default => sub { [qw/region_id region_name/] }, );
+has 'out_format'  => (is => 'rw');
+has 'regions'     => (is => 'rw');
+no Mouse;
 
-use base 'Exporter';
-our @EXPORT_OK = qw/list display_table find/;
-
-my @regions = (
+my @meta_regions = (
     { id => 'us-east-1',      name => 'US East (Northern Virginia)' },
     { id => 'us-west-1',      name => 'US West (Northern California)' },
     { id => 'us-west-2',      name => 'US West (Oregon)' },
@@ -16,31 +18,63 @@ my @regions = (
     { id => 'sa-east-1',      name => 'South America (Sao Paulo)' },
 );
 
-use Text::ASCIITable;
+use Yogafire::Output;
 use Term::ANSIColor qw/colored/;
+use Yogafire::Declare qw/ec2 config/;
 
-sub list { \@regions; }
-
-sub display_table {
-    my ($rows, $zones) = @_;
-    my @header = qw/region_id region_name/;
-    push @header, 'region_zones' if $zones;
-    my $t = Text::ASCIITable->new();
-    $t->setCols(@header);
-
-    my $no = 0;
-    for my $row (@$rows) {
-        my @data = ($row->{id}, $row->{name});
-        push @data, join(',', @{$row->{zones}}) if $zones;
-        $t->addRow(\@data);
+sub BUILD {
+    my ($self) = @_;
+    my @regions  = ec2->describe_regions();
+    for my $region (@regions) {
+        for my $meta_region (@meta_regions) {
+            if($region->regionName eq $meta_region->{id}) {
+                $region->{data}->{full_name} = $meta_region->{name};
+                last;
+            }
+        }
     }
-    print $t;
+    $self->regions(\@regions);
+}
+
+sub output {
+    my ($self, $zones) = @_;
+    my @headers = @{$self->out_columns};
+    push @headers, 'region_zones' if $zones;
+
+    my $output = Yogafire::Output->new({ format => $self->out_format });
+    $output->header(\@headers);
+    my @rows = @{$self->regions};
+    @rows = map {
+        my @data = ($_->regionName, $_->{data}->{full_name});
+        if($zones) {
+            my @zones = map { colored($_, $self->_get_state_color($_->zoneState)) } $_->zones;
+            push @data, join(', ', @zones);
+        }
+        \@data;
+    } @rows;
+    $output->output(\@rows);
+}
+
+sub _get_state_color {
+    my ($self, $status) = @_;
+    if($status eq 'available') {
+        return 'green';
+    } else {
+        return 'red';
+    }
 }
 
 sub find {
-    my ($id) = @_;
-    my @search = grep { $_->{id} =~ /^$id$/ } @regions;
-    return shift @search;
+    my ($self, $text) = @_;
+    for (@{$self->regions}) {
+        if($text =~ /$_->regionName/) {
+            return {
+                id => $_->{id},
+                name => $_->{name},
+            };
+        }
+    }
+    return {};
 }
 
 1;

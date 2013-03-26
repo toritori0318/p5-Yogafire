@@ -19,6 +19,7 @@ use Yogafire::Instance::Action::Info;
 use Yogafire::InstanceTypes;
 use Yogafire::Term;
 use Yogafire::Util qw/progress_dot/;
+use Yogafire::Declare qw/ec2 config/;
 
 sub proc {
     my ($self, $instance, $opt) = @_;
@@ -67,7 +68,8 @@ sub confirm_create_image {
     my $instance_id       = $instance->instanceId;
     my $old_instance_type = $instance->instanceType;
 
-    my $instance_types = Yogafire::InstanceTypes::list();
+    my $y_instance_types = Yogafire::InstanceTypes->new();
+    my $instance_types = $y_instance_types->instance_types;
 
     my $term = Yogafire::Term->new();
     my $m_instance_type;
@@ -86,10 +88,12 @@ sub confirm_create_image {
         }
     }
 
-    my $find_eip          = eval { $instance->ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
-    my $eip               = ($find_eip) ? $instance->ipAddress : '';
+    my $find_eip = eval { ec2->describe_addresses(-public_ip => [$instance->ipAddress]) };
+    my $eip      = ($find_eip) ? $instance->ipAddress : '';
 
-    my $confirm_str =<<"EOF";
+    unless($force) {
+        print "\n";
+        my $confirm_str =<<"EOF";
 ================================================================
 Change Instance Type
 
@@ -99,8 +103,6 @@ Change Instance Type
       Instance Type : $old_instance_type -> $instance_type
 ================================================================
 EOF
-    unless($force) {
-        print "\n";
 
         my $prompt = "Change Instance Type OK?";
         $prompt .= " ([important] Instance will stop once, and resume after.) " if $instance->instanceState ne 'stopped';

@@ -3,13 +3,15 @@ use strict;
 use warnings;
 
 use Mouse;
-has 'ec2'    => (is => 'rw', isa => 'VM::EC2');
-has 'config' => (is => 'rw', isa => 'Yogafire::Config');
 no Mouse;
 
-sub run {
+sub procs {
     my ($self, $instances, $opt) = @_;
-    $self->proc($_, $opt) for @$instances;
+    if(ref $instances eq "ARRAY") {
+        $self->proc($_, $opt) for @$instances;
+    } else {
+        $self->proc($instances, $opt);
+    }
 }
 
 sub proc {

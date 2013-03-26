@@ -1,5 +1,29 @@
 Revision history for Perl extension Yogafire.
 
+0.02 2013/03/27
+  - refactor
+  - Unified process that identifies the target.
+  - Added the 'copy-and-launch' command is missing
+  - Modified to be incremental filter
+  - Added support for 'yogafire'
+  - Added support for 'template-file' option into 'render'
+  - Changed Text::ASCIITable to Text::UnicodeTable::Simple
+  - support for color display into instance-type
+  - zsh completion bugfix.
+  - Changed "update-tag" to "update-ec2-tags" command.
+  - ssh proxy support
+  - Added support for proxy option
+  - Added support for self option
+  - vpc support
+  - Added support for 'get-noopt / put-noopt' command
+  - changed to copy all the tags in addition to "Name" tag
+  - Progress display support
+  - Support for running multiple instances and force option
+  - update instance-type info.
+  - Added support for 'loop' option
+  - Added support for 'change-instance-type' command
+  - removed owner_id from yoga-config
+
 0.01 2012/06/23
     - original version; created by h2xs 1.23 with options
         -AX -n Yogafire

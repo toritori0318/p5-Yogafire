@@ -1,0 +1,7 @@
+[%# instance loop  %]
+[% FOREACH i IN instances %]
+[%# インスタンス毎に出力 %]
+default;[% i.tags.Name %]
+    address [% i.ipAddress %]
+    use_node_name yes
+[% END %]

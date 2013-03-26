@@ -1,0 +1,7 @@
+[%# (ex)  %]
+[%#  "Role" Tag = {"Nagios":"1","Group":"www"}  %]
+[% FOREACH i IN instances %]
+  [% SET ROLE = decode_json(i.tags.Role) %]
+  [% ROLE.Nagios # 1 %]
+  [% ROLE.Group  # www %]
+[% END %]

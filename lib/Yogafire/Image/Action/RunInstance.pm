@@ -17,8 +17,9 @@ no Mouse;
 
 use Yogafire::Term;
 use Yogafire::InstanceTypes;
+use Yogafire::Declare qw/ec2 config/;
 
-sub run {
+sub proc {
     my ($self, $image, $opt) = @_;
 
     my ($input, $tags) = $self->confirm_launch_instance($image, $opt);
@@ -28,6 +29,8 @@ sub run {
     my @instances = $image->run_instances( %$input );
     if($tags && scalar (keys %$tags) > 0 ) {
         for my $instance (@instances) {
+            # waiting status
+            while ($instance->current_state ne 'running') { sleep 3; }
             for my $key (keys %$tags) {
                 $instance->add_tags($key => $tags->{$key});
             }
@@ -61,8 +64,8 @@ sub confirm_launch_instance {
         );
     }
 
-    my $instance_types = Yogafire::InstanceTypes::list();
-
+    my $y_instance_types = Yogafire::InstanceTypes->new();
+    my $instance_types = $y_instance_types->instance_types;
     unless($instance_type) {
         print "\n";
         $instance_type = $term->get_reply(
@@ -74,7 +77,7 @@ sub confirm_launch_instance {
 
     unless($availability_zone) {
         print "\n";
-        my @select_zone = $self->ec2->describe_availability_zones({ state => 'available' });
+        my @select_zone = ec2->describe_availability_zones({ state => 'available' });
         push @select_zone, ' ';
         $availability_zone = $term->get_reply(
             prompt   => 'Availability Zone List > ',
@@ -94,7 +97,7 @@ sub confirm_launch_instance {
 
     unless($keypair) {
         print "\n";
-        my @select_keypairs = $self->ec2->describe_key_pairs();
+        my @select_keypairs = ec2->describe_key_pairs();
         $keypair = $term->get_reply(
             prompt   => 'Keypair List > ',
             choices  => [map {$_->keyName} @select_keypairs],
@@ -104,7 +107,7 @@ sub confirm_launch_instance {
 
     if(scalar @groups == 0) {
         print "\n";
-        my @select_groups = $self->ec2->describe_security_groups();
+        my @select_groups = ec2->describe_security_groups();
         @groups = $term->get_reply(
             prompt   => 'Security Group List. (put them on one line, separated by blanks) > ',
             choices  => [map {$_->groupName} @select_groups],

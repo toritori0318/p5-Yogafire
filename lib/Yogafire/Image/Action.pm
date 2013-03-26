@@ -7,8 +7,8 @@ use Yogafire::Image::Action::Deregister;
 use Yogafire::Image::Action::Info;
 
 use Mouse;
-extends 'Yogafire::ActionBase';
-
+has 'action_name'  => (is => 'rw');
+has 'action_class' => (is => 'rw');
 has 'actions' => (
     is => 'rw',
     isa => 'ArrayRef',
@@ -26,16 +26,35 @@ no Mouse;
 
 use Yogafire::Term;
 
-sub action {
+sub BUILD {
+    my ($self) = @_;
+    my $action_name = $self->action_name;
+    if($action_name) {
+        my $action_class = $self->init_action($action_name);
+        $self->action_class($action_class);
+    }
+}
+
+sub init_action {
     my ($self, $name) = @_;
     my $action_class = (grep { $_->name eq $name } @{$self->actions})[0];
-    $action_class->ec2($self->ec2);
-    $action_class->config($self->config);
     $action_class;
 };
 
-sub confirm {
-    my ($self, $image) = @_;
+sub procs {
+    my ($self, $target_image, $opt) = @_;
+
+    if($self->action_class) {
+        # run action
+        $self->action_class->procs($target_image, $opt);
+    } else {
+        # show action list
+        $self->action_list($target_image, $opt);
+    }
+};
+
+sub action_list {
+    my ($self, $image, $opt) = @_;
     my $term = Yogafire::Term->new();
 
     my @commands = @{$self->actions()};
@@ -46,7 +65,7 @@ sub confirm {
         prompt   => '  Input No > ',
         choices  => [map {$_->{name}} @commands],
     );
-    $self->action($command)->run($image);
+    $self->init_action($command)->procs($image, $opt);
 }
 
 1;

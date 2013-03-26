@@ -12,13 +12,12 @@ use Yogafire::Instance::Action::ChangeInstanceType;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Instance::Action::Quit;
 use Yogafire::Instance::Action::CopyAndLaunch;
-use Yogafire::Instance::Action::UpdateTags;
 use Yogafire::Instance::Action::ExtendVolume;
 
 use Mouse;
-extends 'Yogafire::ActionBase';
-
-has 'actions' => (
+has 'action_name'  => (is => 'rw');
+has 'action_class' => (is => 'rw');
+has 'actions'      => (
     is => 'rw',
     isa => 'ArrayRef',
     default => sub {
@@ -32,7 +31,6 @@ has 'actions' => (
             Yogafire::Instance::Action::CreateImage->new(),
             Yogafire::Instance::Action::ChangeInstanceType->new(),
             Yogafire::Instance::Action::CopyAndLaunch->new(),
-            Yogafire::Instance::Action::UpdateTags->new(),
             Yogafire::Instance::Action::ExtendVolume->new(),
             Yogafire::Instance::Action::Info->new(),
             Yogafire::Instance::Action::Quit->new(),
@@ -44,16 +42,40 @@ no Mouse;
 
 use Yogafire::Term;
 
-sub action {
+sub BUILD {
+    my ($self) = @_;
+    my $action_name = $self->action_name;
+    if($action_name) {
+        my $action_class = $self->init_action($action_name);
+        $self->action_class($action_class);
+    }
+}
+
+sub init_action {
     my ($self, $name) = @_;
     my $action_class = (grep { $_->name eq $name } @{$self->actions})[0];
-    $action_class->ec2($self->ec2);
-    $action_class->config($self->config);
     $action_class;
 };
 
-sub action_print {
-    my ($self, $instance) = @_;
+sub state {
+    my ($self) = @_;
+    return ($self->action_class) ? $self->action_class->state : undef ;
+}
+
+sub procs {
+    my ($self, $target_instances, $opt) = @_;
+
+    if($self->action_class) {
+        # run action
+        $self->action_class->procs($target_instances, $opt);
+    } else {
+        # show action list
+        $self->action_list($target_instances, $opt);
+    }
+};
+
+sub action_list {
+    my ($self, $instance, $opt) = @_;
 
     my $state = $instance->{data}->{instanceState}->{name} || '';
     my @commands = $self->get_commands($state);
@@ -66,7 +88,7 @@ sub action_print {
         prompt   => '  Input No > ',
         choices  => [map {$_->{name}} @commands],
     );
-    $self->action($command)->proc($instance);
+    $self->init_action($command)->proc($instance, $opt);
 }
 
 sub get_commands {

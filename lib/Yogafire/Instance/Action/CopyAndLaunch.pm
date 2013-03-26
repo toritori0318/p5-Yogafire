@@ -10,7 +10,7 @@ has 'state' => (
     is => 'rw',
     isa => 'ArrayRef',
     default => sub {
-        [qw/running pending shutting-down terminated stopping stopped/],
+        [qw/running stopped/],
     },
 );
 no Mouse;
@@ -19,7 +19,7 @@ use Yogafire::Instance::Action::Info;
 use Yogafire::Image::Action::RunInstance;
 
 sub proc {
-    my ($self, $instance) = @_;
+    my ($self, $instance, $opt) = @_;
 
     my $tags = $instance->tags;
     $tags = grep { $_ ne 'Name' } keys %$tags;
@@ -33,8 +33,10 @@ sub proc {
         groups            => [map {$_->groupName} $instance->groups],
     };
     my $image = $instance->aws->describe_images(-image_id => $instance->imageId);
+
+    my %merge_option = (%$opt, %$option);
     # copy launch
-    Yogafire::Image::Action::RunInstance->new()->proc($image, $option);
+    Yogafire::Image::Action::RunInstance->new()->procs($image, \%merge_option);
 };
 
 1;

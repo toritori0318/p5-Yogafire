@@ -1,7 +1,5 @@
 package Yogafire::CommandClass::SSH;
 use Mouse;
-has ec2           => ( is  => "rw" );
-has config        => ( is  => "rw" );
 has opt           => ( is  => "rw" );
 
 has port          => ( is  => "rw" );
@@ -12,23 +10,25 @@ has sync_option   => ( is  => "rw", default => sub { {} });
 no Mouse;
 
 use Net::OpenSSH;
-use Yogafire::Instance qw/list/;
+use Yogafire::Instance;
+use Yogafire::Declare qw/ec2 config/;
 
 sub BUILD {
     my $self = shift;
 
-    $self->port($self->opt->{port} || $self->config->get('ssh_port') || '22');
-    $self->user($self->opt->{user} || $self->config->get('ssh_user') || '');
-    $self->identity_file($self->opt->{identity_file} || $self->config->get('identity_file') || '');
+    $self->port($self->opt->{port} || config->get('ssh_port') || '22');
+    $self->user($self->opt->{user} || config->get('ssh_user') || '');
+    $self->identity_file($self->opt->{identity_file} || config->get('identity_file') || '');
 
     if($self->opt->{sync_option}) {
         $self->sync_option($self->parse_option());
     }
 
-    if($self->opt->{proxy}) {
-        $self->opt->{tagsname} = $self->opt->{proxy};
-        my @proxy_servers = list($self->ec2, $self->opt);
-        my $proxy_instance  = shift @proxy_servers;
+    my $proxy = $self->opt->{proxy} || config->get('proxy');
+    if($proxy) {
+        my $y_ins = Yogafire::Instance->new();
+        $self->opt->{host} = $self->opt->{proxy};
+        my $proxy_instance = $y_ins->find($self->opt);
         die "Not found proxy server.\n" unless $proxy_instance;
 
         $self->proxy($proxy_instance)
