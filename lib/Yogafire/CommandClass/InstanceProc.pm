@@ -68,7 +68,9 @@ sub action_process {
             if(scalar @target_instances == 0) {
                 if($self->{yogafire} && $input eq 'yogafire') {
                     # all target
+                    $opt->{force} = 1;
                     $ia->procs($y_ins->cache, $opt);
+                    $opt->{force} = 0;
                     last;
                 } else {
                     print "Invalid Value. \n";
@@ -135,3 +137,4 @@ sub get_self_instance {
 }
 
 1;
+
