@@ -17,6 +17,7 @@ sub plugin_search_path {
             Yogafire::Command::Common
             Yogafire::Command::Instance
             Yogafire::Command::Image
+            Yogafire::Command::Vpc
             Yogafire::Command::Plugin
         /
     ]
@@ -65,6 +66,10 @@ no warnings 'redefine';
   my @image_commands = $filter_commonds->('::Image::');
   print "Image commands:";
   $pritty->(@image_commands);
+  # vpc command
+  my @vpc_commands = $filter_commonds->('::Vpc::');
+  print "Vpc commands:";
+  $pritty->(@vpc_commands);
   # plugin command
   my @plugin_commands = $filter_commonds->('::Plugin::');
   print "Plugin commands:";
