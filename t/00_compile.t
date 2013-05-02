@@ -34,6 +34,8 @@ BEGIN {
     use_ok ("Yogafire::Command::Plugin::render");
     use_ok ("Yogafire::Command::Plugin::sshconfig");
     use_ok ("Yogafire::Command::Plugin::updateec2tags");
+    use_ok ("Yogafire::Command::Vpc::vpcgraph");
+    use_ok ("Yogafire::Command::Vpc::vpcinfo");
     use_ok ("Yogafire::CommandBase");
     use_ok ("Yogafire::CommandClass::ImageProc");
     use_ok ("Yogafire::CommandClass::InstanceProc");
@@ -64,6 +66,10 @@ BEGIN {
     use_ok ("Yogafire::Regions");
     use_ok ("Yogafire::Term");
     use_ok ("Yogafire::Util");
+    use_ok ("Yogafire::Vpc::Action::Graph");
+    use_ok ("Yogafire::Vpc::Action::Info");
+    use_ok ("Yogafire::Vpc::Action");
+    use_ok ("Yogafire::Vpc");
     use_ok ("Yogafire");
 };
 

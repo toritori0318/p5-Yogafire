@@ -19,6 +19,7 @@ WriteMakefile(
         'DateTime'                      => '0',
         'DateTime::Format::Strptime'    => '0',
         'JSON'                          => '0',
+        'Graph::Easy'                   => '0',
         'Text::Xslate'                  => '0',
         'Text::Xslate::Bridge::TT2Like' => '0',
         'Text::UnicodeTable::Simple'    => '0',
