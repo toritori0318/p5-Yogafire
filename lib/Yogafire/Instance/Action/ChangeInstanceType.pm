@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::InstanceTypes;
 use Yogafire::Term;
@@ -30,32 +31,34 @@ sub proc {
     my $input = $self->confirm_create_image($instance, $opt);
     return unless $input;
 
+    yinfo(resource => $instance, message => "<<<Start>>> Change Instance Type.");
+
     my $save_state = $instance->instanceState;
     # stop instance
     if($save_state ne 'stopped') {
-        print "[Start] Stop Instance. \n";
+        yinfo(resource => $instance, message => " <Start> Stop Instance.");
         $instance->stop;
         progress_dot("Stop instance in process.", sub { $instance->current_state ne 'stopped' } );
-        print "[End] Stop Instance. \n";
+        yinfo(resource => $instance, message => " <End> Stop Instance.");
     }
 
     # change type
-    print "[Start] Change Instance Type. \n";
+    yinfo(resource => $instance, message => " <Start> Change Instance Type.");
     $instance->instanceType($input->{instance_type});
-    print "[End] Change Instance Type. \n";
+    yinfo(resource => $instance, message => " <End> Change Instance Type.");
 
     # start instance
     if($save_state ne 'stopped') {
-        print "[Start] Start Instance. \n";
+        yinfo(resource => $instance, message => " <Start> Start Instance.");
         $instance->start;
         # wait running...
         progress_dot("Start instance in process.", sub { $instance->current_state ne 'running' } );
         # associate eip
         $instance->associate_address($input->{eip}) if !$instance->vpcId && $input->{eip};
-        print "[End] Start Instance. \n";
+        yinfo(resource => $instance, message => " <End> Start Instance.");
     }
 
-    print "[End] Change Instance Type. \n";
+    yinfo(resource => $instance, message => "<<<End>>> Change Instance Type.");
 };
 
 sub confirm_create_image {

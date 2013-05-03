@@ -61,6 +61,7 @@ BEGIN {
     use_ok ("Yogafire::Instance::Action");
     use_ok ("Yogafire::Instance");
     use_ok ("Yogafire::InstanceTypes");
+    use_ok ("Yogafire::Logger");
     use_ok ("Yogafire::Output::Table");
     use_ok ("Yogafire::Output");
     use_ok ("Yogafire::Regions");

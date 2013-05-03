@@ -21,6 +21,7 @@ WriteMakefile(
         'JSON'                          => '0',
         'Graph::Easy'                   => '0',
         'Parallel::ForkManager'         => '0',
+        'Log::Minimal'                  => '0',
         'Text::Xslate'                  => '0',
         'Text::Xslate::Bridge::TT2Like' => '0',
         'Text::UnicodeTable::Simple'    => '0',

@@ -15,12 +15,42 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Image::Action::Info;
 use Yogafire::Term;
 use Yogafire::Declare qw/ec2 config/;
 
 sub proc {
-    my ($self, $image) = @_;
+    my ($self, $image, $opt) = @_;
+
+    my ($input) = $self->confirm($image, $opt);
+    return unless $input;
+
+    my $delete_snapshot = $input->{delete_snapshot};
+    my $snapshot_id     = $input->{snapshot_id};
+
+    yinfo(resource => $image, message => "<<<Start>>> Image Deregister.");
+    unless(ec2->deregister_image($image->imageId)) {
+        yerror(resource => $image, message => "<<<End>>> Image Deregister fail.");
+    }
+
+    if($delete_snapshot && $snapshot_id) {
+        # wait for deregister...
+        sleep 3;
+
+        yinfo(resource => $image, message => " <Start> Snapshot delete.");
+        unless(ec2->delete_snapshot($snapshot_id)) {
+            yerror(resource => $image, message => "<<<End>>> Snapshot delete fail.");
+        }
+        yinfo(resource => $image, message => "  SnapshotID:$snapshot_id");
+        yinfo(resource => $image, message => " <End> Snapshot delete.");
+    }
+
+    yinfo(resource => $image, message => "<<<End>>> Image Deregister.");
+};
+
+sub confirm {
+    my ($self, $image, $opt) = @_;
 
     # show info
     Yogafire::Image::Action::Info->new()->procs($image);
@@ -52,24 +82,10 @@ sub proc {
         prompt   => 'Are you sure you want to deregister this image? > ',
     );
 
-    print "Image Deregister... \n";
-    if(ec2->deregister_image($image->imageId)) {
-        print "Image Deregister process. \n";
-    } else {
-        print "Image Deregister fail. \n";
-    }
-
-    if($delete_snapshot && $snapshot_id) {
-        # wait for deregister...
-        sleep 3;
-
-        print "Snapshot delete... \n";
-        if(ec2->delete_snapshot($snapshot_id)) {
-            print "Snapshot delete process. \n";
-        } else {
-            print "Snapshot delete fail. \n";
-        }
-    }
+    return {
+        snapshot_id     => $snapshot_id,
+        delete_snapshot => $delete_snapshot,
+    };
 };
 
 1;

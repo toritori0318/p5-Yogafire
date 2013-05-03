@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Term;
 use Yogafire::InstanceTypes;
 use Yogafire::Declare qw/ec2 config/;
@@ -25,7 +26,7 @@ sub proc {
     my ($input, $tags) = $self->confirm_launch_instance($image, $opt);
     return unless $input;
 
-    print "Launch instance start... \n";
+    yinfo(resource => $image, message => "<<<Start>>> Launch instance.");
     my @instances = $image->run_instances( %$input );
     if($tags && scalar (keys %$tags) > 0 ) {
         for my $instance (@instances) {
@@ -36,7 +37,7 @@ sub proc {
             }
         }
     }
-    print "Launch instance in process. \n";
+    yinfo(resource => $image, message => "<<<End>>> Launch instance in process.");
 
 };
 

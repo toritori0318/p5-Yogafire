@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 use Yogafire::Util qw/progress_dot/;
@@ -29,86 +30,89 @@ sub proc {
     my $input = $self->confirm_create_image($instance, $opt);
     return unless $input;
 
-    print "[Start] Extend Volume. \n";
+    yinfo(resource => $instance, message => "<<<Start>>> Extend Volume.");
 
     my $save_state = $instance->instanceState;
     # stop instance
     if($save_state ne 'stopped') {
-        print "[Start] Stop Instance. \n";
+        yinfo(resource => $instance, message => " <Start> Stop Instance.");
         $instance->stop;
         progress_dot("Stop instance in process.", sub { $instance->current_state ne 'stopped' } );
-        print "[End] Stop Instance. \n";
+        yinfo(resource => $instance, message => " <End> Stop Instance.");
     }
 
     my $cur_volume = $input->{volume};
     my $snapshot;
     my $new_volume;
     {
-        print "[Start] Create new snapshot from this volume. \n";
+        yinfo(resource => $instance, message => " <Start> Create new snapshot from this volume.");
         $snapshot = $cur_volume->create_snapshot("Yoga Extend Snapshot at ".localtime);
         progress_dot("Snapshot create in process.", sub { $snapshot->current_status ne 'completed' } );
-        printf "Snapshot status: [%s] [%s] \n", $snapshot->snapshotId, $snapshot->current_status;
-        print "[End] Create new snapshot from this volume. \n";
+        my $message = sprintf "Snapshot status: %s %s", $snapshot->snapshotId, $snapshot->current_status;
+        yinfo(resource => $instance, message => $message);
+        yinfo(resource => $instance, message => " <End> Create new snapshot from this volume.");
     }
 
     {
-        print "[Start] Create new volume. \n";
+        yinfo(resource => $instance, message => " <Start> Create new volume.");
         my %args = (
             -size              => $input->{update_size},
             -availability_zone => $input->{availability_zone},
         );
         $new_volume = $snapshot->create_volume(%args);
         progress_dot("Create new volume in process.", sub { $new_volume->current_status ne 'available' } );
-        printf "New volume status: [%s] [%s] \n", $new_volume->volumeId, $new_volume->current_status;
-        print "[End] Create new volume. \n";
+        my $message = sprintf "New volume status: %s %s", $new_volume->volumeId, $new_volume->current_status;
+        yinfo(resource => $instance, message => $message);
+        yinfo(resource => $instance, message => " <End> Create new volume.");
     }
 
     my $device_name = $input->{device_name};
     eval {
         {
-            print "[Start] Detach current volume. \n";
+            yinfo(resource => $instance, message => " <Start> Detach current volume.");
             my $attachment = $cur_volume->detach();
             progress_dot("Detach current volume in process.", sub { $attachment->current_status ne 'detached' } );
-            print "[End] Detach current volume... \n";
+            yinfo(resource => $instance, message => " <End> Detach current volume.");
         }
 
         {
-            print "[Start] Attach instance volume from new volume... \n";
+            yinfo(resource => $instance, message => " <Start> Attach instance volume from new volume.");
             my %args = (
                 -instance_id => $instance->instanceId,
                 -device      => $device_name,
             );
             my $attachment = $new_volume->attach(%args);
             progress_dot("Attach volume in process.", sub { $attachment->current_status ne 'attached' } );
-            print "attachment status: ",$attachment->current_status,"\n";
-            print "[End] Attach instance volume from new volume... \n";
+            my $message = sprintf "attachment status: %s", $attachment->current_status;
+            yinfo(resource => $instance, message => $message);
+            yinfo(resource => $instance, message => " <End> Attach instance volume from new volume.");
         }
     };
     if($@) {
-        warn "[Exception] $@";
-        print "[Start] Rollback... \n";
+        ycrit(resource => $instance, message => " <Exception> $@");
+        yinfo(resource => $instance, message => " <Start> Rollback...");
         my %args = (
             -instance_id => $instance->instanceId,
             -device      => $device_name,
         );
         my $attachment = $cur_volume->attach(%args);
         progress_dot("Rollback volume in process.", sub { $attachment->current_status ne 'attached' } );
-        print "[End] Rollback... \n";
+        yinfo(resource => $instance, message => " <End> Rollback...");
         return;
     }
 
     # start instance
     if($save_state ne 'stopped') {
-        print "[Start] Start Instance. \n";
+        yinfo(resource => $instance, message => " <Start> Start Instance.");
         $instance->start;
         # wait running...
         progress_dot("Start instance in process.", sub { $instance->current_state ne 'running' } );
         # associate eip
         $instance->associate_address($input->{eip}) if !$instance->vpcId && $input->{eip};
-        print "[End] Start Instance. \n";
+        yinfo(resource => $instance, message => " <End> Start Instance.");
     }
 
-    print "[End] Extend Volume. \n";
+    yinfo(resource => $instance, message => "<<<End>>> Extend Volume.");
 
     my $complete_str =<<"EOF";
 

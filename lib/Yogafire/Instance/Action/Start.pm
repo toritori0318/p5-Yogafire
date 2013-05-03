@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
@@ -34,9 +35,9 @@ sub proc {
         );
     }
 
-    print "Instance start... \n";
+    yinfo(resource => $instance, message => "<<<Start>>> Instance start.");
     $instance->start;
-    print "Instance start in process. \n";
+    yinfo(resource => $instance, message => "<<<End>>> Instance start.");
 };
 
 1;

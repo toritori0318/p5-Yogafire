@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
@@ -34,9 +35,9 @@ sub proc {
         );
     }
 
-    print "Instance reboot... \n";
+    yinfo(resource => $instance, message => "<<<Start>>> Instance reboot.");
     $instance->reboot;
-    print "Instance reboot in process. \n";
+    yinfo(resource => $instance, message => "<<<End>>> Instance reboot in process.");
 };
 
 1;

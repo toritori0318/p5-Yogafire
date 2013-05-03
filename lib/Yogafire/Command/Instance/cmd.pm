@@ -112,9 +112,9 @@ sub execute {
     }
 
     my $concurrency = $opt->{concurrency} || 1;
-    my $pm = new Parallel::ForkManager($concurrency);
+    my $pm = Parallel::ForkManager->new($concurrency);
 
-    for (@instances) {
+    for my $instance (@instances) {
         my $pid = $pm->start and next;
 
         my $yoga_ssh = Yogafire::CommandClass::SSH->new(
@@ -123,8 +123,8 @@ sub execute {
             }
         );
 
-        my $name = $_->tags->{Name} || '';
-        my $host = $yoga_ssh->target_host($_);
+        my $name = $instance->tags->{Name} || '';
+        my $host = $yoga_ssh->target_host($instance);
         my $results;
         unless ($opt->{'dry-run'}) {
             # exec ssh
@@ -145,8 +145,7 @@ sub execute {
             );
         }
 
-        printf "# Connected to %s@%s(%s)\n%s", config->get('ssh_user'), $host, $name, $results || '';
-
+        yinfo(resource => $instance, message => $results);
         $pm->finish;
     }
 
@@ -193,3 +192,4 @@ sub exec_cmd {
 }
 
 1;
+

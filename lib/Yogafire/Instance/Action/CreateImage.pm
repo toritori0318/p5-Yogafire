@@ -15,6 +15,7 @@ has 'state' => (
 );
 no Mouse;
 
+use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
 
@@ -27,14 +28,15 @@ sub proc {
     my $input = $self->confirm_create_image($instance, $opt);
     return unless $input;
 
+    yinfo(resource => $instance, message => "<<<Start>>> Create image");
     print "Create image... \n";
     my $image_id = $instance->create_image(
         -name        => $input->{name},
         -description => $input->{description},
         -no_reboot   => $input->{reboot},
     );
-    print " image id => [$image_id]\n";
-    print "Create image in process. \n";
+    yinfo(resource => $instance, message => " ImageID: $image_id");
+    yinfo(resource => $instance, message => "<<<End>>> Create image in process");
 };
 
 sub confirm_create_image {
