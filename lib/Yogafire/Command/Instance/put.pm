@@ -1,13 +1,18 @@
 package Yogafire::Command::Instance::put;
 use Mouse;
-
 extends qw(Yogafire::CommandBase);
-
 has 'dry-run'=> (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
     documentation => "dry run mode.",
+);
+has concurrency => (
+    traits        => [qw(Getopt)],
+    isa           => "Int",
+    is            => "rw",
+    cmd_aliases   => "c",
+    documentation => "Number of multiple processes.",
 );
 has sync_option => (
     traits        => [qw(Getopt)],

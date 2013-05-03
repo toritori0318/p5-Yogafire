@@ -8,6 +8,8 @@ has mode => (
 no Mouse;
 
 use Net::OpenSSH;
+use Parallel::ForkManager;
+use Yogafire::Logger;
 use Yogafire::Instance;
 use Yogafire::CommandClass::SSH;
 use Yogafire::Declare qw/ec2 config/;
@@ -30,16 +32,21 @@ sub execute {
         die "Not Found Instance. \n";
     }
 
+    my $concurrency = $opt->{concurrency} || 1;
+    my $pm = Parallel::ForkManager->new($concurrency);
+
     # rsync loop
-    for (@instances) {
+    for my $instance (@instances) {
+        my $pid = $pm->start and next;
+
         my $yoga_ssh = Yogafire::CommandClass::SSH->new(
             {
                 opt    => $opt,
             }
         );
-        my $name = $_->tags->{Name} || '';
-        my $host = $yoga_ssh->target_host($_);
-        printf "# Sync %s %s@%s(%s)\n", $self->mode, config->get('ssh_user'), $host, $name;
+        my $name = $instance->tags->{Name} || '';
+        my $host = $yoga_ssh->target_host($instance);
+        yinfo(resource => $instance, message => sprintf("Sync %s", $self->mode));
 
         # set default
         $self->set_default_option($yoga_ssh->sync_option) if $is_default_option;
@@ -55,7 +62,10 @@ sub execute {
         } else {
             $ssh->rsync_get($yoga_ssh->sync_option, $src, $dest) or die "rsync failed: " . $ssh->error;
         }
+        $pm->finish;
     }
+
+    $pm->wait_all_children;
 }
 
 sub set_default_option {
