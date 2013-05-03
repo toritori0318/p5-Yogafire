@@ -71,7 +71,20 @@ sub proc {
         my $tags_name = ($rt->tags && $rt->tags->{Name}) ? $rt->tags->{Name} : 'none';
         $print_header->('Route Table Info', "=", $block);
         $print->('routeTableId', sprintf("%s(%s)", $rt->routeTableId, $tags_name), $block);
+
         print "\n";
+        for my $r (@{[$rt->routes]}) {
+            my $block = 9;
+            my $tags_name = ($r->tags && $r->tags->{Name}) ? $r->tags->{Name} : 'none';
+            $print_header->('Route Info', "-", $block);
+            $print->('gatewayId',            $r->gatewayId, $block);
+            $print->('CidrBlock',            $r->destinationCidrBlock, $block);
+            $print->('instanceId',           $r->instanceId, $block)         if $r->instanceId;
+            $print->('instanceOwnerId',      $r->instanceOwnerId, $block)    if $r->instanceOwnerId;
+            $print->('networkInterfaceId',   $r->networkInterfaceId, $block) if $r->networkInterfaceId;
+            print "\n";
+        }
+
         for my $a (@{[$rt->associations]}) {
             my $block = 9;
             my $tags_name = ($rt->tags && $rt->tags->{Name}) ? $rt->tags->{Name} : 'none';

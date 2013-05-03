@@ -134,7 +134,7 @@ sub make_route_table {
             push @bodies, sprintf("gateway:%s:%s", $r->gatewayId, $r->destinationCidrBlock);
         }
         elsif($r->instanceId) {
-            push @bodies, sprintf("instance:%s:%s", $r->instanceId, $r->destinationCidrBlock);
+            push @bodies, sprintf("instance:%s/%s:%s", $r->instanceId, $r->networkInterfaceId, $r->destinationCidrBlock);
         }
         elsif($r->networkInterfaceId) {
             push @bodies, sprintf("nic:%s:%s", $r->networkInterfaceId, $r->destinationCidrBlock);
