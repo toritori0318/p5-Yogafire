@@ -46,18 +46,4 @@ test_app(Yogafire => [ qw(config --init --noconfirm) ]);
     ok($result->error, 'validation2 errror');
 }
 
-# run cmd
-{
-    my $result = test_app(Yogafire => [ qw(cmd '*' 'ls' --dry-run) ]);
-    like($result->stdout, qr/======== dry run mode =========/, 'printed what we list');
-    is($result->error, undef, '');
-}
-
-# run cmd
-{
-    $input_value = 'secret';
-    my $result = test_app(Yogafire => [ qw(cmd '*' 'ls' -s -P) ]);
-    is($result->error, undef, '');
-}
-
 done_testing;

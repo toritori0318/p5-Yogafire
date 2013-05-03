@@ -5,6 +5,7 @@ use Log::Minimal;
 use base 'Exporter';
 our @EXPORT = qw/yinfo ywarn ycrit/;
 
+$Log::Minimal::COLOR = 1;
 $Log::Minimal::PRINT = sub {
     my ( $time, $type, $message, $trace,$raw_message) = @_;
     warn " # $time [$type] $message\n";
@@ -17,7 +18,7 @@ sub _builder {
     if(ref $resource eq 'VM::EC2::Instance') {
         push @rowheader, $resource->instanceId;
         push @rowheader, ($resource->tags->{Name}) ? "(".$resource->tags->{Name}.")" : "";
-        push @rowheader, $resource->ipAddress;
+        push @rowheader, $resource->ipAddress if $resource->ipAddress;
     } elsif(ref $resource eq 'VM::EC2::Image') {
         push @rowheader, $resource->imageId;
         push @rowheader, ($resource->tags->{Name}) ? "(".$resource->tags->{Name}.")" : "";
