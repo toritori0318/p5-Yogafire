@@ -1,7 +1,7 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME              => 'Yogafire',
+    NAME          => 'Yogafire',
     AUTHOR        => 'toritori0318 <toritori0318@gmail.com>',
     VERSION_FROM  => 'lib/Yogafire.pm',
     PREREQ_PM     => {
@@ -20,6 +20,7 @@ WriteMakefile(
         'DateTime::Format::Strptime'    => '0',
         'JSON'                          => '0',
         'Graph::Easy'                   => '0',
+        'Parallel::ForkManager'         => '0',
         'Text::Xslate'                  => '0',
         'Text::Xslate::Bridge::TT2Like' => '0',
         'Text::UnicodeTable::Simple'    => '0',

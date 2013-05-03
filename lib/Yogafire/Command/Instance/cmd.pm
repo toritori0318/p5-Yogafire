@@ -8,13 +8,13 @@ has filter => (
     cmd_aliases   => "f",
     documentation => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
 );
-#has parallel => (
-#    traits        => [qw(Getopt)],
-#    isa           => "Bool",
-#    is            => "rw",
-#    cmd_aliases   => "p",
-#    documentation => "Run in parallel.",
-#);
+has concurrency => (
+    traits        => [qw(Getopt)],
+    isa           => "Int",
+    is            => "rw",
+    cmd_aliases   => "c",
+    documentation => "Number of multiple processes.",
+);
 has sudo => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
@@ -67,6 +67,8 @@ has proxy => (
 no Mouse;
 
 use Net::OpenSSH;
+use Parallel::ForkManager;
+use Yogafire::Logger;
 use Yogafire::Instance;
 use Yogafire::Term;
 use Yogafire::Declare qw/ec2 config/;
@@ -109,7 +111,12 @@ sub execute {
         printf "======== command = %s\n", $cmd;
     }
 
+    my $concurrency = $opt->{concurrency} || 1;
+    my $pm = new Parallel::ForkManager($concurrency);
+
     for (@instances) {
+        my $pid = $pm->start and next;
+
         my $yoga_ssh = Yogafire::CommandClass::SSH->new(
             {
                 opt    => $opt,
@@ -139,7 +146,11 @@ sub execute {
         }
 
         printf "# Connected to %s@%s(%s)\n%s", config->get('ssh_user'), $host, $name, $results || '';
+
+        $pm->finish;
     }
+
+    $pm->wait_all_children;
 }
 
 my $g_password = '';

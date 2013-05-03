@@ -49,13 +49,7 @@ test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 # run cmd
 {
     my $result = test_app(Yogafire => [ qw(cmd '*' 'ls' --dry-run) ]);
-    my $str =<<'EOF';
-# Connected to ec2-user@59.100.100.1(hoge)
-# Connected to ec2-user@59.100.100.2(fuga)
-EOF
-    chomp($str);
-    $str = quotemeta($str);
-    like($result->stdout, qr/$str/, 'printed what we list');
+    like($result->stdout, qr/======== dry run mode =========/, 'printed what we list');
     is($result->error, undef, '');
 }
 
@@ -63,13 +57,6 @@ EOF
 {
     $input_value = 'secret';
     my $result = test_app(Yogafire => [ qw(cmd '*' 'ls' -s -P) ]);
-    my $str =<<'EOF';
-# Connected to ec2-user@59.100.100.1(hoge)
-# Connected to ec2-user@59.100.100.2(fuga)
-EOF
-    chomp($str);
-    $str = quotemeta($str);
-    like($result->stdout, qr/$str/, 'printed what we list');
     is($result->error, undef, '');
 }
 
