@@ -32,6 +32,10 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
     Image commands:
                     ls-ami: Image List
 
+    Vpc commands:
+                 vpc-graph: VPC Graph View
+                  vpc-info: VPC List vpcs
+
     Plugin commands:
            all-region-info: All Region Info
                 amiwatcher: EC2 image status watcher
