@@ -57,7 +57,7 @@ sub execute {
         {
             action       => 'graph',
             opt          => $opt,
-            interactive  => $opt->{interactive},
+            interactive  => 1,
             loop         => $opt->{loop},
         }
     );

@@ -47,9 +47,9 @@ sub proc {
         my $route_table  = shift @route_tables;
         my $target_route_table;
         if($route_table) {
-            $target_route_table = $self->search_route_table(\@vpc_route_tables, $route_table->routeTableId);
+            $target_route_table = $self->info_route_table(\@vpc_route_tables, $route_table->routeTableId);
         } else {
-            $target_route_table = $self->search_main_route_table(\@vpc_route_tables);
+            $target_route_table = $self->info_main_route_table(\@vpc_route_tables);
         }
 
         my $node_route_table = $g->add_node($self->make_route_table($target_route_table, $bool_detail));
@@ -87,13 +87,13 @@ sub proc {
     }
 };
 
-sub search_route_table {
+sub info_route_table {
     my ($self, $routes, $route_table_id) = @_;
     my @route_tables = grep { $_->routeTableId eq $route_table_id } @$routes;
     return shift @route_tables;
 }
 
-sub search_main_route_table {
+sub info_main_route_table {
     my ($self, $routes) = @_;
     my @route_tables = grep { $_->main } @$routes;
     return shift @route_tables;

@@ -3,40 +3,6 @@ use Mouse;
 
 extends qw(Yogafire::CommandBase);
 
-has interactive => (
-    traits          => [qw(Getopt)],
-    isa             => "Bool",
-    is              => "rw",
-    cmd_aliases     => "i",
-    documentation   => "interactive mode.",
-);
-has state => (
-    traits          => [qw(Getopt)],
-    isa             => "Str",
-    is              => "rw",
-    cmd_aliases     => "s",
-    documentation   => "specified instance status (running / stopped)",
-);
-has tagsname => (
-    traits          => [qw(Getopt)],
-    isa             => "Str",
-    is              => "rw",
-    cmd_aliases     => "n",
-    documentation   => "specified instance tagsname.",
-);
-has filter => (
-    traits          => [qw(Getopt)],
-    isa             => "Str",
-    is              => "rw",
-    cmd_aliases     => "f",
-    documentation   => "api filter. (ex.--filter='tag:keyname=value,instance-state-name=running')",
-);
-has format => (
-    traits          => [qw(Getopt)],
-    isa             => "Bool",
-    is              => "rw",
-    documentation   => "specified output format(default:table). (table / plain / json)",
-);
 has loop => (
     traits          => [qw(Getopt)],
     isa             => "Bool",
@@ -64,7 +30,7 @@ sub execute {
         {
             action       => 'info',
             opt          => $opt,
-            interactive  => $opt->{interactive},
+            interactive  => 1,
             loop         => $opt->{loop},
         }
     );

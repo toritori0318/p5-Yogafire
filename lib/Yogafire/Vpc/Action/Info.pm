@@ -39,6 +39,8 @@ sub proc {
     $print->('instanceTenancy' , $vpc->instanceTenancy);
     print "\n";
 
+    my @vpc_route_tables = $vpc->route_tables;
+
     # Subnet
     my @p_subnets;
     for my $subnet (@{[$vpc->subnets]}) {
@@ -50,14 +52,21 @@ sub proc {
         $print->('cidrBlock'        , $subnet->cidrBlock, $block);
         $print->('availabilityZone' , $subnet->availabilityZone, $block);
         $print->('availableIpCount' , $subnet->availableIpAddressCount, $block);
-        my @route_tables = grep { $_->subnetId && $_->subnetId eq $subnet->subnetId } map { @{[$_->associations]} } $vpc->route_tables;
+        # route table
+        my @route_tables = grep { $_->subnetId && $_->subnetId eq $subnet->subnetId } map { @{[$_->associations]} } @vpc_route_tables;
         my $route_table = shift @route_tables || '';
-        $print->('routeTableId'     , $route_table, $block);
+        my $target_route_table;
+        if($route_table) {
+            $target_route_table = $self->info_route_table(\@vpc_route_tables, $route_table->routeTableId);
+        } else {
+            $target_route_table = $self->info_main_route_table(\@vpc_route_tables);
+        }
+        $print->('routeTableId', $target_route_table, $block);
         print "\n";
     }
 
     # Route Table
-    for my $rt (@{[$vpc->route_tables]}) {
+    for my $rt (@vpc_route_tables) {
         my $block = 5;
         my $tags_name = ($rt->tags && $rt->tags->{Name}) ? $rt->tags->{Name} : 'none';
         $print_header->('Route Table Info', "=", $block);
@@ -85,5 +94,17 @@ sub proc {
     }
 
 };
+
+sub info_route_table {
+    my ($self, $routes, $route_table_id) = @_;
+    my @route_tables = grep { $_->routeTableId eq $route_table_id } @$routes;
+    return shift @route_tables;
+}
+
+sub info_main_route_table {
+    my ($self, $routes) = @_;
+    my @route_tables = grep { $_->main } @$routes;
+    return shift @route_tables;
+}
 
 1;
