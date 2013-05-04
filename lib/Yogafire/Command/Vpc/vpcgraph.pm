@@ -3,11 +3,12 @@ use Mouse;
 
 extends qw(Yogafire::CommandBase);
 
-has format => (
+has 'graph-format' => (
     traits          => [qw(Getopt)],
     isa             => "Str",
     is              => "rw",
-    documentation   => "specified output format(default:ascii). (ascii / boxart)",
+    cmd_aliases     => "f",
+    documentation   => "specified output graph format(default:ascii). (ascii / boxart)",
 );
 has loop => (
     traits          => [qw(Getopt)],

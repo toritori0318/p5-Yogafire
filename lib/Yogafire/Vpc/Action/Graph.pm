@@ -17,11 +17,12 @@ no Mouse;
 
 use List::Util qw/max/;
 use Graph::Easy;
+use Encode qw/encode_utf8/;
 
 sub proc {
     my ($self, $vpc, $opt) = @_;
 
-    my $format                = $opt->{format} || 'ascii';
+    my $graph_format          = $opt->{'graph-format'} || 'ascii';
     my $bool_route_table      = $opt->{'route-table'};
     my $bool_internet_gateway = $opt->{'internet-gateway'};
     my $bool_detail           = $opt->{'detail'};
@@ -80,8 +81,8 @@ sub proc {
     }
 
     # output
-    if($format eq 'boxart') {
-        print $g->as_boxart();
+    if($graph_format eq 'boxart') {
+        print encode_utf8($g->as_boxart());
     } else {
         print $g->as_ascii();
     }
