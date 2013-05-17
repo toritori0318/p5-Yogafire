@@ -1,5 +1,9 @@
 Revision history for Perl extension Yogafire.
 
+0.04 2013/05/18
+  - Added support for 'view-detail / platform / region' option into 'instance-type'.
+  - Changed to get the price from http://aws.amazon.com/ec2/pricing/pricing-on-demand-instances.json
+
 0.03 2013/05/04
   - Added support for 'vpc-info / vpc-graph' command.
   - Added support for 'concurrency' option into 'cmd / get / put'.
