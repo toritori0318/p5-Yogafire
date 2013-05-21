@@ -58,7 +58,7 @@ sub action_process {
 
         my $target_image = $y_image->find_from_cache({ name => qr/^$input$/ });
         $target_image  ||= $y_image->find_from_cache({ id   => qr/^$input$/ });
-        $target_image  ||= $images[$input-1] if $input && $input =~ /^\d+$/;
+        $target_image  ||= $y_image->cache->[$input-1] if $input && $input =~ /^\d+$/;
         if (!$target_image) {
             my @target_images = $y_image->search_from_cache({ name => qr/$input/ });
             if(scalar @target_images == 0) {

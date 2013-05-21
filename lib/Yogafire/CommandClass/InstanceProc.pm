@@ -62,7 +62,7 @@ sub action_process {
 
         my $target_instance = $y_ins->find_from_cache({ name => qr/^$input$/ });
         $target_instance  ||= $y_ins->find_from_cache({ id   => qr/^$input$/ });
-        $target_instance  ||= $instances[$input-1] if $input && $input =~ /^\d+$/;
+        $target_instance  ||= $y_ins->cache->[$input-1] if $input && $input =~ /^\d+$/;
         if (!$target_instance) {
             my @target_instances = $y_ins->search_from_cache({ name => qr/$input/ });
             if(scalar @target_instances == 0) {
