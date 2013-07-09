@@ -1,5 +1,9 @@
 Revision history for Perl extension Yogafire.
 
+0.05 2013/07/09
+  - Fixed a issue that yoga-ls did not show anything when number of instances equals 1
+  - Interactive filter bugfix
+
 0.04 2013/05/18
   - Added support for 'view-detail / platform / region' option into 'instance-type'.
   - Changed to get the price from http://aws.amazon.com/ec2/pricing/pricing-on-demand-instances.json
