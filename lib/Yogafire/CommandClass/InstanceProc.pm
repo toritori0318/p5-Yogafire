@@ -34,8 +34,8 @@ sub action_process {
     my @instances = $y_ins->search($opt);
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
-    } elsif(scalar @instances == 1) {
-        $ia->procs(\@instances, $opt) if $ia->action_class;
+    } elsif(scalar @instances == 1 && $ia->action_class) {
+        $ia->procs(\@instances, $opt);
         return;
     }
 
