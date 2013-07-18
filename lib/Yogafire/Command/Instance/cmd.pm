@@ -62,6 +62,13 @@ has proxy => (
     is              => "rw",
     documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
+has timeout => (
+    traits        => [qw(Getopt)],
+    isa           => "Int",
+    is            => "rw",
+    cmd_aliases   => "c",
+    documentation => "Number of ssh timeout. (default: 30)",
+);
 
 
 no Mouse;
@@ -91,6 +98,8 @@ sub validate_args {
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
+
+    my $timeout = $opt->{timeout} || 30;
 
     my $y_ins = Yogafire::Instance->new();
 
@@ -131,7 +140,7 @@ sub execute {
             my $ssh = $yoga_ssh->ssh(
                 {
                     host    => $host,
-                    timeout => 10,
+                    timeout => $timeout,
                 }
             );
 
@@ -145,7 +154,11 @@ sub execute {
             );
         }
 
-        yinfo(resource => $instance, message => $results);
+        yinfo(resource => $instance, message => '============== Command Log Start ==============');
+        print $results;
+        print "\n";
+        yinfo(resource => $instance, message => '============== Command Log End ==============');
+
         $pm->finish;
     }
 
