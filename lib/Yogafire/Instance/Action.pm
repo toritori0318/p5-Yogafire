@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Yogafire::Instance::Action::SSH;
+use Yogafire::Instance::Action::SSHTmux;
 use Yogafire::Instance::Action::Start;
 use Yogafire::Instance::Action::Stop;
 use Yogafire::Instance::Action::Reboot;
@@ -24,6 +25,7 @@ has 'actions'      => (
         my $self = shift;
         return [
             Yogafire::Instance::Action::SSH->new(),
+            Yogafire::Instance::Action::SSHTmux->new(),
             Yogafire::Instance::Action::Start->new(),
             Yogafire::Instance::Action::Stop->new(),
             Yogafire::Instance::Action::Reboot->new(),

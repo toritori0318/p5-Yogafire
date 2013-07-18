@@ -11,16 +11,16 @@ no Mouse;
 use Yogafire::CommandBase;
 use Yogafire::Declare;
 
+my @command_class = qw/
+    Common
+    Instance
+    Image
+    SpotInstance
+    Vpc
+    Plugin
+/;
 sub plugin_search_path {
-    [
-        qw/
-            Yogafire::Command::Common
-            Yogafire::Command::Instance
-            Yogafire::Command::Image
-            Yogafire::Command::Vpc
-            Yogafire::Command::Plugin
-        /
-    ]
+    [ map { 'Yogafire::Command::' . $_ } @command_class ];
 }
 
 use App::Cmd::Command::commands;
@@ -55,25 +55,12 @@ no warnings 'redefine';
   };
   print "\n";
   # common command
-  my @common_commands = $filter_commonds->('::Common::');
-  print "Common commands:";
-  $pritty->(@common_commands);
-  # instance command
-  my @instance_commands = $filter_commonds->('::Instance::');
-  print "Instance commands:";
-  $pritty->(@instance_commands);
-  # image command
-  my @image_commands = $filter_commonds->('::Image::');
-  print "Image commands:";
-  $pritty->(@image_commands);
-  # vpc command
-  my @vpc_commands = $filter_commonds->('::Vpc::');
-  print "Vpc commands:";
-  $pritty->(@vpc_commands);
-  # plugin command
-  my @plugin_commands = $filter_commonds->('::Plugin::');
-  print "Plugin commands:";
-  $pritty->(@plugin_commands);
+  for my $cmd (@command_class) {
+      $DB::single=1;
+      my @commands = $filter_commonds->("::${cmd}::");
+      print "$cmd commands:";
+      $pritty->(@commands);
+  }
 };
 
 1;
