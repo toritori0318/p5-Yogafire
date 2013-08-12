@@ -5,7 +5,7 @@ use warnings;
 use Mouse;
 extends 'Yogafire::ActionBase';
 
-has 'name'  => (is => 'rw', isa => 'Str', default => 'run instance');
+has 'name'  => (is => 'rw', isa => 'Str', default => 'runinstance');
 has 'state' => (
     is => 'rw',
     isa => 'ArrayRef',
@@ -19,6 +19,7 @@ use Yogafire::Logger;
 use Yogafire::Term;
 use Yogafire::InstanceTypes;
 use Yogafire::Declare qw/ec2 config/;
+use Yogafire::Util;
 
 sub proc {
     my ($self, $image, $opt) = @_;
@@ -46,67 +47,99 @@ sub confirm_launch_instance {
     $opt ||= {};
 
     my $count             = $opt->{count};
-    my $instance_type     = $opt->{instance_type};
+    my $instance_type     = $opt->{type};
     my $availability_zone = $opt->{availability_zone};
     my $name              = $opt->{name};
     my $keypair           = $opt->{keypair};
-    my @groups            = ($opt->{groups}) ? @{$opt->{groups}} : ();
+    my @groups            = ($opt->{a_groups}) ? @{$opt->{a_groups}} : ();
     my $force             = $opt->{force};
-    my $tags              = $opt->{tags} || {};
+    my %tags              = ($opt->{h_tags}) ? %{$opt->{h_tags}} : ();
+    if($name && !exists $tags{Name}) {
+        $tags{Name} = $name;
+    }
 
     my $term = Yogafire::Term->new();
 
-    unless($count) {
+    unless($force) {
+        my $default = $count || 1;
         print "\n";
         $count = $term->get_reply(
             prompt   => 'Launch Count > ',
             allow    => qr/\d+/,
-            default  => 1,
+            default  => $count,
         );
     }
 
     my $y_instance_types = Yogafire::InstanceTypes->new();
     my $instance_types = $y_instance_types->instance_types;
-    unless($instance_type) {
+    unless($force) {
+        my $default = $instance_type || 't1.micro';
         print "\n";
         $instance_type = $term->get_reply(
             prompt   => 'Instance Type List > ',
             choices  => [map { $_->{id} } @$instance_types],
-            default  => 't1.micro',
+            default  => $default,
         );
     }
 
-    unless($availability_zone) {
+    unless($force) {
+        my $default = $availability_zone || ' ';
         print "\n";
         my @select_zone = ec2->describe_availability_zones({ state => 'available' });
         push @select_zone, ' ';
         $availability_zone = $term->get_reply(
             prompt   => 'Availability Zone List > ',
             choices  => \@select_zone,
-            default  => ' ',
+            default  => $default,
         );
         $availability_zone =~ s/ //;
     }
 
-    unless($name) {
+    unless($force) {
+        my $default = $tags{Name} || '';
         print "\n";
         $name = $term->get_reply(
             prompt   => 'Instance Name > ',
+            default  => $default,
         );
         $name ||= '';
     }
+    my %itags;
+    unless($force) {
+        for my $key (keys %tags) {
+            next if $key eq 'Name';
 
-    unless($keypair) {
+            my $default = $tags{$key} || '';
+            print "\n";
+            $itags{$key} = $term->get_reply(
+                prompt   => "Tags [$key] > ",
+                default  => $default,
+            );
+            $itags{$key} ||= '';
+        }
+    }
+
+    unless($force) {
         print "\n";
         my @select_keypairs = ec2->describe_key_pairs();
+        my $default = $keypair;
         $keypair = $term->get_reply(
             prompt   => 'Keypair List > ',
             choices  => [map {$_->keyName} @select_keypairs],
-            default  => $select_keypairs[0]->keyName,
+            default  => $default,
         );
     }
 
-    if(scalar @groups == 0) {
+    if(scalar @groups > 0) {
+        my @select_groups = ec2->describe_security_groups(
+            -group_name => \@groups
+        );
+        # validation
+        if (scalar @select_groups != scalar @groups) {
+            @groups = ();
+        }
+    }
+    if(!$force && scalar @groups == 0) {
         print "\n";
         my @select_groups = ec2->describe_security_groups();
         @groups = $term->get_reply(
@@ -116,6 +149,10 @@ sub confirm_launch_instance {
         );
     }
 
+    my $disp_tags = join("\n", map { sprintf("    %s=%s", $_, $itags{$_}) } keys %itags);
+    if($disp_tags) {
+        $disp_tags = "\nTagKey Info\n$disp_tags";
+    }
     my $confirm_str =<<"EOF";
 ================================================================
 Launch Info
@@ -126,6 +163,7 @@ Availability Zone : $availability_zone
              Name : $name
           Keypair : $keypair
    Security Group : @groups
+$disp_tags
 ================================================================
 EOF
 
@@ -147,10 +185,7 @@ EOF
     $args{'-placement_zone'} = $availability_zone if $availability_zone;
 
     # tag
-    my $return_tags = $tags;
-    $return_tags->{Name} = $name;
-
-    return (\%args, $return_tags);
+    return (\%args, \%tags);
 };
 
 1;
