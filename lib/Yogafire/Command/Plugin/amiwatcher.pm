@@ -30,7 +30,7 @@ sub execute {
     $opt->{'timeout'} ||= 480;
     $opt->{'watch-status'} ||= 'available';
 
-    $opt->{owner_id} = ec2->account_id;
+    $opt->{owner} = 'self';
 
     my $y_image = Yogafire::Image->new();
 

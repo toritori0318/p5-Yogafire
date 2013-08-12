@@ -21,7 +21,7 @@ sub search {
     my ($self, $opts) = @_;
     $opts ||= {};
 
-    my $owner_id     = ($opts->{owner_id}) ? $opts->{owner_id} : '';
+    my $owner        = $opts->{owner};
     my $state        = $opts->{state};
     my $name         = $opts->{name} || '';
     my $tagsname     = $opts->{tagsname} || '';
@@ -39,11 +39,10 @@ sub search {
     $filter{'name'}     = $name     if $name;
     %filter = (%filter, %$_) for (@filters);
 
-    my @images = ec2->describe_images(
-        -owner  => $owner_id,
-        -filter => \%filter,
-    );
+    my %image_filter = ('-filter' => \%filter);
+    $image_filter{'-owner'} = $owner if $owner;
 
+    my @images = ec2->describe_images(%image_filter);
     $self->cache(\@images);
 
     return @images;

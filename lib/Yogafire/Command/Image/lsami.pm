@@ -63,6 +63,8 @@ sub execute {
     my $name = $args->[0];
     $opt->{name} = $name if $name;
 
+    $opt->{owner} = 'self';
+
     my $proc = Yogafire::CommandClass::ImageProc->new(
         {
             action       => undef,

@@ -19,8 +19,6 @@ sub action_process {
     my $action_name = $self->action;
     my $opt         = $self->opt || {};
 
-    $opt->{owner_id} = ec2->account_id;
-
     my $y_image = Yogafire::Image->new();
     $y_image->out_columns(config->get('image_column')) if config->get('image_column');
     $y_image->out_format($opt->{format} || 'table');
@@ -33,6 +31,9 @@ sub action_process {
     my @images = $y_image->search($opt);
     if(scalar @images == 0) {
         die "Not Found Image. \n";
+    } elsif(scalar @images == 1 && $ia->action_class) {
+        $ia->procs(\@images, $opt);
+        return;
     }
 
     # force
