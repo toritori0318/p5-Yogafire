@@ -18,4 +18,16 @@ sub progress_dot {
     print "\n";
 }
 
+sub key_eq_value_to_hash {
+    my ($keyvalue ) = @_;
+    return {} unless $keyvalue;
+
+    my %hash;
+    for my $keyvs (@$keyvalue) {
+        my ($key, $value) = split /=/, $keyvs;
+        $hash{$key} = $value;
+    }
+    return \%hash;
+}
+
 1;

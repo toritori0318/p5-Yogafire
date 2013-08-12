@@ -111,7 +111,8 @@ define service{
 }
 
 [% IF i.tags.Role  %]
-[% INCLUDE "./example/render/nagios/inc/" _ i.tags.Role _ ".tt" WITH NAME_ALIAS=NAME_ALIAS, i=i %]
+[% FILENAME = './example/render/nagios/include/' _ i.tags.Role _ '.tt' %]
+[% INCLUDE $FILENAME %]
 [% END %]
 
 [% END %]

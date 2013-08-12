@@ -1,0 +1,8 @@
+#### db ####
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     DB
+  check_command           check_[% NAME_ALIAS %]_db
+}
+

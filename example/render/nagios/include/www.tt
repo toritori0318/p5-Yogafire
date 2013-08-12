@@ -1,0 +1,14 @@
+#### www ####
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     HTTP
+  check_command           check_[% NAME_ALIAS %]_http_www
+}
+define service{
+  use                     [% NAME_ALIAS %]-service
+  host_name               [% i.tags.Name %]
+  service_description     MEMCACHED
+  check_command           check_[% NAME_ALIAS %]_memcached
+}
+

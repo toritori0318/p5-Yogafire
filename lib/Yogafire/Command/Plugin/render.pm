@@ -40,10 +40,19 @@ has 'template-file' => (
     documentation   => "specified template file.",
 );
 
+has 'template-value' => (
+    traits          => [qw(Getopt)],
+    isa             => "ArrayRef",
+    is              => "rw",
+    cmd_aliases     => "V",
+    documentation   => "specified template value key(=value). (ex. --template-value='Role=www' --template-value='Env=dev'",
+);
+
 no Mouse;
 
 use Yogafire::Instance;
-use Text::Xslate;
+use Yogafire::Util;
+use Template;
 use JSON;
 
 sub abstract {'Render Tool'}
@@ -80,17 +89,12 @@ sub execute {
         $string = $self->slurp($template_file);
     }
 
-    # xslate
-    my $tx = Text::Xslate->new(
-        syntax => 'TTerse',
-        module => [
-            'Text::Xslate::Bridge::TT2Like'
-        ],
-        'function' => {
-            decode_json => sub { return ($_[0]) ? JSON::decode_json($_[0]) : undef; },
-        },
-    );
-    print $tx->render_string($string, { instances => \@instances });
+    my $template_values = Yogafire::Util::key_eq_value_to_hash($opt->{'template-value'});
+    my %template_args = (instances => \@instances, %$template_values);
+    # create Template object
+    my $tt = Template->new({ RELATIVE=>1 });
+    $tt->process(\$string, \%template_args)
+           || die $tt->error(), "\n"
 }
 
 sub search_tags {
