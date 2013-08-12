@@ -66,7 +66,7 @@ has timeout => (
     traits        => [qw(Getopt)],
     isa           => "Int",
     is            => "rw",
-    cmd_aliases   => "c",
+    cmd_aliases   => "t",
     documentation => "Number of ssh timeout. (default: 30)",
 );
 

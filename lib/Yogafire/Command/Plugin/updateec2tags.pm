@@ -34,6 +34,7 @@ no Mouse;
 
 use Yogafire::Instance;
 use Yogafire::Declare qw/ec2 config/;
+use Yogafire::Util;
 
 sub abstract {'Update EC2 Tags'}
 sub command_names {'update-ec2-tags'}
@@ -66,7 +67,7 @@ sub execute {
     my $keyvalue = $opt->{key} || [];
     my $force    = $opt->{force};
 
-    my $tags = $self->convert_hash($keyvalue);
+    my $tags = Yogafire::Util::key_eq_value_to_hash($keyvalue);
 
     unless($force) {
         my $column_list = config->get('instance_column');
@@ -92,16 +93,6 @@ sub execute {
         $seqno++;
     }
     print "[End] Update Tags. \n";
-}
-
-sub convert_hash {
-    my ( $self, $keyvalue ) = @_;
-    my %hash;
-    for my $keyvs (@$keyvalue) {
-        my ($key, $value) = split /=/, $keyvs;
-        $hash{$key} = $value;
-    }
-    return \%hash;
 }
 
 1;
