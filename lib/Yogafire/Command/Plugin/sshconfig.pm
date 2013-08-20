@@ -183,6 +183,7 @@ sub _sshconfig_proxy {
         my $name        = $_->tags->{Name};
         my $host        = ($private) ? $_->privateIpAddress : $_->ipAddress;
         next unless $name;
+        next if $_->instance_id eq $proxy_instance->instance_id;
 
         push @replace_hosts, $self->_build_ssh_config(
             {
@@ -207,7 +208,7 @@ sub _build_ssh_config {
     $str   .= sprintf ("    User         %s\n" , $params->{user});
     $str   .= sprintf ("    Port         %s\n" , $params->{ssh_port});
 
-    $str   .= sprintf ("    ProxyCommand ssh %s -W %h:%p\n" , $params->{proxy}) if $params->{proxy};
+    $str   .= sprintf ("    ProxyCommand ssh %s -W %%h:%%p\n" , $params->{proxy}) if $params->{proxy};
 
     return $str;
 }
