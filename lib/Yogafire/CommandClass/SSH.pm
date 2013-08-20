@@ -12,6 +12,7 @@ no Mouse;
 use Net::OpenSSH;
 use Yogafire::Instance;
 use Yogafire::Declare qw/ec2 config/;
+use Yogafire::Util;
 
 sub BUILD {
     my $self = shift;
@@ -45,15 +46,14 @@ sub build_proxy_command {
     }
     return join(' ', @proxy_cmd);
 }
-
 sub build_raw_ssh_command {
     my ($self, $instance) = @_;
     my @cmd;
     if($self->proxy) {
-        my $host = $instance->privateIpAddress;
+        my $host = Yogafire::Util::get_target_host($instance, '1');
         @cmd = ('ssh', '-p', $self->port, '-i', $self->identity_file, '-l', $self->user, '-oProxyCommand="', $self->build_proxy_command(), '"', $host);
     } else {
-        my $host = $instance->ipAddress || $instance->privateIpAddress;
+        my $host = Yogafire::Util::get_target_host($instance);
         @cmd = ('ssh', '-p', $self->port, '-i', $self->identity_file, '-l', $self->user, $host);
     }
     return join(' ', @cmd);

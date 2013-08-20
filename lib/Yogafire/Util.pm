@@ -30,4 +30,16 @@ sub key_eq_value_to_hash {
     return \%hash;
 }
 
+
+sub get_target_host {
+    my ($instance, $private) = @_;
+    return '' unless $instance;
+
+    if($private) {
+        return $instance->privateDnsName || $_->privateIpAddress;
+    } else {
+        return $instance->dnsName || $_->ipAddress || $_->privateIpAddress;
+    }
+}
+
 1;

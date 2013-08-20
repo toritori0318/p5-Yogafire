@@ -39,6 +39,7 @@ no Mouse;
 
 use Yogafire::Instance;
 use Yogafire::Declare qw/ec2 config/;
+use Yogafire::Util;
 
 use File::Copy qw/copy/;
 use Text::Diff 'diff';
@@ -62,11 +63,9 @@ sub execute {
 
     my $y_ins = Yogafire::Instance->new();
 
-    my $ip_key = ($opt->{private}) ? 'privateIpAddress' : 'ipAddress';
-
     my @instances = $y_ins->search($opt);
     # name & ip is required.
-    @instances = grep { $_->tags->{Name} && $_->{data}->{$ip_key} } @instances;
+    @instances = grep { $_->tags->{Name} && Yogafire::Util::get_target_host($_) } @instances;
 
     if(scalar @instances == 0) {
         die "Not Found Instance. \n";
@@ -141,7 +140,7 @@ sub _sshconfig {
     my @replace_hosts;
     for (@$instances) {
         my $name        = $_->tags->{Name};
-        my $host        = ($private) ? $_->privateIpAddress : $_->ipAddress;
+        my $host        = Yogafire::Util::get_target_host($_, $private);
         next unless $name;
 
         push @replace_hosts, $self->_build_ssh_config(
@@ -167,7 +166,7 @@ sub _sshconfig_proxy {
     my @replace_hosts;
 
     my $proxy_name    = $proxy_instance->tags->{Name};
-    my $proxy_host    = ($private) ? $proxy_instance->privateIpAddress : $proxy_instance->ipAddress;
+    my $proxy_host    = Yogafire::Util::get_target_host($proxy_instance, $private);
     # proxy server
     push @replace_hosts, $self->_build_ssh_config(
         {
@@ -179,11 +178,11 @@ sub _sshconfig_proxy {
         }
     );
 
-    for (@$instances) {
-        my $name        = $_->tags->{Name};
-        my $host        = ($private) ? $_->privateIpAddress : $_->ipAddress;
+    for my $instance (@$instances) {
+        my $name        = $instance->tags->{Name};
+        my $host        = Yogafire::Util::get_target_host($instance, $private);
         next unless $name;
-        next if $_->instance_id eq $proxy_instance->instance_id;
+        next if $instance->instance_id eq $proxy_instance->instance_id;
 
         push @replace_hosts, $self->_build_ssh_config(
             {
