@@ -1,6 +1,7 @@
 package Yogafire::Command::Plugin::updateec2tags;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has tagsname => (
     traits          => [qw(Getopt)],

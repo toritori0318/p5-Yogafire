@@ -1,7 +1,7 @@
 package Yogafire::Command::Instance::terminate;
 use Mouse;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has state => (
     traits          => [qw(Getopt)],

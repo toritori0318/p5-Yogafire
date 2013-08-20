@@ -75,7 +75,6 @@ sub convert_row {
 sub attribute_mapping {
     my ($self, $vpc, $key) = @_;
 
-    $DB::single=1;
     my $value;
     if ($_ =~ /^tags_(.*)/) {
         $value = $vpc->tags->{$1};

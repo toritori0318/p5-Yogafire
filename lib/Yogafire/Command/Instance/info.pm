@@ -2,7 +2,7 @@ package Yogafire::Command::Instance::info;
 use Mouse;
 use Mouse::Util::TypeConstraints;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has state => (
     traits        => [qw(Getopt)],

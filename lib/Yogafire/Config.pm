@@ -19,6 +19,7 @@ my $config_file = do {
 use Mouse;
 has 'file'   => (is => 'rw', isa => 'Str', default => $config_file );
 has 'config' => (is => 'rw');
+has 'current_profile' => (is => 'rw');
 no Mouse;
 
 sub BUILD {
@@ -29,6 +30,7 @@ sub BUILD {
     }
 
     $self->set_config();
+
     return $self;
 }
 
@@ -44,6 +46,9 @@ sub set_config {
     $yaml->[0]->{$profile}->{ssh_port}      ||= '';
 
     $self->config($yaml);
+
+    # initial profile
+    $self->current_profile($profile);
 }
 
 sub init {
@@ -163,17 +168,16 @@ EOF
     chmod(0600, $config_file);
 }
 
-sub current_profile {
-    my ($self) = @_;
-    return $self->config->[0]->{use_profile};
-}
-
 sub get_profile {
     my ($self, $profile) = @_;
-    return ($self->config->[0]->{$profile}) ? $self->config->[0]->{$profile} : 0;
+    my $section = $self->config->[0]->{$profile};
+    unless($section) {
+        die " Fail! invalid profile [$profile]\n";
+    }
+    return $section;
 }
 
-sub set_profile {
+sub write_profile {
     my ($self, $profile) = @_;
 
     $self->config->[0]->{use_profile} = $profile;

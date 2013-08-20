@@ -1,7 +1,7 @@
 package Yogafire::Command::Vpc::vpcgraph;
 use Mouse;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has 'graph-format' => (
     traits          => [qw(Getopt)],

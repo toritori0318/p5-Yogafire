@@ -1,7 +1,7 @@
 package Yogafire::Command::Vpc::vpcinfo;
 use Mouse;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has loop => (
     traits          => [qw(Getopt)],

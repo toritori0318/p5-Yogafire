@@ -1,6 +1,8 @@
 package Yogafire::Command::Instance::cmd;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
+
 has filter => (
     traits        => [qw(Getopt)],
     isa           => "Str",

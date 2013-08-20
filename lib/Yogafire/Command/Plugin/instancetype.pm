@@ -1,6 +1,8 @@
 package Yogafire::Command::Plugin::instancetype;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
+
 has region => (
     traits        => [qw(Getopt)],
     isa           => "Str",

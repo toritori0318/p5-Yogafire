@@ -27,7 +27,6 @@ sub BUILD {
     my ($self) = @_;
     my $config = Yogafire::Config->new;
     $self->set_config($config);
-    $self->set_ec2(vmec2()) if $config && $config->config;
 }
 
 sub vmec2 {
@@ -82,6 +81,14 @@ sub validate_args_common {
             die sprintf("bad permissions: [%s][%s]\nPlease change the permissions to 0600\n", $file, $mode_8);
         }
     }
+
+    # profile
+    if($opt->{profile} && config->get_profile($opt->{profile})) {
+        $self->config->current_profile($opt->{profile});
+        $self->set_ec2(vmec2());
+    }
+    # set ec2
+    $self->set_ec2(vmec2()) if $self->config;
 };
 
 1;

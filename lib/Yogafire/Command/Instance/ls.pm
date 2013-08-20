@@ -1,7 +1,7 @@
 package Yogafire::Command::Instance::ls;
 use Mouse;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has interactive => (
     traits          => [qw(Getopt)],

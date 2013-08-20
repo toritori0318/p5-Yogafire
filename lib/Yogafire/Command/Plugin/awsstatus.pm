@@ -1,6 +1,8 @@
 package Yogafire::Command::Plugin::awsstatus;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
+
 has from => (
     traits        => [qw(Getopt)],
     isa           => "Int",

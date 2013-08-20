@@ -1,7 +1,7 @@
 package Yogafire::Command::Image::runinstance;
 use Mouse;
 
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
 has filter => (
     traits          => [qw(Getopt)],

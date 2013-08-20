@@ -18,15 +18,9 @@ sub execute {
 
     my $profile = shift @$args if $args;
 
-    if($profile) {
-        my $section = config->get_profile($profile);
-        if($section) {
-            config->set_profile($profile);
-            print " use profile [$profile]\n";
-        } else {
-            print " Fail! invalid profile [$profile]\n";
-        }
-
+    if($profile && config->get_profile($profile)) {
+        config->write_profile($profile);
+        print " use profile [$profile]\n";
     } else {
         my @profiles = map { $_ } keys %{config->list_profile};
         my $current_profile = config->current_profile();

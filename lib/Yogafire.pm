@@ -56,7 +56,6 @@ no warnings 'redefine';
   print "\n";
   # common command
   for my $cmd (@command_class) {
-      $DB::single=1;
       my @commands = $filter_commonds->("::${cmd}::");
       print "$cmd commands:";
       $pritty->(@commands);

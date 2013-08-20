@@ -1,6 +1,8 @@
 package Yogafire::Command::Instance::put;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
+
 has 'dry-run'=> (
     traits        => [qw(Getopt)],
     isa           => "Bool",
