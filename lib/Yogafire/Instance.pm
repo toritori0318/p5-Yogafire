@@ -21,6 +21,7 @@ sub search {
     my ($self, $opts) = @_;
     $opts ||= {};
 
+    my @instance_ids = ($opts->{instance_ids}) ? @{$opts->{instance_ids}}: ();
     my $state        = $opts->{state};
     my $host         = $opts->{host} || $opts->{tagsname};
     my $customfilter = $opts->{filter} || '';
@@ -39,10 +40,11 @@ sub search {
     }
     %filter = (%filter, %$_) for (@filters);
 
-    my @instances = ec2->describe_instances(
-      -filter => \%filter,
-    );
-
+    my %args = (-filter => \%filter);
+    $args{'-instance_id'} = \@instance_ids if scalar @instance_ids > 0;
+    # get instances
+    my @instances = ec2->describe_instances(%args);
+    # set cache
     $self->cache(\@instances);
 
     return @instances;
