@@ -37,7 +37,7 @@ has description => (
 );
 has noreboot => (
     traits          => [qw(Getopt)],
-    isa             => "Str",
+    isa             => "Bool",
     is              => "rw",
     documentation   => "The instance will not be rebooted during the bundle process.",
 );
@@ -47,6 +47,12 @@ has loop => (
     is              => "rw",
     cmd_aliases     => "l",
     documentation   => "Repeat without exit interactive mode.",
+);
+has autoname => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    documentation   => "To target myself.",
 );
 has self => (
     traits          => [qw(Getopt)],

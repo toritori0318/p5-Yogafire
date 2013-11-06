@@ -18,6 +18,7 @@ no Mouse;
 use Yogafire::Logger;
 use Yogafire::Instance::Action::Info;
 use Yogafire::Term;
+use POSIX qw(strftime);
 
 sub proc {
     my ($self, $instance, $opt) = @_;
@@ -42,8 +43,14 @@ sub proc {
 sub confirm_create_image {
     my ($self, $instance, $opt) = @_;
     $opt ||= {};
-    my $name        = $opt->{name};
+    my $name = $opt->{name};
     my $description = $opt->{description};
+    if($opt->{autoname}) {
+        my $tags_name = $instance->tags->{Name};
+        my $gen_name = sprintf("%s-%s", $tags_name, strftime("%Y%m%d%H%M%S", localtime()));
+        $name = $gen_name;
+        $description = $gen_name;
+    }
     my $noreboot    = $opt->{noreboot};
     my $force       = $opt->{force};
 
