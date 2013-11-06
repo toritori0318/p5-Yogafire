@@ -5,7 +5,7 @@ has action      => ( is  => "rw" );
 has force       => ( is  => "rw" );
 has interactive => ( is  => "rw" );
 has loop        => ( is  => "rw" );
-has yogafire    => ( is  => "rw" );
+has multi       => ( is  => "rw" );
 no Mouse;
 
 use LWP::UserAgent;
@@ -53,7 +53,7 @@ sub action_process {
         return unless $self->interactive;
 
         # confirm
-        my $yogafire = ($self->{yogafire}) ? '/ ("yogafire" is all target)': '';
+        my $yogafire = ($self->multi) ? '/ ("yogafire" is all target)': '';
         my $input = $term->readline("no / tags_Name / instance_id ${yogafire}> ");
         $input =~ s/^ //g;
         $input =~ s/ $//g;
@@ -66,11 +66,17 @@ sub action_process {
         if (!$target_instance) {
             my @target_instances = $y_ins->search_from_cache({ name => qr/$input/ });
             if(scalar @target_instances == 0) {
-                if($self->{yogafire} && $input eq 'yogafire') {
+                my @ids = grep { /^\d+$/ } split(/,/, $input);
+                if($self->multi && $input eq 'yogafire') {
                     # all target
                     $opt->{force} = 1;
                     $ia->procs($y_ins->cache, $opt);
                     $opt->{force} = 0;
+                    last;
+                } elsif($self->multi && scalar @ids > 0) {
+                    # specify target
+                    my @instances = map { $y_ins->cache->[$_-1] } @ids;
+                    $ia->procs(\@instances, $opt);
                     last;
                 } else {
                     print "Invalid Value. \n";

@@ -80,6 +80,7 @@ sub execute {
             opt          => $opt,
             force        => $opt->{force},
             interactive  => 1,
+            multi        => 1,
             loop         => $opt->{loop},
         }
     );

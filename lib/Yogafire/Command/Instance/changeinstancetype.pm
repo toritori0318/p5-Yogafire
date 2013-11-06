@@ -81,6 +81,7 @@ sub execute {
             force        => $opt->{force},
             interactive  => 1,
             loop         => $opt->{loop},
+            multi        => 1,
         }
     );
     if($opt->{self}) {
