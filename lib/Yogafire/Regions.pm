@@ -67,11 +67,12 @@ sub _get_state_color {
 
 sub find {
     my ($self, $text) = @_;
-    for (@{$self->regions}) {
-        if($text =~ /$_->regionName/) {
+    for my $region (@{$self->regions}) {
+        my $region_id = $region->regionName;
+        if($text =~ /$region_id/) {
             return {
-                id => $_->{id},
-                name => $_->{name},
+                id   => $region_id,
+                name => $region->{data}->{full_name},
             };
         }
     }
