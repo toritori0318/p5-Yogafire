@@ -146,6 +146,61 @@ my @instance_types = (
         price            => 'N/A',
     },
     {
+        id               => 'c3.large',
+        oid              => 'hiCPU3ODI_med',
+        name             => 'High-CPU3 Large Instance',
+        cpu              => '7 ECU(3.5 x 2core)',
+        memory           => '3.75GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => '2 x 16 GB SSD',
+        price            => 'N/A',
+    },
+    {
+        id               => 'c3.xlarge',
+        oid              => 'hiCPU3ODI_med',
+        name             => 'High-CPU3 Extra Large Instance',
+        cpu              => '14 ECU(3.5 x 4core)',
+        memory           => '7GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => '2 x 40 GB SSD',
+        price            => 'N/A',
+    },
+    {
+        id               => 'c3.2xlarge',
+        oid              => 'hiCPU3ODI_med',
+        name             => 'High-CPU3 Double Extra Large Instance',
+        cpu              => '28 ECU(3.5 x 8core)',
+        memory           => '15GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => '2 x 80 GB SSD',
+        price            => 'N/A',
+    },
+    {
+        id               => 'c3.4xlarge',
+        oid              => 'hiCPU3ODI_med',
+        name             => 'High-CPU3 Quadruple Extra Large Instance',
+        cpu              => '55 ECU(3.5 x 16core)',
+        memory           => '30GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => '2 x 160 GB SSD',
+        price            => 'N/A',
+    },
+    {
+        id               => 'c3.8xlarge',
+        oid              => 'hiCPU3ODI_med',
+        name             => 'High-CPU3 Double Quadruple Extra Large Instance',
+        cpu              => '108 ECU(3.5 x 32core)',
+        memory           => '60GB',
+        io               => 'High',
+        ebs_optimized    => 'N/A',
+        instance_storage => '2 x 320 GB SSD',
+        price            => 'N/A',
+    },
+    {
         id               => 'cc2.8xlarge',
         oid              => 'clusterComputeI_xxxxxxxxl',
         name             => 'Cluster Compute Quadruple Extra Large Instance',
@@ -299,9 +354,11 @@ sub _get_group_color {
     } elsif ( $id =~ /^m3/ ) {
         return 'yellow';
     } elsif ( $id =~ /^m2/ ) {
-        return 'blue';
+        return 'blue bold';
     } elsif ( $id =~ /^c1/ ) {
         return 'cyan';
+    } elsif ( $id =~ /^c3/ ) {
+        return 'blue';
     } elsif ( $id =~ /^cc/ ) {
         return 'magenta';
     } elsif ( $id =~ /^cg/ ) {
@@ -309,7 +366,7 @@ sub _get_group_color {
     } elsif ( $id =~ /^hi/ ) {
         return 'red bold';
     } elsif ( $id =~ /^cr/ ) {
-        return 'blue bold';
+        return 'cyan bold';
     } elsif ( $id =~ /^hs/ ) {
         return 'magenta bold';
     }
