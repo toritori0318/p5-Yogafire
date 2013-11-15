@@ -36,7 +36,6 @@ sub vmec2 {
     my $aws_secret_access_key = config->get('secret_access_key');
     my $identity_file         = config->get('identity_file');
     my $region                = config->get('region');
-    return unless $aws_access_key_id;
 
     my %params = (
         -access_key     => $aws_access_key_id,
@@ -48,7 +47,31 @@ sub vmec2 {
         $params{'-endpoint'}       = "https://ec2.${region}.amazonaws.com";
     }
 
-    VM::EC2->new(%params);
+    my $ec2;
+    eval {
+        # try access key auth.
+        $ec2 = VM::EC2->new(%params);
+    };
+    if($@) {
+        # try iam role auth.
+        eval {
+            $params{'-access_key'} = 'dummy';
+            $params{'-secret_key'} = 'dummy';
+            # dummy vmec2
+            my $ec2_dummy = VM::EC2->new(%params);
+            # get iam token
+            my $token = $ec2_dummy->instance_metadata->iam_credentials;
+            $params{'-security_token'} = $token;
+            delete $params{'-access_key'};
+            delete $params{'-secret_key'};
+            # get vmec2 instance
+            $ec2 = VM::EC2->new(%params);
+        };
+        if($@) {
+            die "AWS auth error.[$@]";
+        }
+    }
+    return $ec2;
 }
 
 sub validate_args {
