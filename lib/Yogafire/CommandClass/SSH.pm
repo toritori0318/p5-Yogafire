@@ -53,7 +53,7 @@ sub build_raw_ssh_command {
         my $host = $instance->privateIpAddress;
         @cmd = ('ssh', '-p', $self->port, '-i', $self->identity_file, '-l', $self->user, '-oProxyCommand="', $self->build_proxy_command(), '"', $host);
     } else {
-        my $host = $instance->ipAddress;
+        my $host = $instance->ipAddress || $instance->privateIpAddress;
         @cmd = ('ssh', '-p', $self->port, '-i', $self->identity_file, '-l', $self->user, $host);
     }
     return join(' ', @cmd);
