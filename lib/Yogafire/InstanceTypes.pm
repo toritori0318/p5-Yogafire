@@ -15,7 +15,6 @@ use Yogafire::Regions;
 my @instance_types = (
     {
         id               => 't1.micro',
-        oid              => 'uODI_u',
         name             => 'Micro Instance',
         cpu              => '2 ECU(burst)',
         memory           => '613MB',
@@ -26,7 +25,6 @@ my @instance_types = (
     },
     {
         id               => 'm1.small',
-        oid              => 'stdODI_sm',
         name             => 'Small Instance',
         cpu              => '1 ECU(1 x 1core)',
         memory           => '1.7GB',
@@ -37,7 +35,6 @@ my @instance_types = (
     },
     {
         id               => 'm1.medium',
-        oid              => 'stdODI_med',
         name             => 'Medium Instance',
         cpu              => '2 ECU(2 x 1core)',
         memory           => '3.75GB',
@@ -48,7 +45,6 @@ my @instance_types = (
     },
     {
         id               => 'm1.large',
-        oid              => 'stdODI_lg',
         name             => 'Large Instance',
         cpu              => '4 ECU(2 x 2core)',
         memory           => '7.5GB',
@@ -59,7 +55,6 @@ my @instance_types = (
     },
     {
         id               => 'm1.xlarge',
-        oid              => 'stdODI_xl',
         name             => 'Extra Large Instance',
         cpu              => '8 ECU(2 x 4core)',
         memory           => '15GB',
@@ -70,7 +65,6 @@ my @instance_types = (
     },
     {
         id               => 'm3.xlarge',
-        oid              => 'secgenstdODI_xl',
         name             => 'M3 Extra Large Instance',
         cpu              => '13 ECU(3.25 x 4core)',
         memory           => '15GB',
@@ -81,7 +75,6 @@ my @instance_types = (
     },
     {
         id               => 'm3.2xlarge',
-        oid              => 'secgenstdODI_xxl',
         name             => 'M3 Double Extra Large Instance',
         cpu              => '26 ECU(3.25 x 8core)',
         memory           => '30GB',
@@ -92,7 +85,6 @@ my @instance_types = (
     },
     {
         id               => 'm2.xlarge',
-        oid              => 'hiMemODI_xl',
         name             => 'High-Memory Extra Large Instance',
         cpu              => '6.5 ECU(3.25 x 2core)',
         memory           => '17.1GB',
@@ -103,7 +95,6 @@ my @instance_types = (
     },
     {
         id               => 'm2.2xlarge',
-        oid              => 'hiMemODI_xxl',
         name             => 'High-Memory Double Extra Large Instance',
         cpu              => '13 ECU(3.25 x 4core)',
         memory           => '34.2GB',
@@ -114,7 +105,6 @@ my @instance_types = (
     },
     {
         id               => 'm2.4xlarge',
-        oid              => 'hiMemODI_xxxxl',
         name             => 'High-Memory Quadruple Extra Large Instance',
         cpu              => '26 ECU(3.25 x 8core)',
         memory           => '68.4GB',
@@ -125,7 +115,6 @@ my @instance_types = (
     },
     {
         id               => 'c1.medium',
-        oid              => 'hiCPUODI_med',
         name             => 'High-CPU Medium Instance',
         cpu              => '5 ECU(2.5 x 2core)',
         memory           => '1.7GB',
@@ -136,7 +125,6 @@ my @instance_types = (
     },
     {
         id               => 'c1.xlarge',
-        oid              => 'hiCPUODI_xl',
         name             => 'High-CPU Extra Large Instance',
         cpu              => '20 ECU(2.5 x 8core)',
         memory           => '7GB',
@@ -147,7 +135,6 @@ my @instance_types = (
     },
     {
         id               => 'c3.large',
-        oid              => 'hiCPU3ODI_med',
         name             => 'High-CPU3 Large Instance',
         cpu              => '7 ECU(3.5 x 2core)',
         memory           => '3.75GB',
@@ -158,7 +145,6 @@ my @instance_types = (
     },
     {
         id               => 'c3.xlarge',
-        oid              => 'hiCPU3ODI_med',
         name             => 'High-CPU3 Extra Large Instance',
         cpu              => '14 ECU(3.5 x 4core)',
         memory           => '7GB',
@@ -169,7 +155,6 @@ my @instance_types = (
     },
     {
         id               => 'c3.2xlarge',
-        oid              => 'hiCPU3ODI_med',
         name             => 'High-CPU3 Double Extra Large Instance',
         cpu              => '28 ECU(3.5 x 8core)',
         memory           => '15GB',
@@ -180,7 +165,6 @@ my @instance_types = (
     },
     {
         id               => 'c3.4xlarge',
-        oid              => 'hiCPU3ODI_med',
         name             => 'High-CPU3 Quadruple Extra Large Instance',
         cpu              => '55 ECU(3.5 x 16core)',
         memory           => '30GB',
@@ -191,7 +175,6 @@ my @instance_types = (
     },
     {
         id               => 'c3.8xlarge',
-        oid              => 'hiCPU3ODI_med',
         name             => 'High-CPU3 Double Quadruple Extra Large Instance',
         cpu              => '108 ECU(3.5 x 32core)',
         memory           => '60GB',
@@ -202,7 +185,6 @@ my @instance_types = (
     },
     {
         id               => 'cc2.8xlarge',
-        oid              => 'clusterComputeI_xxxxxxxxl',
         name             => 'Cluster Compute Quadruple Extra Large Instance',
         cpu              => '88 ECU(2 x Intel Xeon E5-2670, 8core "Sandy Bridge" arch)',
         memory           => '60.5GB',
@@ -213,7 +195,6 @@ my @instance_types = (
     },
     {
         id               => 'cr1.8xlarge',
-        oid              => 'clusterHiMemODI_xxxxxxxxl',
         name             => 'High Memory Cluster Eight Extra Large Instance',
         cpu              => '88 ECU(2 x Intel Xeon E5-2670, 8core Intel Turbo, NUMA)',
         memory           => '244GB',
@@ -224,7 +205,6 @@ my @instance_types = (
     },
     {
         id               => 'cg1.4xlarge',
-        oid              => 'clusterGPUI_xxxxl',
         name             => 'Cluster GPU Quadruple Extra Large Instance',
         cpu              => '33.5 ECU(2 x Intel Xeon X5570, 4core "Nehalem" arch)',
         memory           => '22GB',
@@ -235,7 +215,6 @@ my @instance_types = (
     },
     {
         id               => 'hi1.4xlarge',
-        oid              => 'hiIoODI_xxxxl',
         name             => 'High I/O Quadruple Extra Large Instance',
         cpu              => '35 ECU(2.2 x 16core)',
         memory           => '60.5GB',
@@ -246,7 +225,6 @@ my @instance_types = (
     },
     {
         id               => 'hs1.8xlarge',
-        oid              => 'hiStoreODI_xxxxxxxxl',
         name             => 'High Storage Instances',
         cpu              => '35 ECU(2.2 x 16core)',
         memory           => '117GB',
@@ -257,7 +235,12 @@ my @instance_types = (
     },
 );
 
-my $s3_json = 'http://aws.amazon.com/jp/ec2/pricing/pricing-on-demand-instances.json/';
+my %price_mapping = (
+    'on-demand'       => 'od',
+    'reserved-right'  => 'ri-light',
+    'reserved-medium' => 'ri-medium',
+    'reserved-heavy'  => 'ri-heavy',
+);
 
 use Yogafire::Output;
 use Term::ANSIColor qw/colored/;
@@ -270,10 +253,10 @@ sub BUILD {
 }
 
 sub get_prices {
-    my ($self) = @_;
+    my ($self, $json_file) = @_;
     my $ua = LWP::UserAgent->new;
     $ua->timeout(3);
-    my $response = $ua->get($s3_json);
+    my $response = $ua->get($json_file);
     if ( $response->is_success ) {
         return JSON::decode_json( $response->decoded_content );    # or whatever
     } else {
@@ -281,30 +264,18 @@ sub get_prices {
     }
 }
 
-sub get_region_price {
-    my ($self, $region) = @_;
-    my $prices = $self->get_prices();
-    my $m_region = Yogafire::Regions->new();
-    my $cnv_region   = shift @{ [ grep { $_->regionName eq $region } @{$m_region->regions()} ] };
-    my $region_price = shift @{ [ grep { $_->{region} eq $cnv_region->{data}->{oid} } @{ $prices->{config}->{regions} } ] };
-    return $region_price;
-}
-
 sub match_type_and_price {
     my ($self, $types, $prices, $os) = @_;
     for my $type (@$types) {
-        my ($group, $tiny_type) = split /_/, $type->{oid};
         for my $price (@$prices) {
-            next unless $price->{type} eq $group;
-
             for my $size (@{$price->{sizes}}) {
-                next unless $size->{size} eq $tiny_type;
+                next unless $size->{size} eq $type->{id};
 
                 my %h;
                 for my $row (@{$size->{valueColumns}}) {
                     $h{$row->{name}} = $row->{'prices'}->{'USD'};
                 }
-                $type->{price}       = $h{$os};
+                $type->{price} = $h{$os};
                 if($type->{price} eq 'N/A') {
                      $type->{price_month} = 'N/A';
                 }else{
@@ -318,18 +289,32 @@ sub match_type_and_price {
 
 sub search {
     my ( $self, $opt ) = @_;
-    my $region   = $opt->{region} || config->get('region');
-    my $platform = $opt->{platform} || 'linux';
+    my $region     = $opt->{region} || config->get('region');
+    my $platform   = $opt->{platform} || 'linux';
+    my $price_kind = $opt->{price_kind} || 'on-demand';
 
-    my $prices = $self->get_region_price($region);
-    my $convert_rows = $self->match_type_and_price($self->instance_types, $prices->{instanceTypes}, $platform);
+    my $json_file  = $self->s3_json_file($platform, $price_kind);
+    my $prices     = $self->get_prices($json_file);
+    my $m_region   = Yogafire::Regions->new();
+    my $cnv_region = shift @{ [ grep { $_->regionName eq $region } @{$m_region->regions()} ] };
+    my $cnv_prices = shift @{ [ grep { $_->{region} eq $cnv_region->{data}->{oid} } @{ $prices->{config}->{regions} } ] };
+
+    my $convert_rows = $self->match_type_and_price($self->instance_types, $cnv_prices->{instanceTypes}, $platform);
     return $convert_rows;
+}
+
+sub s3_json_file {
+    my ($self, $platform, $price_kind) = @_;
+    my $price_map = $price_mapping{$price_kind};
+    die "[$price_kind] is invalid kindname." unless $price_map;
+
+    return "http://aws.amazon.com/ec2/pricing/json/${platform}-${price_map}.json";
 }
 
 sub output {
     my ( $self, $rows, $opt ) = @_;
 
-    if($opt->{'view-detail'}) {
+    if($opt->{'detail'}) {
         $self->out_columns([qw/id name cpu memory io ebs_optimized instance_storage price price_month/]);
     } else {
         $self->out_columns([qw/id name cpu memory io price/]);

@@ -10,12 +10,12 @@ has region => (
     cmd_aliases   => "r",
     documentation => "specify the region name.",
 );
-has 'view-detail' => (
+has detail => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
-    cmd_aliases   => "F",
-    documentation => "specify the region name.",
+    cmd_aliases   => "D",
+    documentation => "detail view.",
 );
 has platform => (
     traits        => [qw(Getopt)],
@@ -23,6 +23,13 @@ has platform => (
     is            => "rw",
     cmd_aliases   => "p",
     documentation => "specify the platform .(linux / mswin  default:linux)",
+);
+has 'price-kind' => (
+    traits        => [qw(Getopt)],
+    isa           => "Str",
+    is            => "rw",
+    cmd_aliases   => "k",
+    documentation => "specify the price kind .(on-demand / reserved-right / reserved-medium / reserved-heavy default:on-demand)",
 );
 #has filter => (
 #    traits          => [qw(Getopt)],
