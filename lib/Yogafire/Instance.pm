@@ -83,7 +83,7 @@ sub attribute_mapping {
     if ($_ =~ /^tags_(.*)/) {
         $value = $instance->tags->{$1};
     } elsif ($_ =~ /^groupSet$/) {
-        $value = join(',', (map {$_->groupName} $instance->groups) );
+        $value = join(',', (map {$_->groupName} $instance->groupSet) );
     } elsif ($_ =~ /^instanceState$/) {
         $value = $instance->{data}->{instanceState}->{name};
     } elsif ($_ =~ /^monitoring$/) {

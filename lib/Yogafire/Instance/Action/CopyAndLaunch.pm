@@ -30,7 +30,7 @@ sub proc {
         name              => $instance->tags->{Name},
         tags              => $tags,
         keypair           => $instance->keyPair,
-        groups            => [map {$_->groupName} $instance->groups],
+        groups            => [map {$_->groupName} $instance->groupSet],
     };
     my $image = $instance->aws->describe_images(-image_id => $instance->imageId);
 

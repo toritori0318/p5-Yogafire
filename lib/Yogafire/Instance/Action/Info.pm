@@ -28,7 +28,7 @@ sub proc {
     }
     $print->('monitoring', $instance->monitoring);
     $print->('availabilityZone', $instance->placement);
-    my $group_set = ($instance->groups) ? join(',', (map {$_->groupName} $instance->groups)) : '';
+    my $group_set = ($instance->groupSet) ? join(',', (map {$_->groupName} $instance->groupSet)) : '';
     $print->('groupSet', $group_set);
 };
 
