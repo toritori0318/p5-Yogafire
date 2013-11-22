@@ -106,19 +106,11 @@ sub execute {
     } elsif($diff_count < 0) {
         warn "scale in instance\n";
         $diff_count = -$diff_count;
-        my @ret_instance_ids = $self->terminate_instances(\@instances, $diff_count);
+        my @ret_instance_ids = $self->terminate_instances(\@instances, \@availability_zones, $diff_count, $total_count);
         # DeRegister ELB
         if($elb && scalar @ret_instance_ids > 0) {
             my @states = $elb->describe_instance_health(-instances => \@elb_instance_ids);
-            my @terminated_instance_ids;
-            for my $state (@states) {
-                # Deregister terminate instance
-                if($state->State eq 'OutOfService' && $state->Description eq 'Instance is in terminated state.') {
-                    push @terminated_instance_ids, $state->InstanceId;
-                }
-            }
-            warn "  Deregister instance id[$_]\n" for @terminated_instance_ids;
-            $elb->deregister_instances(@terminated_instance_ids)
+            $elb->deregister_instances(@ret_instance_ids)
         }
         return;
     }
@@ -138,7 +130,7 @@ sub execute {
         # Register ELB
         if($elb && scalar @ret_instance_ids > 0) {
             warn "  Register instance id[$_]\n" for @ret_instance_ids;
-            $elb->register_instances('-instances' => @ret_instance_ids);
+            $elb->register_instances(@ret_instance_ids);
         }
     } else {
         # single-az
@@ -147,7 +139,7 @@ sub execute {
         # Register ELB
         if($elb && scalar @ret_instance_ids > 0) {
             warn "  Register instance id[$_]\n" for @ret_instance_ids;
-            $elb->register_instances('-instances' => @ret_instance_ids);
+            $elb->register_instances(@ret_instance_ids);
         }
     }
 }
@@ -188,15 +180,39 @@ sub launch_instances {
 }
 
 sub terminate_instances {
-    my ($self, $instances, $diff_count) = @_;
+    my ($self, $instances, $zones, $diff_count, $total_count) = @_;
+
+    my $az_counts = $self->get_az_count($instances);
+
+    my %az_terminate_count = map { $_ => 0 } @$zones;
+    my $center_count       = int($total_count / scalar @$zones);
+    my $surplus_count      = $total_count % scalar @$zones;
+    # Decide the number of instances in each az
+    for my $az (@$zones) {
+        my $az_count             = $az_counts->{$az} || 0;
+        my $terminate_count      = $az_count - $center_count;
+        $az_terminate_count{$az} = $terminate_count if $terminate_count > 0;
+        # surplus
+        if($surplus_count > 0) {
+            $az_terminate_count{$az}++;
+            $surplus_count--;
+        }
+    }
 
     my @instance_ids;
     for my $instance (reverse @$instances) {
-        push @instance_ids, $instance->instanceId;
-        $instance->terminate;
+        if($az_terminate_count{$instance->placement} > 0) {
+            warn sprintf("[%s][%s][%s] Terminate target instance.", $instance->tags->{Name}||'', $instance->instanceId, $instance->placement, );
+            push @instance_ids, $instance->instanceId;
+            # terminate
+            $instance->terminate;
+            # decr
+            $az_terminate_count{$instance->placement}--;
+            last if --$diff_count <= 0;
+        }
 
-        last if --$diff_count <= 0;
     }
+
     return \@instance_ids;
 }
 
@@ -242,7 +258,7 @@ sub launch_instances_multi_az {
         }
     }
 
-    my @instances;
+    my @instance_ids;
     # Launch each az
     for my $az (@$zones) {
         $args{'-placement_zone'} = $az if $az;
@@ -250,7 +266,7 @@ sub launch_instances_multi_az {
         next if $args{'-max_count'} <= 0;
 
         warn sprintf("Launch instance in multi-az [%s] > [%s]. \n", $args{'-placement_zone'}, $args{'-max_count'});
-        @instances = $image->run_instances( %args );
+        my @instances = $image->run_instances( %args );
         if($tags && scalar (keys %$tags) > 0 ) {
             for my $instance (@instances) {
                 # waiting status
@@ -258,10 +274,11 @@ sub launch_instances_multi_az {
                 for my $key (keys %$tags) {
                     $instance->add_tags($key => $tags->{$key});
                 }
+                push @instance_ids, $instance->instanceId;
             }
         }
     }
-    return (map {$_->instanceId} @instances);
+    return @instance_ids;
 }
 
 1;
