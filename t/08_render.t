@@ -4,7 +4,7 @@ use Test::More;
 
 use t::Util;
 BEGIN {
-    t::Util::set_env();
+    our $fh = t::Util::set_env();
 }
 
 use App::Cmd::Tester;
@@ -22,9 +22,6 @@ my $guard = mock_guard(
         'describe_instances' => sub { Test::Mock::Set::Instance::mocks() },
     },
 );
-
-# create test config
-test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 use Term::ANSIColor qw/colored/;
 # run cmd

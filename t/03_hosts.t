@@ -4,7 +4,7 @@ use Test::More;
 
 use t::Util;
 BEGIN {
-    t::Util::set_env();
+    our $fh = t::Util::set_env();
 }
 
 use App::Cmd::Tester;
@@ -14,8 +14,6 @@ use lib 't/lib';
 use Test::Mock::Set::Instance;
 
 use Yogafire;
-
-test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 my $guard = mock_guard(
     'VM::EC2' => {

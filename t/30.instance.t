@@ -4,7 +4,7 @@ use Test::More;
 
 use t::Util;
 BEGIN {
-    t::Util::set_env();
+    our $fh = t::Util::set_env();
 }
 
 use Yogafire::Instance;

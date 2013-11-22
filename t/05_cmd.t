@@ -4,7 +4,7 @@ use Test::More;
 
 use t::Util;
 BEGIN {
-    t::Util::set_env();
+    our $fh = t::Util::set_env();
 }
 
 use App::Cmd::Tester;
@@ -31,8 +31,6 @@ my $guard = mock_guard(
     },
 );
 
-# create test config
-test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 # validation 1
 {

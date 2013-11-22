@@ -4,7 +4,7 @@ use Test::More;
 
 use t::Util;
 BEGIN {
-    t::Util::set_env();
+    our $fh = t::Util::set_env();
 }
 
 use App::Cmd::Tester;
@@ -14,8 +14,6 @@ use lib 't/lib';
 use Test::Mock::Set::Instance;
 
 use Yogafire;
-
-test_app(Yogafire => [ qw(config --init --noconfirm) ]);
 
 my $guard = mock_guard(
     'VM::EC2' => {
@@ -30,20 +28,20 @@ my $sshconfig_file = create_sshconfig_file();
     my $str =<<'EOF';
 Host fugafuga
     HostName     wannyan.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 
 #======== Yogafire Begen ========#
 Host hoge
     HostName     hogehoge.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 
 Host fuga
     HostName     fugafuga.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 #======== Yogafire End   ========#
@@ -64,20 +62,20 @@ my $sshconfig_file = create_sshconfig_file();
     my $str =<<'EOF';
 Host fugafuga
     HostName     wannyan.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 
 #======== Yogafire Begen ========#
 Host hoge
     HostName     hogehoge.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 
 Host fuga
     HostName     fugafuga.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
     ProxyCommand ssh hoge -W %h:%p
@@ -98,7 +96,7 @@ sub create_sshconfig_file {
     print $fh <<'EOF';
 Host fugafuga
     HostName     wannyan.com
-    IdentityFile 
+    IdentityFile /path/to/keypem
     User         ec2-user
     Port         22
 EOF
