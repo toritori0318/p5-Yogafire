@@ -1,5 +1,16 @@
 Revision history for Perl extension Yogafire.
 
+0.06 2013/xx/xx
+  - Update to the latest version of the instance type.
+  - Support for IAM roles.
+  - Added "autoname" option into "create-image" command
+  - Added support for 'scale-ec2' command
+  - Added support for 'profile' global option
+  - Added support for 'run-instance' command
+  - Change template engine from "Xslate" to "TT".
+  - Added support for 'sshtmux' command
+  - Added "timeout" option into "cmd" command
+
 0.05 2013/07/09
   - Fixed a issue that yoga-ls did not show anything when number of instances equals 1(@ysasaki)
   - Interactive filter bugfix
