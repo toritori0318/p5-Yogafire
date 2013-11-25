@@ -36,9 +36,9 @@ sub get_target_host {
     return '' unless $instance;
 
     if($private) {
-        return $instance->privateDnsName || $_->privateIpAddress;
+        return $instance->privateDnsName || $instance->privateIpAddress;
     } else {
-        return $instance->dnsName || $_->ipAddress || $_->privateIpAddress;
+        return $instance->dnsName || $instance->ipAddress || $instance->privateIpAddress;
     }
 }
 
