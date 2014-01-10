@@ -51,6 +51,13 @@ has proxy => (
     is              => "rw",
     documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
+has retry => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    cmd_aliases   => "s",
+    documentation => "Retry until ssh succeeds.",
+);
 no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;

@@ -27,9 +27,24 @@ sub proc {
         }
     );
     my $ssh_cmd = $yoga_ssh->build_raw_ssh_command($instance);
-    print "$ssh_cmd\n";
-    exec($ssh_cmd);
+    $self->exec_ssh($ssh_cmd) unless $opt->{retry};
+
+    # retry
+    my $host = $yoga_ssh->target_host($instance);
+    while (1) {
+        # check ssh connection
+        eval { $yoga_ssh->ssh({ host => $host }); };
+        $self->exec_ssh($ssh_cmd) unless $@;
+
+        #warn $@;
+        sleep 10;
+    }
 };
 
-1;
+sub exec_ssh {
+    my ($self, $ssh_cmd) = @_;
+    print "$ssh_cmd\n";
+    exec($ssh_cmd);
+}
 
+1;
