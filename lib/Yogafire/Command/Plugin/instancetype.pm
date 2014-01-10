@@ -24,12 +24,48 @@ has platform => (
     cmd_aliases   => "p",
     documentation => "specify the platform .(linux / mswin  default:linux)",
 );
-has 'price-kind' => (
+has 'io' => (
     traits        => [qw(Getopt)],
-    isa           => "Str",
+    isa           => "Bool",
     is            => "rw",
-    cmd_aliases   => "k",
-    documentation => "specify the price kind .(on-demand / reserved-right / reserved-medium / reserved-heavy default:on-demand)",
+    documentation => "Show the network io.(default: off)",
+);
+has 'ebs-optimized' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Show the ebs optimized.(default: off)",
+);
+has 'instance-storage' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Show the instance storage.(default: off)",
+);
+has 'price-od' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    default       => sub { 1 },
+    documentation => "Show the on-demand price.(default: on)",
+);
+has 'price-ri-light' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Show the reserved-instance-light price.(default: off)",
+);
+has 'price-ri-medium' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Show the reserved-instance-medium price.(default: off)",
+);
+has 'price-ri-heavy' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Show the reserved-instance-heavy price.(default: off)",
 );
 #has filter => (
 #    traits          => [qw(Getopt)],
@@ -46,6 +82,8 @@ sub command_names {'instance-type'}
 
 sub execute {
     my ( $self, $opt, $args ) = @_;
+
+    $opt->{'price-od'} = 1 unless defined $opt->{'price-od'};
 
     my $y_instance_types = Yogafire::InstanceTypes->new();
     my $rows = $y_instance_types->search($opt);
