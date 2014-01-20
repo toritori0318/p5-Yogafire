@@ -5,6 +5,7 @@ use Mouse;
 has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/] }, );
 has 'out_format'  => (is => 'rw');
 has 'cache'       => (is => 'rw');
+has 'eips'        => (is => 'rw');
 no Mouse;
 
 use Yogafire::Output;
@@ -93,6 +94,13 @@ sub attribute_mapping {
     } elsif ($_ =~ /^colorfulInstanceState$/) {
         my $state = $instance->{data}->{instanceState}->{name};
         $value = colored($state, $self->_get_state_color($state));
+    } elsif ($_ =~ /^ipAddress$/) {
+        my $ip_address = $instance->{data}->{$_};
+        if($self->eips && grep { /^$ip_address$/ } @{$self->eips}) {
+            $value = colored($ip_address, 'green');
+        } else {
+            $value = $ip_address;
+        }
     } else {
         $value = $instance->{data}->{$_};
     }

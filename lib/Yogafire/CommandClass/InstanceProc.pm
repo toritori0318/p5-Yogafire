@@ -23,6 +23,10 @@ sub action_process {
     my $y_ins = Yogafire::Instance->new();
     $y_ins->out_columns(config->get('instance_column')) if config->get('instance_column');
     $y_ins->out_format($opt->{format} || 'table');
+    if(config->get('highlight_eip')) {
+        my @eips = ec2->describe_addresses();
+        $y_ins->eips(\@eips);
+    }
 
     # action class
     my $ia = Yogafire::Instance::Action->new(
@@ -114,6 +118,10 @@ sub self_process {
     my $y_ins = Yogafire::Instance->new();
     $y_ins->out_columns(config->get('instance_column')) if config->get('instance_column');
     $y_ins->out_format($opt->{format} || 'table');
+    if(config->get('highlight_eip')) {
+        my @eips = ec2->describe_addresses();
+        $y_ins->eips(\@eips);
+    }
 
     # action class
     my $ia = Yogafire::Instance::Action->new(
