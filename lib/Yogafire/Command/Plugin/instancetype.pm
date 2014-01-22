@@ -3,13 +3,6 @@ use Mouse;
 
 extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 
-has region => (
-    traits        => [qw(Getopt)],
-    isa           => "Str",
-    is            => "rw",
-    cmd_aliases   => "r",
-    documentation => "specify the region name.",
-);
 has detail => (
     traits        => [qw(Getopt)],
     isa           => "Bool",

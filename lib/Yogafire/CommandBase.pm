@@ -30,12 +30,12 @@ sub BUILD {
 }
 
 sub vmec2 {
-    my ($self) = @_;
+    my ($self, $opt_region) = @_;
     # Config取得
     my $aws_access_key_id     = config->get('access_key_id');
     my $aws_secret_access_key = config->get('secret_access_key');
     my $identity_file         = config->get('identity_file');
-    my $region                = config->get('region');
+    my $region                = $opt_region || config->get('region');
 
     my %params = (
         -access_key     => $aws_access_key_id,
@@ -108,10 +108,10 @@ sub validate_args_common {
     # profile
     if($opt->{profile} && config->get_profile($opt->{profile})) {
         $self->config->current_profile($opt->{profile});
-        $self->set_ec2(vmec2());
+        $self->set_ec2($self->vmec2($opt->{region}));
     }
     # set ec2
-    $self->set_ec2(vmec2()) if $self->config;
+    $self->set_ec2($self->vmec2($opt->{region})) if $self->config;
 };
 
 1;
