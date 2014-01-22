@@ -25,7 +25,7 @@ sub execute {
         my @profiles = map { $_ } keys %{config->list_profile};
         my $current_profile = config->current_profile();
         print "--------- profiles ---------\n";
-        for my $profile (@profiles) {
+        for my $profile (sort @profiles) {
            printf " %s %s\n", ($current_profile eq $profile) ? '*' : ' ', $profile;
         }
     }
