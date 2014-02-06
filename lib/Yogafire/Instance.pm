@@ -96,7 +96,7 @@ sub attribute_mapping {
         $value = colored($state, $self->_get_state_color($state));
     } elsif ($_ =~ /^ipAddress$/) {
         my $ip_address = $instance->{data}->{$_};
-        if($self->eips && grep { /^$ip_address$/ } @{$self->eips}) {
+        if($self->eips && $ip_address && grep { /^$ip_address$/ } @{$self->eips}) {
             $value = colored($ip_address, 'green');
         } else {
             $value = $ip_address;
