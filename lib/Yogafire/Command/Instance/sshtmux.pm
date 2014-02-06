@@ -51,6 +51,12 @@ has proxy => (
     is              => "rw",
     documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
+has sync => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    documentation   => "enable synchronize-panes.",
+);
 has force => (
     traits          => [qw(Getopt)],
     isa             => "Bool",

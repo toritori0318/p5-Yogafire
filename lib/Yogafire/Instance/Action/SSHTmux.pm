@@ -48,6 +48,10 @@ sub _procs {
         }
     }
 
+    if($opt->{sync}) {
+        push @ssh_commands, sprintf("tmux set-window-option synchronize-panes on");
+    }
+
     my $session = '';
     if($ENV{SESSION_NAME}) {
         $session=$ENV{SESSION_NAME};
