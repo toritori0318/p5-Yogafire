@@ -1,11 +1,11 @@
-package Yogafire::Image::Action::RunInstance;
+package Yogafire::Image::Action::RunInstances;
 use strict;
 use warnings;
 
 use Mouse;
 extends 'Yogafire::ActionBase';
 
-has 'name'  => (is => 'rw', isa => 'Str', default => 'runinstance');
+has 'name'  => (is => 'rw', isa => 'Str', default => 'runinstances');
 has 'state' => (
     is => 'rw',
     isa => 'ArrayRef',
@@ -144,7 +144,7 @@ sub confirm_launch_instance {
         my @select_groups = ec2->describe_security_groups();
         @groups = $term->get_reply(
             prompt   => 'Security Group List. (put them on one line, separated by blanks) > ',
-            choices  => [map {$_->groupName} @select_groups],
+            choices  => [sort map {$_->groupName} @select_groups],
             multi    => 1,
         );
     }

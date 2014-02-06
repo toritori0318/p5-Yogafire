@@ -1,4 +1,4 @@
-package Yogafire::Command::Image::runinstance;
+package Yogafire::Command::Image::runinstances;
 use Mouse;
 
 extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
@@ -96,11 +96,11 @@ use Yogafire::CommandClass::ImageProc;
 use Yogafire::Util;
 
 sub abstract {'Running Instance'}
-sub command_names {'run-instance'}
+sub command_names {'run-instances'}
 
 sub usage {
     my ( $self, $opt, $args ) = @_;
-    $self->{usage}->{leader_text} = 'yoga launch <image-id> [-?]';
+    $self->{usage}->{leader_text} = 'yoga '. $self->command_names .' <image-id> [-?]';
     $self->{usage};
 }
 
@@ -129,7 +129,7 @@ sub execute {
 
     my $proc = Yogafire::CommandClass::ImageProc->new(
         {
-            action       => 'runinstance',
+            action       => 'runinstances',
             opt          => $opt,
             interactive  => 1,
         }
