@@ -109,8 +109,7 @@ sub execute {
         my @ret_instance_ids = $self->terminate_instances(\@instances, \@availability_zones, $diff_count, $total_count);
         # DeRegister ELB
         if($elb && scalar @ret_instance_ids > 0) {
-            my @states = $elb->describe_instance_health(-instances => \@elb_instance_ids);
-            $elb->deregister_instances(@ret_instance_ids)
+            $elb->deregister_instances(@ret_instance_ids);
         }
         return;
     }
@@ -213,7 +212,7 @@ sub terminate_instances {
 
     }
 
-    return \@instance_ids;
+    return @instance_ids;
 }
 
 
