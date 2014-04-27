@@ -691,7 +691,7 @@ sub output {
 
 sub _get_group_color {
     my ( $self, $id ) = @_;
-    if ( $id =~ /^t1/ ) {
+    if ( $id =~ /^r3/ ) {
         return 'bold';
     } elsif ( $id =~ /^m1/ ) {
         return 'green';
@@ -716,6 +716,7 @@ sub _get_group_color {
     } elsif ( $id =~ /^i2/ ) {
         return 'yellow bold';
     }
+    return 'white';
 }
 
 1;
