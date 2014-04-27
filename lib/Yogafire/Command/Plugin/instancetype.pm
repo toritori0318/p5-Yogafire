@@ -60,6 +60,13 @@ has 'price-ri-heavy' => (
     is            => "rw",
     documentation => "Show the reserved-instance-heavy price.(default: off)",
 );
+has 'previous-generation' => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    cmd_aliases   => "g",
+    documentation => "Show the previous-generation type.(default: off)",
+);
 #has filter => (
 #    traits          => [qw(Getopt)],
 #    isa             => "Str",

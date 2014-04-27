@@ -25,6 +25,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'N/A',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm1.small',
@@ -38,6 +39,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '160 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm1.medium',
@@ -51,6 +53,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '410 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'm1.large',
@@ -64,6 +67,7 @@ my @instance_types = (
         ebs_optimized    => '500 Mbps',
         instance_storage => '2 x 420 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'm1.xlarge',
@@ -77,6 +81,7 @@ my @instance_types = (
         ebs_optimized    => '1000 Mbps',
         instance_storage => '4 x 420 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'm3.medium',
@@ -90,6 +95,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 1 x 4 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm3.large',
@@ -103,6 +109,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 1 x 32 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm3.xlarge',
@@ -116,6 +123,7 @@ my @instance_types = (
         ebs_optimized    => '500 Mbps',
         instance_storage => 'SSD 2 x 40 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm3.2xlarge',
@@ -129,6 +137,7 @@ my @instance_types = (
         ebs_optimized    => '1000 Mbps',
         instance_storage => 'SSD 2 x 80 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'r3.large',
@@ -142,6 +151,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 1 x 32 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'r3.xlarge',
@@ -155,6 +165,7 @@ my @instance_types = (
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 1 x 80 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'r3.2xlarge',
@@ -181,6 +192,7 @@ my @instance_types = (
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 1 x 320 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'r3.8xlarge',
@@ -194,6 +206,7 @@ my @instance_types = (
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 2 x 320 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'm2.xlarge',
@@ -207,6 +220,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '420 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'm2.2xlarge',
@@ -220,6 +234,7 @@ my @instance_types = (
         ebs_optimized    => '500 Mbps',
         instance_storage => '850 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'm2.4xlarge',
@@ -233,6 +248,7 @@ my @instance_types = (
         ebs_optimized    => '1000 Mbps',
         instance_storage => '2 x 840 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'c1.medium',
@@ -246,6 +262,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '350 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'c1.xlarge',
@@ -259,6 +276,7 @@ my @instance_types = (
         ebs_optimized    => '1000 Mbps',
         instance_storage => '4 x 420 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'c3.large',
@@ -272,6 +290,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 2 x 16 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'c3.xlarge',
@@ -285,6 +304,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 40 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'c3.2xlarge',
@@ -298,6 +318,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 80 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'c3.4xlarge',
@@ -311,6 +332,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 160 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'c3.8xlarge',
@@ -324,6 +346,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 2 x 320 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'cc2.8xlarge',
@@ -337,6 +360,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '4 x 840 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'cr1.8xlarge',
@@ -350,6 +374,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 1 x 240 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'cg1.4xlarge',
@@ -363,6 +388,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '2 x 840 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'i2.large',
@@ -376,6 +402,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 2 x 360 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'i2.xlarge',
@@ -389,6 +416,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 720 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'i2.2xlarge',
@@ -402,6 +430,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 720 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'i2.4xlarge',
@@ -415,6 +444,7 @@ my @instance_types = (
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 4 x 720 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'i2.8xlarge',
@@ -428,6 +458,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 8 x 720 GB',
         price            => 'N/A',
+        previous_generation => 0,
     },
     {
         id               => 'hi1.4xlarge',
@@ -441,6 +472,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 2 x 1024 GB',
         price            => 'N/A',
+        previous_generation => 1,
     },
     {
         id               => 'hs1.8xlarge',
@@ -454,9 +486,12 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '2T x 24',
         price            => 'N/A',
+        previous_generation => 0,
     },
 );
 
+my $price_url_current  = 'https://a0.awsstatic.com/pricing/1/deprecated/ec2';
+my $price_url_previous = 'https://a0.awsstatic.com/pricing/1/deprecated/ec2/previous-generation';
 my %price_mapping = (
     'price-on-demand' => 'od',
     'price-ri-light'  => 'ri-light',
@@ -498,11 +533,11 @@ sub match_type_and_price_on_demand {
                 for my $row (@{$size->{valueColumns}}) {
                     $h{$row->{name}} = $row->{'prices'}->{'USD'};
                 }
-                $types{$type}->{price} = $h{$os};
+                $types{$type}->{price} = $h{$os} || $h{'os'};
                 if(!$types{$type}->{price} || $types{$type}->{price} eq 'N/A') {
                     $types{$type}->{price_month} = 'N/A';
                 }else{
-                    $types{$type}->{price_month} = $h{$os} * 24 * 30;
+                    $types{$type}->{price_month} = $types{$type}->{price} * 24 * 30;
                 }
             }
         }
@@ -547,27 +582,40 @@ sub match_type_and_price_reserved {
 
 sub search {
     my ( $self, $opt ) = @_;
-    my $region          = $opt->{region} || config->get('region');
-    my $platform        = $opt->{platform} || 'linux';
-    my $price_on_demand = $opt->{'price-od'};
-    my $price_ri_light  = $opt->{'price-ri-light'};
-    my $price_ri_medium = $opt->{'price-ri-medium'};
-    my $price_ri_heavy  = $opt->{'price-ri-heavy'};
-    my $m_region        = Yogafire::Regions->new();
-    my $cnv_region      = shift @{ [ grep { $_->regionName eq $region } @{$m_region->regions()} ] };
+    my $region              = $opt->{region} || config->get('region');
+    my $platform            = $opt->{platform} || 'linux';
+    my $previous_generation = $opt->{'previous-generation'};
+    my $price_on_demand     = $opt->{'price-od'};
+    my $price_ri_light      = $opt->{'price-ri-light'};
+    my $price_ri_medium     = $opt->{'price-ri-medium'};
+    my $price_ri_heavy      = $opt->{'price-ri-heavy'};
+    my $m_region            = Yogafire::Regions->new();
+    my $cnv_region          = shift @{ [ grep { $_->regionName eq $region } @{$m_region->regions()} ] };
 
     my %prices = (
-        price_od   => ($price_on_demand) ? $self->get_price_for_on_demand($cnv_region, $platform) : {},
-        price_ri_l => ($price_ri_light)  ? $self->get_price_for_reserved($cnv_region, $platform, 'price-ri-light') : {},
-        price_ri_m => ($price_ri_medium) ? $self->get_price_for_reserved($cnv_region, $platform, 'price-ri-medium') : {},
-        price_ri_h => ($price_ri_heavy)  ? $self->get_price_for_reserved($cnv_region, $platform, 'price-ri-heavy') : {},
+        price_od   => ($price_on_demand) ? $self->get_price_for_on_demand($cnv_region, $platform, 0) : {},
+        price_ri_l => ($price_ri_light)  ? $self->get_price_for_reserved($cnv_region, $platform, 0, 'price-ri-light') : {},
+        price_ri_m => ($price_ri_medium) ? $self->get_price_for_reserved($cnv_region, $platform, 0, 'price-ri-medium') : {},
+        price_ri_h => ($price_ri_heavy)  ? $self->get_price_for_reserved($cnv_region, $platform, 0, 'price-ri-heavy') : {},
     );
+    my %prices_previous_generation;
+    if($previous_generation) {
+        %prices_previous_generation = (
+            price_od   => ($price_on_demand) ? $self->get_price_for_on_demand($cnv_region, $platform, 1) : {},
+            price_ri_l => ($price_ri_light)  ? $self->get_price_for_reserved($cnv_region, $platform, 1, 'price-ri-light') : {},
+            price_ri_m => ($price_ri_medium) ? $self->get_price_for_reserved($cnv_region, $platform, 1, 'price-ri-medium') : {},
+            price_ri_h => ($price_ri_heavy)  ? $self->get_price_for_reserved($cnv_region, $platform, 1, 'price-ri-heavy') : {},
+        );
+    }
 
     my @convert_rows;
     for my $row (@{$self->instance_types}) {
+        next if !$previous_generation && $row->{previous_generation};
+
+        my %seed_prices = ($row->{previous_generation}) ? %prices_previous_generation : %prices;
         my $type = $row->{id};
-        for my $pkey (keys %prices) {
-            my %p = %{$prices{$pkey}};
+        for my $pkey (keys %seed_prices) {
+            my %p = %{$seed_prices{$pkey}};
             if(%p && $pkey eq "price_od") {
                 $row->{price}       = $p{$type}->{price} || 'N/A';
                 $row->{price_month} = $p{$type}->{price_month} || 'N/A';
@@ -583,9 +631,9 @@ sub search {
 }
 
 sub get_price_for_on_demand {
-    my ( $self, $region, $platform ) = @_;
+    my ( $self, $region, $platform, $previous_generation ) = @_;
 
-    my $json_file  = $self->s3_json_file($platform, 'price-on-demand');
+    my $json_file  = $self->s3_json_file($platform, 'price-on-demand', $previous_generation);
     my $prices     = $self->get_prices($json_file);
     my $cnv_prices = shift @{ [ grep { $_->{region} eq $region->{data}->{oid} || $_->{region} eq $region->{data}->{regionName} } @{ $prices->{config}->{regions} } ] };
 
@@ -593,9 +641,9 @@ sub get_price_for_on_demand {
 }
 
 sub get_price_for_reserved {
-    my ( $self, $region, $platform, $price_kind ) = @_;
+    my ( $self, $region, $platform, $previous_generation, $price_kind ) = @_;
 
-    my $json_file  = $self->s3_json_file($platform, $price_kind);
+    my $json_file  = $self->s3_json_file($platform, $price_kind, $previous_generation);
     my $prices     = $self->get_prices($json_file);
     my $cnv_prices = shift @{ [ grep { $_->{region} eq $region->{data}->{oid} || $_->{region} eq $region->{data}->{regionName} } @{ $prices->{config}->{regions} } ] };
 
@@ -603,11 +651,15 @@ sub get_price_for_reserved {
 }
 
 sub s3_json_file {
-    my ($self, $platform, $price_kind) = @_;
+    my ($self, $platform, $price_kind, $previous_generation) = @_;
     my $price_map = $price_mapping{$price_kind};
     die "[$price_kind] is invalid kindname." unless $price_map;
 
-    return "http://aws.amazon.com/ec2/pricing/json/${platform}-${price_map}.json";
+    if($previous_generation) {
+        return "$price_url_previous/${platform}-${price_map}.json";
+    } else {
+        return "$price_url_current/${platform}-${price_map}.json";
+    }
 }
 
 sub output {
