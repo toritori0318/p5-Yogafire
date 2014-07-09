@@ -14,18 +14,60 @@ use Yogafire::Regions;
 
 my @instance_types = (
     {
+        id               => 't2.micro',
+        name             => 'T2 Micro Instance',
+        name_tiny        => 't2 micro',
+        cpu              => 'Variable',
+        ecu              => 'Variable',
+        vcpu             => '1',
+        memory           => '1GB',
+        io               => 'Low to Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 't2.small',
+        name             => 'T2 Small Instance',
+        name_tiny        => 't2 small',
+        cpu              => 'Variable',
+        ecu              => 'Variable',
+        vcpu             => '1',
+        memory           => '2GB',
+        io               => 'Low to Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 't2.medium',
+        name             => 'T2 Medium Instance',
+        name_tiny        => 't2 medium',
+        cpu              => 'Variable',
+        ecu              => 'Variable',
+        vcpu             => '2',
+        memory           => '4GB',
+        io               => 'Low to Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
         id               => 't1.micro',
         name             => 'Micro Instance',
         name_tiny        => 'micro',
-        cpu              => '2 ECU(burst)',
-        ecu              => '2(burst)',
+        cpu              => 'Variable',
+        ecu              => 'Variable',
         vcpu             => '1',
         memory           => '613MB',
         io               => 'Low',
         ebs_optimized    => 'N/A',
         instance_storage => 'N/A',
         price            => 'N/A',
-        previous_generation => 0,
+        previous_generation => 1,
     },
     {
         id               => 'm1.small',
@@ -39,7 +81,7 @@ my @instance_types = (
         ebs_optimized    => 'N/A',
         instance_storage => '160 GB',
         price            => 'N/A',
-        previous_generation => 0,
+        previous_generation => 1,
     },
     {
         id               => 'm1.medium',
@@ -693,10 +735,12 @@ sub _get_group_color {
     my ( $self, $id ) = @_;
     if ( $id =~ /^r3/ ) {
         return 'bold';
+    } elsif ( $id =~ /^t2/ ) {
+        return 'yellow';
     } elsif ( $id =~ /^m1/ ) {
         return 'green';
     } elsif ( $id =~ /^m3/ ) {
-        return 'yellow';
+        return 'green bold';
     } elsif ( $id =~ /^m2/ ) {
         return 'blue bold';
     } elsif ( $id =~ /^c1/ ) {
