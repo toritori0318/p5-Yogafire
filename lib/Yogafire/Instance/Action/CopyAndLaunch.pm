@@ -16,7 +16,7 @@ has 'state' => (
 no Mouse;
 
 use Yogafire::Instance::Action::Info;
-use Yogafire::Image::Action::RunInstance;
+use Yogafire::Image::Action::RunInstances;
 
 sub proc {
     my ($self, $instance, $opt) = @_;

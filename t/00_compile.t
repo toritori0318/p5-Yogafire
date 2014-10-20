@@ -44,7 +44,7 @@ BEGIN {
     use_ok ("Yogafire::Config");
     use_ok ("Yogafire::Image::Action::Deregister");
     use_ok ("Yogafire::Image::Action::Info");
-    use_ok ("Yogafire::Image::Action::RunInstance");
+    use_ok ("Yogafire::Image::Action::RunInstances");
     use_ok ("Yogafire::Image::Action");
     use_ok ("Yogafire::Image");
     use_ok ("Yogafire::Instance::Action::ChangeInstanceType");

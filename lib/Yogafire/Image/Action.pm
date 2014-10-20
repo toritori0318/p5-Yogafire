@@ -2,7 +2,7 @@ package Yogafire::Image::Action;
 use strict;
 use warnings;
 
-use Yogafire::Image::Action::RunInstance;
+use Yogafire::Image::Action::RunInstances;
 use Yogafire::Image::Action::Deregister;
 use Yogafire::Image::Action::Info;
 
