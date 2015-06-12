@@ -8,14 +8,15 @@ has 'regions'     => (is => 'rw');
 no Mouse;
 
 my @meta_regions = (
-    { id => 'us-east-1',      oid => 'us-east',    name => 'US East (Northern Virginia)' },
-    { id => 'us-west-1',      oid => 'us-west',    name => 'US West (Northern California)' },
-    { id => 'us-west-2',      oid => 'us-west-2',  name => 'US West (Oregon)' },
-    { id => 'eu-west-1',      oid => 'eu-ireland', name => 'EU (Ireland)' },
-    { id => 'ap-southeast-1', oid => 'apac-sin',   name => 'Asia Pacific (Singapore)' },
-    { id => 'ap-southeast-2', oid => 'apac-syd',   name => 'Asia Pacific (Sydney)' },
-    { id => 'ap-northeast-1', oid => 'apac-tokyo', name => 'Asia Pacific (Tokyo)' },
-    { id => 'sa-east-1',      oid => 'sa-east-1',  name => 'South America (Sao Paulo)' },
+    { id => 'us-east-1',      oid => 'us-east',      name => 'US East (Northern Virginia)' },
+    { id => 'us-west-1',      oid => 'us-west',      name => 'US West (Northern California)' },
+    { id => 'us-west-2',      oid => 'us-west-2',    name => 'US West (Oregon)' },
+    { id => 'eu-west-1',      oid => 'eu-ireland',   name => 'EU (Ireland)' },
+    { id => 'eu-central-1',   oid => 'eu-central-1', name => 'EU (Frankfurt)' },
+    { id => 'ap-southeast-1', oid => 'apac-sin',     name => 'Asia Pacific (Singapore)' },
+    { id => 'ap-southeast-2', oid => 'apac-syd',     name => 'Asia Pacific (Sydney)' },
+    { id => 'ap-northeast-1', oid => 'apac-tokyo',   name => 'Asia Pacific (Tokyo)' },
+    { id => 'sa-east-1',      oid => 'sa-east-1',    name => 'South America (Sao Paulo)' },
 );
 
 use Yogafire::Output;
