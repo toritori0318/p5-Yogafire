@@ -1,7 +1,9 @@
 Revision history for Perl extension Yogafire.
 
 0.06 2013/xx/xx
+  - Support for m4/c4 instance into instance-type command.
   - Support for c3 instance into instance-type command, and modified option args.
+  - Support for Frankfurt region.
   - Added "retry" option into "ssh" command.
   - when $instance->ipaddress is undef, try ssh with privateIpAddress(@ainoya)
   - Update to the latest version of the instance type.
@@ -13,6 +15,7 @@ Revision history for Perl extension Yogafire.
   - Change template engine from "Xslate" to "TT".
   - Added support for 'sshtmux' command
   - Added "timeout" option into "cmd" command
+  - follow-up to rename classes (@castor4bit)
 
 0.05 2013/07/09
   - Fixed a issue that yoga-ls did not show anything when number of instances equals 1(@ysasaki)
