@@ -14,6 +14,20 @@ use Yogafire::Regions;
 
 my @instance_types = (
     {
+        id               => 't2.nano',
+        name             => 'T2 Nano Instance',
+        name_tiny        => 't2 nano',
+        cpu              => 'Variable(Credits/3)',
+        ecu              => 'Variable',
+        vcpu             => '1',
+        memory           => '0.5GB',
+        io               => 'Low',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
         id               => 't2.micro',
         name             => 'T2 Micro Instance',
         name_tiny        => 't2 micro',
