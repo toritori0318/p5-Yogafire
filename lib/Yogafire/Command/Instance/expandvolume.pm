@@ -55,6 +55,12 @@ has self => (
     is              => "rw",
     documentation   => "To target myself.",
 );
+has fuzzy => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Fuzzy host filter.",
+);
 no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;
@@ -93,6 +99,9 @@ sub execute {
     } else {
         my $host = $args->[0];
         $opt->{host} = $host if $host;
+        # fuzzy finder
+        $host = "*${host}*" if $host && $opt->{fuzzy};
+
         $proc->action_process();
     }
 }

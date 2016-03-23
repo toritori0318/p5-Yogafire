@@ -63,6 +63,12 @@ has force => (
     is              => "rw",
     documentation   => "force execute.",
 );
+has fuzzy => (
+    traits        => [qw(Getopt)],
+    isa           => "Bool",
+    is            => "rw",
+    documentation => "Fuzzy host filter.",
+);
 no Mouse;
 
 use Yogafire::CommandClass::InstanceProc;
@@ -94,7 +100,10 @@ sub execute {
         $proc->self_process();
     } else {
         my $host = $args->[0];
+        # fuzzy finder
+        $host = "*${host}*" if $host && $opt->{fuzzy};
         $opt->{host} = $host if $host;
+
         $proc->action_process();
     }
 }
