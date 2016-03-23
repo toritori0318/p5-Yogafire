@@ -25,27 +25,33 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
                  put-noopt: Rsync put local file to remote.
                     reboot: EC2 Reboot Instances
                        ssh: EC2 SSH Instance
+                  ssh-tmux: EC2 SSH Instance
                      start: EC2 Start Instances
                       stop: EC2 Stop Instances
                  terminate: EC2 Terminate Instance
-
+    
     Image commands:
                     ls-ami: Image List
-
+             run-instances: Running Instance
+    
     Vpc commands:
                  vpc-graph: VPC Graph View
                   vpc-info: VPC List vpcs
-
+    
     Plugin commands:
            all-region-info: All Region Info
                 amiwatcher: EC2 image status watcher
                 aws-status: Show AWS Status
+           ec2-params-dump: EC2 Parameter Dumper
                 ec2watcher: EC2 instance status watcher
                      hosts: Operation for hosts file
              instance-type: Show Instance Types
                     region: Show AWS Regions
                     render: Render Tool
+                 scale-ec2: Update EC2 Count
+        show-copy-snapshot: Image List
                  sshconfig: Operation for sshconfig
+                   summary: EC2 instance summary report
            update-ec2-tags: Update EC2 Tags
 
 ## Tutorial
