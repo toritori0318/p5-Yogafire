@@ -16,6 +16,7 @@ my @meta_regions = (
     { id => 'ap-southeast-1', oid => 'apac-sin',     name => 'Asia Pacific (Singapore)' },
     { id => 'ap-southeast-2', oid => 'apac-syd',     name => 'Asia Pacific (Sydney)' },
     { id => 'ap-northeast-1', oid => 'apac-tokyo',   name => 'Asia Pacific (Tokyo)' },
+    { id => 'ap-northeast-2', oid => '',             name => 'Asia Pacific (Seoul)' },
     { id => 'sa-east-1',      oid => 'sa-east-1',    name => 'South America (Sao Paulo)' },
 );
 
