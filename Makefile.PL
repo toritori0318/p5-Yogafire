@@ -6,7 +6,8 @@ WriteMakefile(
     VERSION_FROM  => 'lib/Yogafire.pm',
     PREREQ_PM     => {
         'VM::EC2'                       => '1.23',
-        'MouseX::App::Cmd'              => '0',
+        'Mouse'                         => '0',
+        'MouseX::App::Cmd::Command'     => '0',
         'Term::ReadLine'                => '0',
         'Term::ReadLine::Gnu'           => '0',
         'Term::UI'                      => '0',
@@ -22,6 +23,7 @@ WriteMakefile(
         'Graph::Easy'                   => '0',
         'Parallel::ForkManager'         => '0',
         'Log::Minimal'                  => '0',
+        'Mozilla::CA'                   => '0',
         'Template'                      => '0',
         'Text::UnicodeTable::Simple'    => '0',
         'Test::MockObject'              => '0',
