@@ -84,6 +84,34 @@ my @instance_types = (
         previous_generation => 0,
     },
     {
+        id               => 't2.xlarge',
+        name             => 'T2 Extra Large Instance',
+        name_tiny        => 't2 xlarge',
+        cpu              => 'Variable(Credits/54)',
+        ecu              => 'Variable',
+        vcpu             => '4',
+        memory           => '16GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 't2.2xlarge',
+        name             => 'T2 Double Extra Large Instance',
+        name_tiny        => 't2 2xlarge',
+        cpu              => 'Variable(Credits/81)',
+        ecu              => 'Variable',
+        vcpu             => '8',
+        memory           => '32GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
         id               => 't1.micro',
         name             => 'Micro Instance',
         name_tiny        => 'micro',
@@ -280,13 +308,110 @@ my @instance_types = (
         previous_generation => 0,
     },
     {
+        id               => 'm4.16xlarge',
+        name             => 'M4 16 Extra Large Instance',
+        name_tiny        => 'm4 16extra large',
+        cpu              => '188 ECU(2.94 x 64core)',
+        ecu              => '188',
+        vcpu             => '64',
+        memory           => '256GB',
+        io               => '20 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'r4.large',
+        name             => 'R4 Large Instance',
+        name_tiny        => 'r4 large',
+        cpu              => '7 ECU(3.5 x 2core)',
+        ecu              => '7',
+        vcpu             => '2',
+        memory           => '15.25GB',
+        io               => 'Max 10 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'r4.xlarge',
+        name             => 'R4 Extra Large Instance',
+        name_tiny        => 'r4 extra large',
+        cpu              => '13.5 ECU(3.375 x 4core)',
+        ecu              => '13.5',
+        vcpu             => '4',
+        memory           => '30.5GB',
+        io               => 'Max 10 Gigabit',
+        ebs_optimized    => 'Yes',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'r4.2xlarge',
+        name             => 'R4 Double Extra Large Instance',
+        name_tiny        => 'r4 2extra large',
+        cpu              => '27 ECU(3.375 x 8core)',
+        ecu              => '27',
+        vcpu             => '8',
+        memory           => '61GB',
+        io               => 'Max 10 Gigabit',
+        ebs_optimized    => 'Yes',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+    },
+    {
+        id               => 'r4.4xlarge',
+        name             => 'R4 Quadruple Extra Large Instance',
+        name_tiny        => 'r4 4extra large',
+        cpu              => '53 ECU(3.3 x 16core)',
+        ecu              => '53',
+        vcpu             => '16',
+        memory           => '122GB',
+        io               => 'Max 10 Gigabit',
+        ebs_optimized    => 'Yes',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'r4.8xlarge',
+        name             => 'R4 Doubule Quadruple Extra Large Instance',
+        name_tiny        => 'r4 8extra large',
+        cpu              => '99 ECU(3.1 x 32core)',
+        ecu              => '99',
+        vcpu             => '32',
+        memory           => '244GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'Yes',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'r4.16xlarge',
+        name             => 'R4 16Extra Large Instance',
+        name_tiny        => 'r4 16extra large',
+        cpu              => '195 ECU(3.1 x 64)',
+        ecu              => '195',
+        vcpu             => '64',
+        memory           => '488GB',
+        io               => '20 Gigabit',
+        ebs_optimized    => 'Yes',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
         id               => 'r3.large',
         name             => 'R3 Large Instance',
         name_tiny        => 'r3 large',
         cpu              => '6.5 ECU(3.25 x 2core)',
         ecu              => '6.5',
         vcpu             => '2',
-        memory           => '15',
+        memory           => '15GB',
         io               => 'Moderate',
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 1 x 32 GB',
@@ -300,7 +425,7 @@ my @instance_types = (
         cpu              => '13 ECU(3.25 x 4core)',
         ecu              => '13',
         vcpu             => '4',
-        memory           => '30.5',
+        memory           => '30.5GB',
         io               => 'Moderate',
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 1 x 80 GB',
@@ -327,7 +452,7 @@ my @instance_types = (
         cpu              => '52 ECU(3.25 x 16core)',
         ecu              => '52',
         vcpu             => '16',
-        memory           => '122',
+        memory           => '122GB',
         io               => 'High',
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 1 x 320 GB',
@@ -341,7 +466,7 @@ my @instance_types = (
         cpu              => '104 ECU(3.25 x 32core)',
         ecu              => '104',
         vcpu             => '32',
-        memory           => '244',
+        memory           => '244GB',
         io               => '10 Gigabit',
         ebs_optimized    => 'Yes',
         instance_storage => 'SSD 2 x 320 GB',
@@ -698,6 +823,132 @@ my @instance_types = (
         price            => 'N/A',
         previous_generation => 0,
     },
+    {
+        id               => 'd2.xlarge',
+        name             => 'D2 Extra Large',
+        name_tiny        => 'd2 xlarge',
+        cpu              => '14 ECU(3.5 x 4core)',
+        ecu              => '14',
+        vcpu             => '4',
+        memory           => '30.5GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'YES',
+        instance_storage => 'HDD 3 x 2000 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'd2.2xlarge',
+        name             => 'D2 Double Extra Large',
+        name_tiny        => 'd2 2xlarge',
+        cpu              => '28 ECU(3.5 x 8core)',
+        ecu              => '28',
+        vcpu             => '8',
+        memory           => '61GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => 'HDD 6 x 2000 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'd2.4xlarge',
+        name             => 'D2 Quadruple Extra Large',
+        name_tiny        => 'd2 4xlarge',
+        cpu              => '56 ECU(3.5 x 16core)',
+        ecu              => '56',
+        vcpu             => '16',
+        memory           => '122GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => 'HDD 12 x 2000 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'd2.8xlarge',
+        name             => 'D2 Eight Extra Large',
+        name_tiny        => 'd2 8xlarge',
+        cpu              => '112 ECU(3.5 x 32core)',
+        ecu              => '112',
+        vcpu             => '32',
+        memory           => '244GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'HDD 24 x 2000 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'p2.xlarge',
+        name             => 'General Purpose GPU Extra Large',
+        name_tiny        => 'GPU xlarge',
+        cpu              => '12 ECU(3 x 4core)',
+        ecu              => '12',
+        vcpu             => '4',
+        memory           => '64GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'p2.8xlarge',
+        name             => 'General Purpose GPU Eight Extra Large',
+        name_tiny        => 'GPU 8xlarge',
+        cpu              => '94 ECU(3 x 32core)',
+        ecu              => '94',
+        vcpu             => '32',
+        memory           => '488GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'p2.16xlarge',
+        name             => 'General Purpose GPU 16 xlarge',
+        name_tiny        => 'GPU 16 xlarge',
+        cpu              => '188 ECU(3 x 64)',
+        ecu              => '188',
+        vcpu             => '64',
+        memory           => '732GB',
+        io               => '20 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'g2.2xlarge',
+        name             => 'G2 Double Extra Large',
+        name_tiny        => 'G2 2xlarge',
+        cpu              => '26 ECU(3.25 x 8core)',
+        ecu              => '26',
+        vcpu             => '8',
+        memory           => '15GB',
+        io               => 'High',
+        ebs_optimized    => 'YES',
+        instance_storage => 'SSD 1 x 60 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'g2.8xlarge',
+        name             => 'G2 Eight Extra Large',
+        name_tiny        => 'G2 8xlarge',
+        cpu              => '104 ECU(3.25 x 32core)',
+        ecu              => '104',
+        vcpu             => '32',
+        memory           => '60GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'SSD 2 x 120 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
 );
 
 my $price_url_current  = 'https://a0.awsstatic.com/pricing/1/deprecated/ec2';
@@ -879,15 +1130,15 @@ sub output {
     $self->out_columns([qw/id name_tiny ecu vcpu memory/]);
 
     # ex column
-    push $self->out_columns, 'io'               if $opt->{'io'};
-    push $self->out_columns, 'ebs_optimized'    if $opt->{'ebs-optimized'};
-    push $self->out_columns, 'instance_storage' if $opt->{'instance-storage'};
+    push @{$self->out_columns}, 'io'               if $opt->{'io'};
+    push @{$self->out_columns}, 'ebs_optimized'    if $opt->{'ebs-optimized'};
+    push @{$self->out_columns}, 'instance_storage' if $opt->{'instance-storage'};
 
     # price column
-    push $self->out_columns, ('price', 'price_month') if $opt->{'price-od'};
-    push $self->out_columns, ('price_ri_l_yr1', 'price_ri_l_yr3') if $opt->{'price-ri-light'};
-    push $self->out_columns, ('price_ri_m_yr1', 'price_ri_m_yr3') if $opt->{'price-ri-medium'};
-    push $self->out_columns, ('price_ri_h_yr1', 'price_ri_h_yr3') if $opt->{'price-ri-heavy'};
+    push @{$self->out_columns}, ('price', 'price_month') if $opt->{'price-od'};
+    push @{$self->out_columns}, ('price_ri_l_yr1', 'price_ri_l_yr3') if $opt->{'price-ri-light'};
+    push @{$self->out_columns}, ('price_ri_m_yr1', 'price_ri_m_yr3') if $opt->{'price-ri-medium'};
+    push @{$self->out_columns}, ('price_ri_h_yr1', 'price_ri_h_yr3') if $opt->{'price-ri-heavy'};
 
     my $output = Yogafire::Output->new( { format => $self->out_format } );
     $output->header( $self->out_columns );
@@ -903,6 +1154,8 @@ sub _get_group_color {
     my ( $self, $id ) = @_;
     if ( $id =~ /^r3/ ) {
         return 'bold';
+    } elsif ( $id =~ /^r4/ ) {
+        return 'red';
     } elsif ( $id =~ /^t2/ ) {
         return 'yellow';
     } elsif ( $id =~ /^m1/ ) {
@@ -931,6 +1184,10 @@ sub _get_group_color {
         return 'magenta bold';
     } elsif ( $id =~ /^i2/ ) {
         return 'yellow bold';
+    } elsif ( $id =~ /^p2/ ) {
+        return 'blue bold';
+    } elsif ( $id =~ /^g2/ ) {
+        return 'blue bold';
     }
     return 'white';
 }
