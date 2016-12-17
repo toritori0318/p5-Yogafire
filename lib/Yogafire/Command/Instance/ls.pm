@@ -48,6 +48,7 @@ has fuzzy => (
     traits        => [qw(Getopt)],
     isa           => "Bool",
     is            => "rw",
+    cmd_aliases   => "z",
     documentation => "Fuzzy host filter.",
 );
 no Mouse;
