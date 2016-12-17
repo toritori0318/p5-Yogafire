@@ -173,7 +173,7 @@ sub get_filter_from_host {
     } elsif ($host =~ /^ec2-(\d+)-(\d+)-(\d+)-(\d+)/) {
         # public dns name
         $filter{'dns-name'} = $host;
-    } elsif($host =~ m/^i-[0-9a-zA-Z]{8}$/) {
+    } elsif($host =~ m/^i-[0-9a-zA-Z]{8,17}$/) {
         # instance id
         $filter{'instance-id'} = $host;
     } else {
