@@ -126,118 +126,6 @@ my @instance_types = (
         previous_generation => 1,
     },
     {
-        id               => 'm1.small',
-        name             => 'Small Instance',
-        name_tiny        => 'small',
-        cpu              => '1 ECU(1 x 1core)',
-        ecu              => '1',
-        vcpu             => '1',
-        memory           => '1.7GB',
-        io               => 'Moderate',
-        ebs_optimized    => 'N/A',
-        instance_storage => '160 GB',
-        price            => 'N/A',
-        previous_generation => 1,
-    },
-    {
-        id               => 'm1.medium',
-        name             => 'Medium Instance',
-        name_tiny        => 'medium',
-        cpu              => '2 ECU(2 x 1core)',
-        ecu              => '2',
-        vcpu             => '1',
-        memory           => '3.75GB',
-        io               => 'Moderate',
-        ebs_optimized    => 'N/A',
-        instance_storage => '410 GB',
-        price            => 'N/A',
-        previous_generation => 1,
-    },
-    {
-        id               => 'm1.large',
-        name             => 'Large Instance',
-        name_tiny        => 'large',
-        cpu              => '4 ECU(2 x 2core)',
-        ecu              => '4',
-        vcpu             => '2',
-        memory           => '7.5GB',
-        io               => 'High',
-        ebs_optimized    => '500 Mbps',
-        instance_storage => '2 x 420 GB',
-        price            => 'N/A',
-        previous_generation => 1,
-    },
-    {
-        id               => 'm1.xlarge',
-        name             => 'Extra Large Instance',
-        name_tiny        => 'extra large',
-        cpu              => '8 ECU(2 x 4core)',
-        ecu              => '8',
-        vcpu             => '4',
-        memory           => '15GB',
-        io               => 'High',
-        ebs_optimized    => '1000 Mbps',
-        instance_storage => '4 x 420 GB',
-        price            => 'N/A',
-        previous_generation => 1,
-    },
-    {
-        id               => 'm3.medium',
-        name             => 'M3 Medium Instance',
-        name_tiny        => 'm3 medium',
-        cpu              => '3 ECU(3.25 x 1core)',
-        ecu              => '3',
-        vcpu             => '1',
-        memory           => '3.75GB',
-        io               => 'Moderate',
-        ebs_optimized    => 'N/A',
-        instance_storage => 'SSD 1 x 4 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
-        id               => 'm3.large',
-        name             => 'M3 Large Instance',
-        name_tiny        => 'm3 large',
-        cpu              => '6.5 ECU(3.25 x 2core)',
-        ecu              => '6.5',
-        vcpu             => '2',
-        memory           => '7.5GB',
-        io               => 'Moderate',
-        ebs_optimized    => 'N/A',
-        instance_storage => 'SSD 1 x 32 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
-        id               => 'm3.xlarge',
-        name             => 'M3 Extra Large Instance',
-        name_tiny        => 'm3 extra large',
-        cpu              => '13 ECU(3.25 x 4core)',
-        ecu              => '13',
-        vcpu             => '4',
-        memory           => '15GB',
-        io               => 'Moderate',
-        ebs_optimized    => '500 Mbps',
-        instance_storage => 'SSD 2 x 40 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
-        id               => 'm3.2xlarge',
-        name             => 'M3 Double Extra Large Instance',
-        name_tiny        => 'm3 2extra large',
-        cpu              => '26 ECU(3.25 x 8core)',
-        ecu              => '26',
-        vcpu             => '8',
-        memory           => '30GB',
-        io               => 'High',
-        ebs_optimized    => '1000 Mbps',
-        instance_storage => 'SSD 2 x 80 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
         id               => 'm4.large',
         name             => 'M4 Large Instance',
         name_tiny        => 'm4 large',
@@ -322,6 +210,118 @@ my @instance_types = (
         previous_generation => 0,
     },
     {
+        id               => 'm3.medium',
+        name             => 'M3 Medium Instance',
+        name_tiny        => 'm3 medium',
+        cpu              => '3 ECU(3.25 x 1core)',
+        ecu              => '3',
+        vcpu             => '1',
+        memory           => '3.75GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'SSD 1 x 4 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'm3.large',
+        name             => 'M3 Large Instance',
+        name_tiny        => 'm3 large',
+        cpu              => '6.5 ECU(3.25 x 2core)',
+        ecu              => '6.5',
+        vcpu             => '2',
+        memory           => '7.5GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'SSD 1 x 32 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'm3.xlarge',
+        name             => 'M3 Extra Large Instance',
+        name_tiny        => 'm3 extra large',
+        cpu              => '13 ECU(3.25 x 4core)',
+        ecu              => '13',
+        vcpu             => '4',
+        memory           => '15GB',
+        io               => 'Moderate',
+        ebs_optimized    => '500 Mbps',
+        instance_storage => 'SSD 2 x 40 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'm3.2xlarge',
+        name             => 'M3 Double Extra Large Instance',
+        name_tiny        => 'm3 2extra large',
+        cpu              => '26 ECU(3.25 x 8core)',
+        ecu              => '26',
+        vcpu             => '8',
+        memory           => '30GB',
+        io               => 'High',
+        ebs_optimized    => '1000 Mbps',
+        instance_storage => 'SSD 2 x 80 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'm1.small',
+        name             => 'Small Instance',
+        name_tiny        => 'small',
+        cpu              => '1 ECU(1 x 1core)',
+        ecu              => '1',
+        vcpu             => '1',
+        memory           => '1.7GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => '160 GB',
+        price            => 'N/A',
+        previous_generation => 1,
+    },
+    {
+        id               => 'm1.medium',
+        name             => 'Medium Instance',
+        name_tiny        => 'medium',
+        cpu              => '2 ECU(2 x 1core)',
+        ecu              => '2',
+        vcpu             => '1',
+        memory           => '3.75GB',
+        io               => 'Moderate',
+        ebs_optimized    => 'N/A',
+        instance_storage => '410 GB',
+        price            => 'N/A',
+        previous_generation => 1,
+    },
+    {
+        id               => 'm1.large',
+        name             => 'Large Instance',
+        name_tiny        => 'large',
+        cpu              => '4 ECU(2 x 2core)',
+        ecu              => '4',
+        vcpu             => '2',
+        memory           => '7.5GB',
+        io               => 'High',
+        ebs_optimized    => '500 Mbps',
+        instance_storage => '2 x 420 GB',
+        price            => 'N/A',
+        previous_generation => 1,
+    },
+    {
+        id               => 'm1.xlarge',
+        name             => 'Extra Large Instance',
+        name_tiny        => 'extra large',
+        cpu              => '8 ECU(2 x 4core)',
+        ecu              => '8',
+        vcpu             => '4',
+        memory           => '15GB',
+        io               => 'High',
+        ebs_optimized    => '1000 Mbps',
+        instance_storage => '4 x 420 GB',
+        price            => 'N/A',
+        previous_generation => 1,
+    },
+    {
         id               => 'r4.large',
         name             => 'R4 Large Instance',
         name_tiny        => 'r4 large',
@@ -401,6 +401,34 @@ my @instance_types = (
         io               => '20 Gigabit',
         ebs_optimized    => 'Yes',
         instance_storage => 'N/A',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'x1.16xlarge',
+        name             => 'X1 Extra High-Memory 16xlarge',
+        name_tiny        => 'X1 16xlarge',
+        cpu              => '174.5 ECU(2.7 x 64core)',
+        ecu              => '174.5',
+        vcpu             => '64',
+        memory           => '976GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'SSD 1 x 1920 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'x1.32xlarge',
+        name             => 'X1 Extra High-Memory 32xlarge',
+        name_tiny        => 'X1 32xlarge',
+        cpu              => '349 ECU(2.7 x 128core)',
+        ecu              => '349',
+        vcpu             => '128',
+        memory           => '1952GB',
+        io               => '20 Gigabit',
+        ebs_optimized    => 'YES',
+        instance_storage => 'SSD 2 x 1920 GB',
         price            => 'N/A',
         previous_generation => 0,
     },
@@ -712,20 +740,6 @@ my @instance_types = (
         previous_generation => 1,
     },
     {
-        id               => 'cg1.4xlarge',
-        name             => 'Cluster GPU Quadruple Extra Large Instance',
-        name_tiny        => 'cluster gpu 4extra large',
-        cpu              => '33.5 ECU(2 x Intel Xeon X5570, 4core "Nehalem" arch)',
-        ecu              => '33.5',
-        vcpu             => '16',
-        memory           => '22GB',
-        io               => '10 Gigabit',
-        ebs_optimized    => 'N/A',
-        instance_storage => '2 x 840 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
         id               => 'i2.large',
         name             => 'High-Storage Large Instance',
         name_tiny        => 'high storage large',
@@ -792,34 +806,6 @@ my @instance_types = (
         io               => '10 Gigabit',
         ebs_optimized    => 'N/A',
         instance_storage => 'SSD 8 x 720 GB',
-        price            => 'N/A',
-        previous_generation => 0,
-    },
-    {
-        id               => 'hi1.4xlarge',
-        name             => 'High I/O Quadruple Extra Large Instance',
-        name_tiny        => 'high io 4extra large',
-        cpu              => '35 ECU(2.2 x 16core)',
-        ecu              => '35',
-        vcpu             => '16',
-        memory           => '60.5GB',
-        io               => '10 Gigabit',
-        ebs_optimized    => 'N/A',
-        instance_storage => 'SSD 2 x 1024 GB',
-        price            => 'N/A',
-        previous_generation => 1,
-    },
-    {
-        id               => 'hs1.8xlarge',
-        name             => 'High Storage Instances',
-        name_tiny        => 'high storage instances',
-        cpu              => '35 ECU(2.2 x 16core)',
-        ecu              => '35',
-        vcpu             => '16',
-        memory           => '117GB',
-        io               => '10 Gigabit',
-        ebs_optimized    => 'N/A',
-        instance_storage => '2T x 24',
         price            => 'N/A',
         previous_generation => 0,
     },
@@ -946,6 +932,48 @@ my @instance_types = (
         io               => '10 Gigabit',
         ebs_optimized    => 'YES',
         instance_storage => 'SSD 2 x 120 GB',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'hi1.4xlarge',
+        name             => 'High I/O Quadruple Extra Large Instance',
+        name_tiny        => 'high io 4extra large',
+        cpu              => '35 ECU(2.2 x 16core)',
+        ecu              => '35',
+        vcpu             => '16',
+        memory           => '60.5GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'N/A',
+        instance_storage => 'SSD 2 x 1024 GB',
+        price            => 'N/A',
+        previous_generation => 1,
+    },
+    {
+        id               => 'hs1.8xlarge',
+        name             => 'High Storage Instances',
+        name_tiny        => 'high storage instances',
+        cpu              => '35 ECU(2.2 x 16core)',
+        ecu              => '35',
+        vcpu             => '16',
+        memory           => '117GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'N/A',
+        instance_storage => '2T x 24',
+        price            => 'N/A',
+        previous_generation => 0,
+    },
+    {
+        id               => 'cg1.4xlarge',
+        name             => 'Cluster GPU Quadruple Extra Large Instance',
+        name_tiny        => 'cluster gpu 4extra large',
+        cpu              => '33.5 ECU(2 x Intel Xeon X5570, 4core "Nehalem" arch)',
+        ecu              => '33.5',
+        vcpu             => '16',
+        memory           => '22GB',
+        io               => '10 Gigabit',
+        ebs_optimized    => 'N/A',
+        instance_storage => '2 x 840 GB',
         price            => 'N/A',
         previous_generation => 0,
     },
@@ -1152,44 +1180,52 @@ sub output {
 
 sub _get_group_color {
     my ( $self, $id ) = @_;
-    if ( $id =~ /^r3/ ) {
-        return 'bold';
-    } elsif ( $id =~ /^r4/ ) {
+    if ( $id =~ /^r4/ ) {
+        return 'red bold';
+    } elsif ( $id =~ /^x1/ ) {
+        return 'red bold';
+    } elsif ( $id =~ /^r3/ ) {
         return 'red';
     } elsif ( $id =~ /^t2/ ) {
+        return 'yellow bold';
+    } elsif ( $id =~ /^t1/ ) {
         return 'yellow';
+    } elsif ( $id =~ /^m4/ ) {
+        return 'green bold';
+    } elsif ( $id =~ /^m3/ ) {
+        return 'green';
+    } elsif ( $id =~ /^m2/ ) {
+        return 'green';
     } elsif ( $id =~ /^m1/ ) {
         return 'green';
-    } elsif ( $id =~ /^m4/ ) {
+    } elsif ( $id =~ /^c4/ ) {
         return 'blue bold';
-    } elsif ( $id =~ /^m3/ ) {
-        return 'green bold';
-    } elsif ( $id =~ /^m2/ ) {
+    } elsif ( $id =~ /^c3/ ) {
         return 'blue bold';
     } elsif ( $id =~ /^c1/ ) {
-        return 'cyan';
-    } elsif ( $id =~ /^c4/ ) {
-        return 'yellow';
-    } elsif ( $id =~ /^c3/ ) {
         return 'blue';
-    } elsif ( $id =~ /^cc/ ) {
-        return 'magenta';
-    } elsif ( $id =~ /^cg/ ) {
-        return 'red';
-    } elsif ( $id =~ /^hi/ ) {
-        return 'red bold';
-    } elsif ( $id =~ /^cr/ ) {
-        return 'cyan bold';
-    } elsif ( $id =~ /^hs/ ) {
-        return 'magenta bold';
     } elsif ( $id =~ /^i2/ ) {
-        return 'yellow bold';
+        return 'magenta bold';
+    } elsif ( $id =~ /^d2/ ) {
+        return 'magenta bold';
     } elsif ( $id =~ /^p2/ ) {
-        return 'blue bold';
+        return 'cyan bold';
     } elsif ( $id =~ /^g2/ ) {
-        return 'blue bold';
+        return 'cyan bold';
+    #} elsif ( $id =~ /^hi/ ) {
+    #    return '';
+    #} elsif ( $id =~ /^cc/ ) {
+    #    return '';
+    #} elsif ( $id =~ /^cg/ ) {
+    #    return '';
+    #} elsif ( $id =~ /^cr/ ) {
+    #    return '';
+    #} elsif ( $id =~ /^hs/ ) {
+    #    return '';
     }
+
     return 'white';
 }
 
 1;
+
