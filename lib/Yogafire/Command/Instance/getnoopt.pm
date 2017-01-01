@@ -50,6 +50,12 @@ has proxy => (
     is              => "rw",
     documentation   => "specified proxy server name(ip or dns or instance_id or tagsname).",
 );
+has 'hostprefix' => (
+    traits          => [qw(Getopt)],
+    isa             => "Bool",
+    is              => "rw",
+    documentation   => "append hostname(ip) to filename",
+);
 no Mouse;
 
 use Yogafire::CommandClass::Sync;

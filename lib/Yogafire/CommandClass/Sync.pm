@@ -9,6 +9,10 @@ no Mouse;
 
 use Net::OpenSSH;
 use Parallel::ForkManager;
+use File::Basename qw/fileparse/;
+use File::Temp qw/tempdir/;
+use File::Copy qw/move/;
+use Cwd;
 use Yogafire::Logger;
 use Yogafire::Instance;
 use Yogafire::CommandClass::SSH;
@@ -60,7 +64,11 @@ sub execute {
         if($self->mode eq 'put') {
             $ssh->rsync_put($yoga_ssh->sync_option, $src, $dest) or die "rsync failed: " . $ssh->error;
         } else {
-            $ssh->rsync_get($yoga_ssh->sync_option, $src, $dest) or die "rsync failed: " . $ssh->error;
+            if($opt->{hostprefix}) {
+                $self->rsync_get_with_hostprefix($ssh, $host, $yoga_ssh->sync_option, $src, $dest);
+            } else {
+                $ssh->rsync_get($yoga_ssh->sync_option, $src, $dest) or die "rsync failed: " . $ssh->error;
+            }
         }
         $pm->finish;
     }
@@ -74,6 +82,28 @@ sub set_default_option {
         unless($opt->{$option}) {
             $opt->{$option} = 1;
         }
+    }
+}
+
+sub rsync_get_with_hostprefix {
+    my ($self, $ssh, $host, $sync_option, $src, $dest) = @_;
+    my ($dest_basename, $dest_dir) = fileparse $dest;
+
+    my $tempdir = tempdir( CLEANUP => 1 );
+    if(!$tempdir || $tempdir eq Cwd::getcwd()){
+        die "hostprefix option is not supported.";
+    }
+    $tempdir .= "/";
+
+    $ssh->rsync_get($sync_option, $src, $tempdir) or die "rsync failed: " . $ssh->error;
+
+    my @tempfiles = glob "${tempdir}*";
+    for my $file (@tempfiles) {
+        my ($basename, $dir) = fileparse $file;
+        my $to_basename = $dest_basename || $basename;
+        my $tfile = sprintf("%s%s-%s", $dest_dir, $host, $to_basename);
+        move($file, $tfile) or die "move failed: $!";
+        print("[prefix file] >>> $tfile\n");
     }
 }
 

@@ -33,6 +33,11 @@ WriteMakefile(
         'Text::UnicodeTable::Simple'    => '0',
         'Test::MockObject'              => '0',
         'Test::Mock::Guard'             => '0',
+        'File::Basename'                => '0',
+        'File::Temp'                    => '0',
+        'File::Copy'                    => '0',
+        'Cwd'                           => '0',
+
     },
     MIN_PERL_VERSION => '5.008001',
     LICENSE => 'perl',
