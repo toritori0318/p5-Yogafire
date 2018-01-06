@@ -15,6 +15,7 @@ use Yogafire::Instance::Action::Quit;
 use Yogafire::Instance::Action::CopyAndLaunch;
 use Yogafire::Instance::Action::ExtendVolume;
 use Yogafire::Instance::Action::ParamsDump;
+use Yogafire::Instance::Action::Docker;
 
 use Mouse;
 has 'action_name'  => (is => 'rw');
@@ -38,6 +39,7 @@ has 'actions'      => (
             Yogafire::Instance::Action::ParamsDump->new(),
             Yogafire::Instance::Action::Info->new(),
             Yogafire::Instance::Action::Quit->new(),
+            Yogafire::Instance::Action::Docker->new(),
         ];
     },
 );
