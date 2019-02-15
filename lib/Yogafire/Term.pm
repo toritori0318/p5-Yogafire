@@ -7,6 +7,7 @@ use Term::UI;
 
 sub new {
     my $class = shift;
+    $_[0] = "yogash" if scalar(@_) == 0;
     my $self = $class->SUPER::new(@_);
 
     my $attribs = $self->Attribs;
