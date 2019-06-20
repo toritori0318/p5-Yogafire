@@ -28,7 +28,7 @@ sub BUILD {
     my $proxy = $self->opt->{proxy} || config->get('proxy');
     if($proxy) {
         my $y_ins = Yogafire::Instance->new();
-        $self->opt->{host} = $self->opt->{proxy};
+        $self->opt->{host} = $self->opt->{proxy} || $proxy;
         my $proxy_instance = $y_ins->find($self->opt);
         die "Not found proxy server.\n" unless $proxy_instance;
 
