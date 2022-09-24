@@ -25,21 +25,33 @@ use VM::EC2;
 
 sub BUILD {
     my ($self) = @_;
-    my $config = Yogafire::Config->new;
+
+    my $config;
+    if ($self->is_common_command()) {
+        $config = Yogafire::Config->new(common_class => 1);
+    } else {
+        $config = Yogafire::Config->new(current_profile => $self->profile);
+    }
     $self->set_config($config);
 }
 
 sub vmec2 {
     my ($self, $opt_region) = @_;
+    if ($self->is_common_command()) {
+	return
+    }
+
     # Config取得
     my $aws_access_key_id     = config->get('access_key_id');
     my $aws_secret_access_key = config->get('secret_access_key');
+    my $aws_security_token    = config->get('security_token');
     my $identity_file         = config->get('identity_file');
     my $region                = $opt_region || config->get('region');
 
     my %params = (
         -access_key     => $aws_access_key_id,
         -secret_key     => $aws_secret_access_key,
+        -security_token => $aws_security_token,
         -raise_error    => 1,
     );
     if($region) {
@@ -91,11 +103,7 @@ sub validate_args_common {
     }
 
     my $file = config->file;
-    #
-    if(ref $self ne 'Yogafire::Command::Common::config' && !-e $file) {
-        die sprintf("Can't find config file [%s]\nPlease excecute \"yoga config --init\"\n", $file);
-    }
-
+    
     # permission check
     if(-e $file) {
         my $stat_inf = stat($file);
@@ -114,5 +122,15 @@ sub validate_args_common {
     $self->set_ec2($self->vmec2($opt->{region})) if $self->config;
 };
 
-1;
 
+sub is_common_command {
+    my ($self) = @_;
+    my $reftmp = ref $self;
+    if ($reftmp =~ /^Yogafire::Command::Common::/) {
+	return 1;
+    } else {
+	return 0;
+    }
+}
+
+1;

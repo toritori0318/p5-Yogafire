@@ -5,7 +5,7 @@ WriteMakefile(
     AUTHOR        => 'toritori0318 <toritori0318@gmail.com>',
     VERSION_FROM  => 'lib/Yogafire.pm',
     PREREQ_PM     => {
-        'VM::EC2'                       => '1.23',
+        'VM::EC2'                       => '1.24',
         'Mouse'                         => '0',
         'MouseX::App::Cmd::Command'     => '0',
         'ExtUtils::Config'              => '0',
@@ -37,7 +37,7 @@ WriteMakefile(
         'File::Temp'                    => '0',
         'File::Copy'                    => '0',
         'Cwd'                           => '0',
-
+        'Amazon::Credentials'           => '0',
     },
     MIN_PERL_VERSION => '5.008001',
     LICENSE => 'perl',
