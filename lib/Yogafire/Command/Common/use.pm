@@ -1,6 +1,6 @@
 package Yogafire::Command::Common::use;
 use Mouse;
-extends qw(Yogafire::CommandBase);
+extends qw(Yogafire::CommandBase Yogafire::Command::Attribute);
 no Mouse;
 
 use Yogafire::Declare qw/ec2 config/;
@@ -20,13 +20,13 @@ sub execute {
 
     if($profile && config->get_profile($profile)) {
         config->write_profile($profile);
-        print " use profile [$profile]\n";
+        print "\n current profile [$profile]\n";
     } else {
-        my @profiles = map { $_ } keys %{config->list_profile};
+        my @profiles = map { $_ } keys %{config->list_merge_profile};
         my $current_profile = config->current_profile();
-        print "--------- profiles ---------\n";
+        print "\n--------- profiles ---------\n";
         for my $profile (sort @profiles) {
-           printf " %s %s\n", ($current_profile eq $profile) ? '*' : ' ', $profile;
+           printf " %s %s\n", ($current_profile eq config->trim_aws_profile($profile)) ? '*' : ' ', $profile;
         }
     }
 

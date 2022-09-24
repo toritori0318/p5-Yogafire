@@ -4,6 +4,8 @@ use warnings;
 
 use Yogafire::Instance::Action::SSH;
 use Yogafire::Instance::Action::SSHTmux;
+use Yogafire::Instance::Action::SSMStart;
+use Yogafire::Instance::Action::SSMStartTmux;
 use Yogafire::Instance::Action::Start;
 use Yogafire::Instance::Action::Stop;
 use Yogafire::Instance::Action::Reboot;
@@ -27,6 +29,8 @@ has 'actions'      => (
         return [
             Yogafire::Instance::Action::SSH->new(),
             Yogafire::Instance::Action::SSHTmux->new(),
+            Yogafire::Instance::Action::SSMStart->new(),
+            Yogafire::Instance::Action::SSMStartTmux->new(),
             Yogafire::Instance::Action::Start->new(),
             Yogafire::Instance::Action::Stop->new(),
             Yogafire::Instance::Action::Reboot->new(),

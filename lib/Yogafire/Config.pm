@@ -5,6 +5,7 @@ use warnings;
 use YAML::Tiny;
 use File::HomeDir;
 use File::Spec;
+use Amazon::Credentials qw{set_sso_credentials get_role_credentials};
 
 use Yogafire::Term;
 
@@ -16,20 +17,25 @@ my $config_file = do {
     }
 };
 
+my $aws_config_file = do {
+    File::Spec->catfile(File::HomeDir->my_home, '.aws/config');
+};
+
 use Mouse;
 has 'file'   => (is => 'rw', isa => 'Str', default => $config_file );
 has 'config' => (is => 'rw');
-has 'current_profile' => (is => 'rw');
+has 'current_profile' => (is => 'rw', default => 'global');
+has 'common_class' => (is => 'rw', isa => 'Bool');
 no Mouse;
 
 sub BUILD {
     my $self = shift;
 
-    unless(-e $self->file) {
-        return undef;
+    if($self->common_class) {
+        $self->set_dummy_config();
+    } else {
+        $self->set_config();
     }
-
-    $self->set_config();
 
     return $self;
 }
@@ -37,18 +43,126 @@ sub BUILD {
 sub set_config {
     my ($self) = @_;
 
-    my $yaml = YAML::Tiny->read( $self->file );
+    my $yaml;
+    if(-e $self->file) {
+        $yaml = YAML::Tiny->read( $self->file );
+    }
 
-    my $profile = $yaml->[0]->{use_profile} || 'global';
-    $yaml->[0]->{$profile}->{identity_file} ||= '';
-    $yaml->[0]->{$profile}->{region}        ||= '';
-    $yaml->[0]->{$profile}->{ssh_user}      ||= '';
-    $yaml->[0]->{$profile}->{ssh_port}      ||= '';
+    my $profile = $self->current_profile;
+    unless($profile) {
+	if ($yaml->[0]) {
+            $profile = $yaml->[0]->{use_profile} || 'default';
+        } else {
+            $profile = $ENV{'AWS_PROFILE'} || 'default';
+	}
+    }
 
-    $self->config($yaml);
+    # yoga config exists
+    if($yaml && $yaml->[0] && $yaml->[0]->{$profile}) {
+	my $d = $yaml->[0]->{$profile};
+	if($d->{access_key_id} && $d->{secret_access_key}) {
+            $yaml->[0]->{$profile}->{identity_file} ||= '';
+            $yaml->[0]->{$profile}->{region}        ||= '';
+            $yaml->[0]->{$profile}->{ssh_user}      ||= '';
+            $yaml->[0]->{$profile}->{ssh_port}      ||= '';
 
-    # initial profile
+            $self->config($yaml);
+            $self->current_profile($profile);
+	    return;
+	}
+    }
+
+    my $config = [
+	{
+	    "$profile" => {},
+	}
+    ];
+
+    my $region = $ENV{'AWS_DEFAULT_REGION'};
+    if($ENV{'AWS_ACCESS_KEY_ID'} && $ENV{'AWS_SECRET_ACCESS_KEY'}) {
+	# set cred
+        $config->[0]->{$profile}->{access_key_id}     = $ENV{'AWS_ACCESS_KEY_ID'};
+        $config->[0]->{$profile}->{secret_access_key} = $ENV{'AWS_SECRET_ACCESS_KEY'};
+        $config->[0]->{$profile}->{region}            = $ENV{'AWS_DEFAULT_REGION'};
+
+        $self->config($config);
+        $self->current_profile($profile);
+	return
+    }
+
+    my $aws_ini = Config::Tiny->read($aws_config_file);
+    my $section;
+    if ($aws_ini->{$profile}) {
+        $section = $aws_ini->{$profile};
+    } elsif ($aws_ini->{"profile $profile"}) {
+        $section = $aws_ini->{"profile $profile"};
+    }
+
+    my ($aws_access_key_id, $aws_secret_access_key, $aws_security_token, $sso_role_name, $sso_account_id, $cred);
+    if ($section) {
+        # sso token
+	if ($section->{sso_start_url}) {
+            $sso_role_name  = $section->{sso_role_name};
+            $sso_account_id = $section->{sso_account_id};
+            $region         = $section->{sso_region} ||= $config->[0]->{$profile}->{region};
+            if (!$sso_role_name || !$sso_account_id || !$region) {
+                die "sso aws/config section not found [$profile][$sso_role_name][$sso_account_id][$region]\n";
+            }
+
+            set_sso_credentials($sso_role_name, $sso_account_id, $region);
+            $cred = get_role_credentials(role_name  => $sso_role_name,
+                                         account_id => $sso_account_id,
+                                         region     => $region);
+        } else {
+            $cred = Amazon::Credentials->new({ profile => $profile });
+        }
+    }
+
+    if($cred) {
+	# set cred
+        $config->[0]->{$profile}->{access_key_id}     = $cred->{accessKeyId} || $cred->credential_keys->{AWS_ACCESS_KEY_ID};
+        $config->[0]->{$profile}->{secret_access_key} = $cred->{secretAccessKey} || $cred->credential_keys->{AWS_SECRET_ACCESS_KEY};
+        $config->[0]->{$profile}->{security_token}    = $cred->{sessionToken} || $cred->credential_keys->{AWS_SESSION_TOKEN};
+        $config->[0]->{$profile}->{region}            = $cred->{region} || $region;
+    }
+
+    if($yaml && $yaml->[0]->{$profile}) {
+	unless($region) {
+            $config->[0]->{$profile}->{region} ||= $yaml->[0]->{$profile}->{region} ||= '';
+	}
+
+        $config->[0]->{$profile}->{identity_file} ||= $yaml->[0]->{$profile}->{identity_file} ||= '';
+        $config->[0]->{$profile}->{ssh_user}      ||= $yaml->[0]->{$profile}->{ssh_user}      ||= '';
+        $config->[0]->{$profile}->{ssh_port}      ||= $yaml->[0]->{$profile}->{ssh_port}      ||= '';
+    }
+
+    $self->config($config);
     $self->current_profile($profile);
+}
+
+sub set_dummy_config {
+    my ($self) = @_;
+
+    my $config;
+    my $profile = 'global';
+    if(-e $self->file) {
+        $config = YAML::Tiny->read( $self->file );
+        $profile = $config->[0]->{use_profile} || $profile;
+    } else {
+        $config = YAML::Tiny->new();
+    }
+    # initial profile
+    $config->[0]->{use_profile} = $profile;
+    $config->[0]->{$profile} = {};
+
+    $self->config($config);
+    $self->current_profile($profile);
+
+    # write file
+    unless(-e $self->file) {
+        $config->write($config_file);
+        chmod(0600, $config_file);
+    }
 }
 
 sub init {
@@ -170,11 +284,26 @@ EOF
 
 sub get_profile {
     my ($self, $profile) = @_;
-    my $section = $self->config->[0]->{$profile};
+    my $section = $self->get_yoga_profile($profile);
     unless($section) {
-        die " Fail! invalid profile [$profile]\n";
+        $section = $self->get_aws_profile($profile);
+        unless($section) {
+            die " Fail! invalid profile [$profile]\n";
+        }
     }
     return $section;
+}
+
+sub get_yoga_profile {
+    my ($self, $profile) = @_;
+    return $self->config->[0]->{$profile};
+}
+
+sub get_aws_profile {
+    my ($self, $profile) = @_;
+    my $aws_ini = Config::Tiny->read($aws_config_file);
+    my $aws_profile = sprintf("profile %s", $profile);
+    return $aws_ini->{$aws_profile};
 }
 
 sub write_profile {
@@ -182,8 +311,6 @@ sub write_profile {
 
     $self->config->[0]->{use_profile} = $profile;
     $self->config->write($self->file);
-
-    $self->set_config;
 
     return ($self->config->[0]->{$profile}) ? $self->config->[0]->{$profile} : 0;
 }
@@ -196,9 +323,27 @@ sub get {
     return $self->config->[0]->{$profile}->{$key};
 }
 
+sub trim_aws_profile {
+    my ($self, $profile) = @_;
+    $profile =~ s/\[aws\] //g;
+    return $profile;
+}
+
 sub list_profile {
     my ($self) = @_;
     return { map { $_ => $self->config->[0]->{$_} } grep { $_ ne 'use_profile' } keys %{$self->config->[0]} };
+}
+
+sub list_aws_profile {
+    my ($self) = @_;
+    my $aws_ini = Config::Tiny->read($aws_config_file);
+    return { map { $_ =~ s/profile/[aws_profile]/; $_ => $aws_ini->{$_} } keys %{$aws_ini} };
+}
+
+sub list_merge_profile {
+    my ($self) = @_;
+    my %merge= (%{$self->list_profile}, %{$self->list_aws_profile});
+    return \%merge;
 }
 
 1;
