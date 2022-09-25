@@ -2,7 +2,7 @@ package Yogafire;
 use strict;
 use warnings;
 
-our $VERSION = '0.06';
+our $VERSION = '0.10';
 
 use Mouse;
 extends qw(MouseX::App::Cmd);
