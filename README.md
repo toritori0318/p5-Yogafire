@@ -3,9 +3,27 @@ Collection of tools useful for AWS(ec2).
 
 ## Installation
 
+You can choose one of the following.
+
+### Local Machine
+
 cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
 
-## Commands
+### Yoga Commands with Docker
+
+1. Run the following to generate an empty .yoga file
+
+    ```bash
+    touch $HOME/.yoga
+    chmod 600 $HOME/.yoga
+    ```
+2. Add the following to your shell startup file such as .bashrc / .zshrc / ...
+
+    ```bash
+    alias yoga="docker run -it --platform linux/amd64 -v ~/.yoga:/root/.yoga -v ~/.aws:/root/.aws toritori0318/p5-yogafire:latest"
+    ```
+
+### Commands
 
     Common commands:
                     config: Yogafire Config Manager
@@ -58,3 +76,42 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
 
 http://d.hatena.ne.jp/tori243/20130102/1357142925
 
+## Configuration
+
+- AWS environment
+  - AWS_ACCESS_KEY_ID
+  - AWS_SECRET_ACCESS_KEY
+  - AWS_DEFAULT_REGION
+  - AWS_PROFILE
+- [AWS CLI Config](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+- $HOME/.yoga ([example](/example/config/yoga))
+
+## Yoga Profile
+
+- Show profile list
+
+    ```
+    % yoga use
+
+    --------- profiles ---------
+       [aws_profile] hoge-profile  ----> .aws/config profile
+       [aws_profile] fuga-profile  ----> .aws/config profile
+     * global                      ----> current profile
+    ```
+
+- Set default profile
+    ```
+    % yoga use hoge-profile
+
+    --------- profiles ---------
+       [aws_profile] hoge-profile  ----> .aws/config profile
+       [aws_profile] fuga-profile  ----> .aws/config profile
+       global
+     * hoge-profile                ----> current profile
+    ```
+
+- Specify directly by command
+    ```
+    % yoga ls --profile fuga-profile
+    ...
+    ```
