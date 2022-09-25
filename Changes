@@ -1,5 +1,11 @@
 Revision history for Perl extension Yogafire.
 
+0.10 2022/09/25 (Breaking changes)
+  - Changed AWS credentials to read .aws/config.
+  - Support for aws sso login session.
+  - Added ssm-start / ssm-start-tmux command.
+  - Registered with DockerHub for use from Docker commands.
+
 0.06 2013/xx/xx
   - Support for m4/c4 instance into instance-type command.
   - Support for c3 instance into instance-type command, and modified option args.
