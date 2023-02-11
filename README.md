@@ -76,15 +76,21 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
 
 http://d.hatena.ne.jp/tori243/20130102/1357142925
 
-## Configuration
+## Configuration(Priority)
 
-- AWS environment
+1. AWS environment
   - AWS_ACCESS_KEY_ID
   - AWS_SECRET_ACCESS_KEY
   - AWS_DEFAULT_REGION
   - AWS_PROFILE
-- [AWS CLI Config](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
-- $HOME/.yoga ([example](/example/config/yoga))
+2. $HOME/.yoga ([example](/example/config/yoga))
+3. [AWS CLI Config](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+
+### Default value of configration
+
+The `_yoga_default` key can be used as the default value for all profiles.
+
+[Here's](/example/config/yoga) an example.
 
 ## Yoga Profile
 
