@@ -1,8 +1,8 @@
-global:
-  access_key_id: aaaaaaaaaaaaaaaaaaa
+---
+_yoga_default:
   identity_file: '/path/to/hoge.pem'
   region: ap-northeast-1
-  secret_access_key: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  highlight_eip: true
   ssh_port: 22
   ssh_user: ec2-user
 app2:
@@ -22,7 +22,6 @@ app2:
     - dnsName
     - launchTime
     - colorfulInstanceState
-  region: ap-northeast-1
   secret_access_key: zzzzzzzzzzzzzzzzzzzzzzzzzzzzz
   ssh_port: 11122
   ssh_user: fugauser

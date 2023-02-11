@@ -50,91 +50,85 @@ sub set_config {
 
     my $profile = $self->current_profile;
     unless($profile) {
-	if ($yaml->[0]) {
-            $profile = $yaml->[0]->{use_profile} || 'default';
-        } else {
-            $profile = $ENV{'AWS_PROFILE'} || 'default';
+	if ($ENV{'AWS_PROFILE'}) {
+            $profile = $ENV{'AWS_PROFILE'};
+        }elsif ($yaml->[0]) {
+            $profile = $yaml->[0]->{use_profile};
 	}
+	$profile ||= 'default';
     }
 
-    # yoga config exists
-    if($yaml && $yaml->[0] && $yaml->[0]->{$profile}) {
-	my $d = $yaml->[0]->{$profile};
-	if($d->{access_key_id} && $d->{secret_access_key}) {
-            $yaml->[0]->{$profile}->{identity_file} ||= '';
-            $yaml->[0]->{$profile}->{region}        ||= '';
-            $yaml->[0]->{$profile}->{ssh_user}      ||= '';
-            $yaml->[0]->{$profile}->{ssh_port}      ||= '';
+    my $use_config = {};
+    # slurp config
+    if($yaml && $yaml->[0]) {
+	my ($yoga_global_config, $profile_config) = ({}, {});
+	# first load _yoga_default config
+        if($yaml->[0]->{'_yoga_default'}) {
+	    $yoga_global_config = $yaml->[0]->{'_yoga_default'} || {};
+        }
+	# next load profile config
+        if($yaml->[0]->{$profile}) {
+	    $profile_config = $yaml->[0]->{$profile} || {};
+        }
+	# merge
+	my %merge= (%$yoga_global_config, %$profile_config);
+        $use_config = \%merge;
+    }
 
-            $self->config($yaml);
-            $self->current_profile($profile);
-	    return;
-	}
+    # note: Environment variables have the highest priority.
+    if($ENV{'AWS_ACCESS_KEY_ID'} && $ENV{'AWS_SECRET_ACCESS_KEY'}) {
+	# set cred
+        $use_config->{access_key_id}     = $ENV{'AWS_ACCESS_KEY_ID'};
+        $use_config->{secret_access_key} = $ENV{'AWS_SECRET_ACCESS_KEY'};
+        $use_config->{region}            = $ENV{'AWS_DEFAULT_REGION'};
+    }
+
+    # If there is no aws_cred in the env, get aws_config.
+    # note: AWS config have the lowest priority.
+    unless($use_config->{access_key_id} && $use_config->{secret_access_key} && $use_config->{region}) {
+        my $aws_ini = Config::Tiny->read($aws_config_file);
+        my $section;
+        if ($aws_ini->{$profile}) {
+            $section = $aws_ini->{$profile};
+        } elsif ($aws_ini->{"profile $profile"}) {
+            $section = $aws_ini->{"profile $profile"};
+        }
+
+        if ($section) {
+	    my $cred;
+	    my $region;
+            # sso token
+            if ($section->{sso_start_url}) {
+                $region = $section->{sso_region} ||= $use_config->{region};
+                my $sso_role_name  = $section->{sso_role_name};
+                my $sso_account_id = $section->{sso_account_id};
+                if (!$sso_role_name || !$sso_account_id || !$region) {
+                    die "sso aws/config section not found [$profile][$sso_role_name][$sso_account_id][$region]\n";
+                }
+
+                set_sso_credentials($sso_role_name, $sso_account_id, $region);
+                $cred = get_role_credentials(role_name  => $sso_role_name,
+                                             account_id => $sso_account_id,
+                                             region     => $region);
+            } else {
+                $cred = Amazon::Credentials->new({ profile => $profile });
+            }
+
+            if($cred) {
+                # set cred
+                $use_config->{access_key_id}     = $cred->{accessKeyId} || $cred->credential_keys->{AWS_ACCESS_KEY_ID} unless $use_config->{access_key_id};
+                $use_config->{secret_access_key} = $cred->{secretAccessKey} || $cred->credential_keys->{AWS_SECRET_ACCESS_KEY} unless $use_config->{secret_access_key};
+                $use_config->{security_token}    = $cred->{sessionToken} || $cred->credential_keys->{AWS_SESSION_TOKEN} unless $use_config->{security_token};
+                $use_config->{region}            = $cred->{region} || $region unless $use_config->{region};
+            }
+        }
     }
 
     my $config = [
 	{
-	    "$profile" => {},
+	    "$profile" => $use_config,
 	}
     ];
-
-    my $region = $ENV{'AWS_DEFAULT_REGION'};
-    if($ENV{'AWS_ACCESS_KEY_ID'} && $ENV{'AWS_SECRET_ACCESS_KEY'}) {
-	# set cred
-        $config->[0]->{$profile}->{access_key_id}     = $ENV{'AWS_ACCESS_KEY_ID'};
-        $config->[0]->{$profile}->{secret_access_key} = $ENV{'AWS_SECRET_ACCESS_KEY'};
-        $config->[0]->{$profile}->{region}            = $ENV{'AWS_DEFAULT_REGION'};
-
-        $self->config($config);
-        $self->current_profile($profile);
-	return
-    }
-
-    my $aws_ini = Config::Tiny->read($aws_config_file);
-    my $section;
-    if ($aws_ini->{$profile}) {
-        $section = $aws_ini->{$profile};
-    } elsif ($aws_ini->{"profile $profile"}) {
-        $section = $aws_ini->{"profile $profile"};
-    }
-
-    my ($aws_access_key_id, $aws_secret_access_key, $aws_security_token, $sso_role_name, $sso_account_id, $cred);
-    if ($section) {
-        # sso token
-	if ($section->{sso_start_url}) {
-            $sso_role_name  = $section->{sso_role_name};
-            $sso_account_id = $section->{sso_account_id};
-            $region         = $section->{sso_region} ||= $config->[0]->{$profile}->{region};
-            if (!$sso_role_name || !$sso_account_id || !$region) {
-                die "sso aws/config section not found [$profile][$sso_role_name][$sso_account_id][$region]\n";
-            }
-
-            set_sso_credentials($sso_role_name, $sso_account_id, $region);
-            $cred = get_role_credentials(role_name  => $sso_role_name,
-                                         account_id => $sso_account_id,
-                                         region     => $region);
-        } else {
-            $cred = Amazon::Credentials->new({ profile => $profile });
-        }
-    }
-
-    if($cred) {
-	# set cred
-        $config->[0]->{$profile}->{access_key_id}     = $cred->{accessKeyId} || $cred->credential_keys->{AWS_ACCESS_KEY_ID};
-        $config->[0]->{$profile}->{secret_access_key} = $cred->{secretAccessKey} || $cred->credential_keys->{AWS_SECRET_ACCESS_KEY};
-        $config->[0]->{$profile}->{security_token}    = $cred->{sessionToken} || $cred->credential_keys->{AWS_SESSION_TOKEN};
-        $config->[0]->{$profile}->{region}            = $cred->{region} || $region;
-    }
-
-    if($yaml && $yaml->[0]->{$profile}) {
-	unless($region) {
-            $config->[0]->{$profile}->{region} ||= $yaml->[0]->{$profile}->{region} ||= '';
-	}
-
-        $config->[0]->{$profile}->{identity_file} ||= $yaml->[0]->{$profile}->{identity_file} ||= '';
-        $config->[0]->{$profile}->{ssh_user}      ||= $yaml->[0]->{$profile}->{ssh_user}      ||= '';
-        $config->[0]->{$profile}->{ssh_port}      ||= $yaml->[0]->{$profile}->{ssh_port}      ||= '';
-    }
 
     $self->config($config);
     $self->current_profile($profile);
