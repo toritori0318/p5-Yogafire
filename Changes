@@ -1,5 +1,10 @@
 Revision history for Perl extension Yogafire.
 
+0.11 2023/02/12
+  - Change default instance info column definitions.
+  - Fixed a bug that caused the original settings to disappear when 'use' command.
+  - Considering the priority of the configuration.
+
 0.10 2022/09/25 (Breaking changes)
   - Changed AWS credentials to read .aws/config.
   - Support for aws sso login session.

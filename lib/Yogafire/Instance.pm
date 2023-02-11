@@ -2,7 +2,7 @@ package Yogafire::Instance;
 use strict;
 use warnings;
 use Mouse;
-has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress dnsName colorfulInstanceState/] }, );
+has 'out_columns' => (is => 'rw', default => sub { [qw/tags_Name instanceId ipAddress privateIpAddress colorfulInstanceState/] }, );
 has 'out_format'  => (is => 'rw');
 has 'cache'       => (is => 'rw');
 has 'eips'        => (is => 'rw');
