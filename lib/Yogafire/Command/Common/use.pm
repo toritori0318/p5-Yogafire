@@ -19,7 +19,7 @@ sub execute {
     my $profile = shift @$args if $args;
 
     if($profile && config->get_profile($profile)) {
-        config->write_profile($profile);
+        config->switch_use_profile($profile);
         print "\n current profile [$profile]\n";
     } else {
         my @profiles = map { $_ } keys %{config->list_merge_profile};

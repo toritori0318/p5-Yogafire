@@ -315,6 +315,21 @@ sub write_profile {
     return ($self->config->[0]->{$profile}) ? $self->config->[0]->{$profile} : 0;
 }
 
+sub switch_use_profile {
+    my ($self, $profile) = @_;
+
+    if(-e $self->file) {
+        my $yaml = YAML::Tiny->read( $self->file );
+        $self->config($yaml);
+    }
+
+    $self->config->[0]->{$profile} ||= {};
+    $self->config->[0]->{use_profile} = $profile;
+    $self->config->write($self->file);
+
+    return ($self->config->[0]->{$profile}) ? $self->config->[0]->{$profile} : 0;
+}
+
 sub get {
     my ($self, $key) = @_;
     my $profile = $self->current_profile;
