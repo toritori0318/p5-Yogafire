@@ -1,6 +1,10 @@
 # Yogafire
 Collection of tools useful for AWS(ec2).
 
+## ScreenShot
+
+<img src="rec.gif" />
+
 ## Installation
 
 You can choose one of the following.
