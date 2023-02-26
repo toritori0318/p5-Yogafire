@@ -48,6 +48,8 @@ cpanm https://github.com/toritori0318/p5-Yogafire/tarball/master
                     reboot: EC2 Reboot Instances
                        ssh: EC2 SSH Instance
                   ssh-tmux: EC2 SSH Instance
+                 ssm-start: Login to ec2 using system session manager
+            ssm-start-tmux: Login to ec2 using system session manager by tmux
                      start: EC2 Start Instances
                       stop: EC2 Stop Instances
                  terminate: EC2 Terminate Instance
